@@ -64,9 +64,12 @@ cp .env.example .env       # 默认全是 mock，无需配置即可跑
 ```bash
 cd frontend
 npm install
-npm run dev:h5            # 浏览器跑
-npm run dev:mp-weixin     # 微信小程序（需 HBuilderX）
+npm run dev:h5             # 浏览器预览（Vite dev server，端口 5173）
+npm run dev:mp-weixin      # 编译产物到 unpackage/dist/dev/mp-weixin/
+                            # 然后用「微信开发者工具」打开该目录即可预览 / 调试
 ```
+
+> 跑微信小程序**不需要 HBuilderX**。UniApp 编译用 CLI 完成；运行时交给微信开发者工具。HBuilderX 只是可选的 GUI 外壳。
 
 ## 4. 核心 API（统一返回 `{code, message, data}`）
 
