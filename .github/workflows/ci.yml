@@ -22,7 +22,7 @@ jobs:
         with:
           python-version: "3.12"
           cache: pip
-          cache-dependency-path: youshu-ai/backend/pyproject.toml
+          cache-dependency-path: backend/pyproject.toml
 
       - name: Install (incl. dev extras)
         run: |
