@@ -1,0 +1,10 @@
+{
+  "extends": "@dcloudio/uni-app/tsconfig/tsconfig.json",
+  "compilerOptions": {
+    "strict": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    }
+  }
+}

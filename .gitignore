@@ -1,0 +1,7 @@
+# OS / IDE
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# 子项目自带 .gitignore；这里只放外层关心的
