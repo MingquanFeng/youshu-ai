@@ -5,6 +5,7 @@ MVP 用 mock：基于 OCR 文本抽取结构化信息。
 """
 from __future__ import annotations
 
+import importlib.util
 import logging
 import os
 import re
@@ -92,11 +93,9 @@ QWEN_PROMPT = """你是专业记账助手。
 
 def _qwen_vl_run(image_path: str, ocr_text: str) -> RecognizeResult:
     """真实 Qwen-VL 多模态调用：图片 + prompt，返回 JSON。"""
-    try:
-        import dashscope  # type: ignore
-        from dashscope import MultiModalConversation  # type: ignore
-    except ImportError as exc:
-        raise BizException(50000, "未安装 dashscope，无法使用 Qwen-VL 后端") from exc
+    if importlib.util.find_spec("dashscope") is None:
+        raise BizException(50000, "未安装 dashscope，无法使用 Qwen-VL 后端")
+    from dashscope import MultiModalConversation  # type: ignore
 
     if not settings.dashscope_api_key:
         raise BizException(50000, "缺少 DASHSCOPE_API_KEY")

@@ -5,7 +5,6 @@ import logging
 import os
 import uuid
 from datetime import datetime
-from typing import Optional
 
 from fastapi import APIRouter, Depends, File, Query, UploadFile
 from sqlalchemy import func
@@ -109,8 +108,8 @@ def save(
 def list_bills(
     page: int = Query(1, ge=1),
     size: int = Query(20, ge=1, le=100),
-    category: Optional[str] = None,
-    date: Optional[str] = Query(None, description="YYYY-MM-DD"),
+    category: str | None = None,
+    date: str | None = Query(None, description="YYYY-MM-DD"),
     user_id: int = Depends(get_current_user),
     db: Session = Depends(get_db),
 ) -> dict:

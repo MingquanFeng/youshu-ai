@@ -4,7 +4,7 @@ from __future__ import annotations
 import datetime as dt
 from typing import Any
 
-from fastapi import Depends, Header
+from fastapi import Header
 from jose import JWTError, jwt
 
 from app.core.config import settings
@@ -14,8 +14,8 @@ from app.core.exceptions import BizException
 def create_token(user_id: int, extra: dict[str, Any] | None = None) -> str:
     payload: dict[str, Any] = {
         "sub": str(user_id),
-        "iat": dt.datetime.now(dt.timezone.utc),
-        "exp": dt.datetime.now(dt.timezone.utc)
+        "iat": dt.datetime.now(dt.UTC),
+        "exp": dt.datetime.now(dt.UTC)
         + dt.timedelta(minutes=settings.jwt_expire_minutes),
     }
     if extra:

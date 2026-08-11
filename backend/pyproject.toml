@@ -34,3 +34,17 @@ build-backend = "setuptools.build_meta"
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["app*"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+extend-exclude = [".venv", "tests"]
+
+[tool.ruff.lint]
+# 起步阶段：只开基础规则，发现问题再逐步加严
+select = ["E", "F", "W", "I", "B", "UP"]
+ignore = [
+    "E501",  # 行长度交给 formatter
+    "B008",  # FastAPI 依赖里常见，误伤多
+]
+

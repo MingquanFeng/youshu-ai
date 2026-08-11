@@ -2,10 +2,8 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Optional
 
 from pydantic import BaseModel, Field
-
 
 # ---------------------- 通用 ---------------------- #
 
@@ -47,7 +45,7 @@ class SaveBillIn(BaseModel):
     remark: str = ""
     source: str = "manual"
     ai_score: float = 1.0
-    image_id: Optional[str] = None
+    image_id: str | None = None
 
 
 class BillItem(BaseModel):
