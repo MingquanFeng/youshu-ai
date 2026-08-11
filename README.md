@@ -147,4 +147,4 @@ npm run dev:h5       # 浏览器看
 - **V2**：AI 聊天助手 / 自动预算 / 消费预测
 - **V3**：家庭账本 / 多账户 / 资产管理
 
-详见 [docs/](docs/) 中的原始 PRD / MVP。
+详见 [docs/](docs/) 中的原始 PRD / MVP，以及 [docs/ROADMAP.md](docs/ROADMAP.md) 中的开发粒度拆分（一接口 / 一页面 = 一次任务）。
