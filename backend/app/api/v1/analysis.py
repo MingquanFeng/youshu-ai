@@ -4,15 +4,24 @@ from __future__ import annotations
 from collections import Counter
 from datetime import date, datetime, timedelta
 
+from dateutil.relativedelta import relativedelta
 from fastapi import APIRouter, Body, Depends
-from sqlalchemy import func
+from sqlalchemy import case, func
 from sqlalchemy.orm import Session
 
 from app.core.response import ok
 from app.core.security import get_current_user
 from app.db.session import get_db
 from app.models.bill import Bill
-from app.schemas import DailyIn, DailyItem, DailyOut, MonthlyAnalysisOut
+from app.schemas import (
+    CategoryIn,
+    CategoryItem,
+    CategoryOut,
+    DailyIn,
+    DailyItem,
+    DailyOut,
+    MonthlyAnalysisOut,
+)
 
 router = APIRouter(prefix="/analysis", tags=["analysis"])
 
@@ -81,6 +90,52 @@ def daily(
         items.append(DailyItem(date=d.isoformat(), total=totals.get(d.isoformat(), 0)))
 
     return ok(DailyOut(days=items).model_dump())
+
+
+@router.post("/category", response_model=None, summary="近 N 个月分类消费占比")
+def category(
+    body: CategoryIn = Body(default_factory=CategoryIn),
+    user_id: int = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> dict:
+    today = datetime.now()
+    start = (today - relativedelta(months=body.months - 1)).replace(
+        day=1, hour=0, minute=0, second=0, microsecond=0
+    )
+
+    # 时区安全：用 substr(1,10) 按存储格式截取 YYYY-MM-DD，避免 SQLite 隐式时区转换导致首末几天偏差
+    # 与 T-009 /daily 保持一致
+    rows = (
+        db.query(
+            case((Bill.category == "", "其他"), else_=Bill.category).label("cat"),
+            func.sum(Bill.amount).label("s"),
+        )
+        .filter(
+            Bill.user_id == user_id,
+            Bill.deleted_at.is_(None),
+            func.substr(Bill.bill_time, 1, 10) >= start.strftime("%Y-%m-%d"),
+        )
+        .group_by(case((Bill.category == "", "其他"), else_=Bill.category))
+        .order_by(func.sum(Bill.amount).desc())
+        .all()
+    )
+
+    grand_total = sum(float(amt) for _, amt in rows)
+    if grand_total == 0:
+        return ok(CategoryOut(categories=[], total=0).model_dump())
+
+    items = []
+    for cat, amt in rows:
+        rounded_amt = round(float(amt), 2)
+        items.append(
+            CategoryItem(
+                category=cat,
+                amount=rounded_amt,
+                percent=round(rounded_amt / grand_total, 4),
+            )
+        )
+
+    return ok(CategoryOut(categories=items, total=round(grand_total, 2)).model_dump())
 
 
 def _make_advice(category: str, ratio: float, total: float) -> str:

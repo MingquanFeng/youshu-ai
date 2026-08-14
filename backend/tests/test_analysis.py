@@ -34,6 +34,22 @@ def _save_daily(client, headers, amount, bill_time):
     )
 
 
+def _save_category(client, headers, amount, category, bill_time):
+    return client.post(
+        "/api/v1/bill/save",
+        json={
+            "amount": amount,
+            "category": category,
+            "merchant": "test",
+            "pay_method": "微信",
+            "bill_time": bill_time,
+            "source": "manual",
+            "ai_score": 1.0,
+        },
+        headers=headers,
+    )
+
+
 def test_monthly_empty(client, auth_headers):
     res = client.post("/api/v1/analysis/monthly", headers=auth_headers).json()
     assert res["code"] == 0
@@ -177,3 +193,119 @@ def test_daily_timezone_edge(client, auth_headers):
     # 该条计入今天而非昨天
     assert days[today_str] == 120
     assert days[yesterday_str] == 0
+
+
+# ------------------------------ T-010: category ------------------------------ #
+
+
+def _month_day(month_offset: int, day: int = 15) -> str:
+    """相对今天的月份日期字符串，month_offset=0 表本月。"""
+    from datetime import datetime
+
+    from dateutil.relativedelta import relativedelta
+
+    d = datetime.now() - relativedelta(months=month_offset)
+    return d.replace(day=day).strftime("%Y-%m-%dT%H:%M:%S")
+
+
+def test_category_basic(client, auth_headers):
+    # 灌 3 类（餐饮 100、交通 50、购物 30）
+    _save_category(client, auth_headers, 100, "餐饮", _month_day(0))
+    _save_category(client, auth_headers, 50, "交通", _month_day(0))
+    _save_category(client, auth_headers, 30, "购物", _month_day(0))
+
+    res = client.post("/api/v1/analysis/category", json={"months": 1}, headers=auth_headers).json()
+    assert res["code"] == 0
+    data = res["data"]
+    assert len(data["categories"]) == 3
+    assert data["total"] == 180
+    # percent 求和 ≈ 1（允许 ±0.001）
+    assert abs(sum(c["percent"] for c in data["categories"]) - 1.0) < 0.001
+    # 降序
+    amounts = [c["amount"] for c in data["categories"]]
+    assert amounts == sorted(amounts, reverse=True)
+
+
+def test_category_single(client, auth_headers):
+    _save_category(client, auth_headers, 200, "餐饮", _month_day(0))
+
+    res = client.post("/api/v1/analysis/category", json={"months": 1}, headers=auth_headers).json()
+    assert res["code"] == 0
+    data = res["data"]
+    assert len(data["categories"]) == 1
+    assert data["categories"][0]["percent"] == 1.0
+    assert data["total"] == 200
+
+
+def test_category_empty(client, auth_headers):
+    res = client.post("/api/v1/analysis/category", json={"months": 1}, headers=auth_headers).json()
+    assert res["code"] == 0
+    assert res["data"]["categories"] == []
+    assert res["data"]["total"] == 0
+
+
+def test_category_requires_auth(client):
+    res = client.post("/api/v1/analysis/category")
+    assert res.status_code == 401
+    assert res.json()["code"] == 40100
+
+
+def test_category_months_zero(client, auth_headers):
+    res = client.post("/api/v1/analysis/category", json={"months": 0}, headers=auth_headers)
+    assert res.status_code == 422
+    assert res.json()["code"] == 40000
+
+
+def test_category_months_too_large(client, auth_headers):
+    res = client.post("/api/v1/analysis/category", json={"months": 13}, headers=auth_headers)
+    assert res.status_code == 422
+    assert res.json()["code"] == 40000
+
+
+def test_category_soft_delete_filtered(client, auth_headers):
+    # 灌 2 条（餐饮 100 + 交通 50）
+    r1 = _save_category(client, auth_headers, 100, "餐饮", _month_day(0))
+    _save_category(client, auth_headers, 50, "交通", _month_day(0))
+    # 软删餐饮
+    bill_id = r1.json()["data"]["id"]
+    assert client.delete(f"/api/v1/bill/{bill_id}", headers=auth_headers).status_code == 200
+
+    res = client.post("/api/v1/analysis/category", json={"months": 1}, headers=auth_headers).json()
+    assert res["code"] == 0
+    assert len(res["data"]["categories"]) == 1
+    assert res["data"]["categories"][0]["category"] == "交通"
+    assert res["data"]["total"] == 50
+
+
+def test_category_user_isolation(client, auth_headers):
+    # 用户 A 灌数据
+    _save_category(client, auth_headers, 999, "餐饮", _month_day(0))
+    # 用户 B 登录
+    res_b = client.post("/api/v1/user/login", json={"code": "other"})
+    assert res_b.status_code == 200
+    headers_b = {"Authorization": f"Bearer {res_b.json()['data']['token']}"}
+
+    res = client.post("/api/v1/analysis/category", json={"months": 1}, headers=headers_b).json()
+    assert res["code"] == 0
+    assert res["data"]["total"] == 0
+
+
+def test_category_empty_category_fallback(client, auth_headers):
+    _save_category(client, auth_headers, 50, "", _month_day(0))
+
+    res = client.post("/api/v1/analysis/category", json={"months": 1}, headers=auth_headers).json()
+    assert res["code"] == 0
+    assert res["data"]["categories"][0]["category"] == "其他"
+
+
+def test_category_time_boundary(client, auth_headers):
+    # 灌 2 个月前数据 + 1 条今天数据
+    _save_category(client, auth_headers, 999, "餐饮", _month_day(2))
+    _save_category(client, auth_headers, 100, "交通", _month_day(0))
+
+    res = client.post("/api/v1/analysis/category", json={"months": 1}, headers=auth_headers).json()
+    assert res["code"] == 0
+    # 仅统计今天那条
+    assert res["data"]["total"] == 100
+    assert len(res["data"]["categories"]) == 1
+    assert res["data"]["categories"][0]["category"] == "交通"

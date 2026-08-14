@@ -93,3 +93,18 @@ class DailyItem(BaseModel):
 
 class DailyOut(BaseModel):
     days: list[DailyItem]
+
+
+class CategoryIn(BaseModel):
+    months: int = Field(default=1, ge=1, le=12, description="回溯月数（含本月），默认 1")
+
+
+class CategoryItem(BaseModel):
+    category: str
+    amount: float
+    percent: float
+
+
+class CategoryOut(BaseModel):
+    categories: list[CategoryItem]
+    total: float
