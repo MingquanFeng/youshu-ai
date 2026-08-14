@@ -5,3 +5,6 @@
 *.swp
 .claude/
 # 子项目自带 .gitignore；这里只放外层关心的
+
+# T-005 QA screenshots
+docs/screenshots/
