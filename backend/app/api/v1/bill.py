@@ -153,6 +153,29 @@ def list_bills(
     )
 
 
+@router.get("/{bill_id}", response_model=None, summary="账单详情")
+def get_bill(
+    bill_id: int,
+    user_id: int = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> dict:
+    bill = db.query(Bill).filter(Bill.id == bill_id).one_or_none()
+    if bill is None or bill.user_id != user_id:
+        raise BizException(40400, "账单不存在")
+    # TODO(T-004): 加 deleted_at 过滤
+    return ok(BillItem(
+        id=bill.id,
+        amount=float(bill.amount),
+        category=bill.category,
+        merchant=bill.merchant,
+        pay_method=bill.pay_method,
+        bill_time=bill.bill_time,
+        remark=bill.remark,
+        source=bill.source,
+        ai_score=float(bill.ai_score),
+    ).model_dump(mode="json"))
+
+
 # ------------------------------ 工具 ------------------------------ #
 
 def _ext_from_mime(mime: str) -> str:
