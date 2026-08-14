@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@dcloudio/uni-h5": "3.0.0-alpha-5010120260519001",
+    "@qiun/vue-ucharts": "^2.5.0-20230101",
     "@vue/compiler-core": "3.4.21",
     "@vue/compiler-dom": "3.4.21",
     "@vue/compiler-sfc": "3.4.21",
