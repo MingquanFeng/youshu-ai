@@ -48,6 +48,15 @@ class SaveBillIn(BaseModel):
     image_id: str | None = None
 
 
+class UpdateBillIn(BaseModel):
+    amount: float | None = Field(default=None, gt=0)
+    category: str | None = None
+    merchant: str | None = None
+    pay_method: str | None = None
+    bill_time: datetime | None = None
+    remark: str | None = None
+
+
 class BillItem(BaseModel):
     id: int
     amount: float

@@ -22,6 +22,7 @@ from app.schemas import (
     RecognizeIn,
     RecognizeOut,
     SaveBillIn,
+    UpdateBillIn,
     UploadOut,
 )
 from app.services.pipeline import recognize_pipeline
@@ -163,6 +164,49 @@ def get_bill(
     if bill is None or bill.user_id != user_id:
         raise BizException(40400, "账单不存在")
     # TODO(T-004): 加 deleted_at 过滤
+    return ok(BillItem(
+        id=bill.id,
+        amount=float(bill.amount),
+        category=bill.category,
+        merchant=bill.merchant,
+        pay_method=bill.pay_method,
+        bill_time=bill.bill_time,
+        remark=bill.remark,
+        source=bill.source,
+        ai_score=float(bill.ai_score),
+    ).model_dump(mode="json"))
+
+
+WHITELIST = {"amount", "category", "merchant", "pay_method", "bill_time", "remark"}
+
+
+@router.put("/{bill_id}", response_model=None, summary="编辑账单")
+def update_bill(
+    bill_id: int,
+    body: UpdateBillIn,
+    user_id: int = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> dict:
+    bill = db.query(Bill).filter(Bill.id == bill_id).one_or_none()
+    if bill is None or bill.user_id != user_id:
+        raise BizException(40400, "账单不存在")
+    # TODO(T-004): 加 deleted_at 过滤
+
+    updates = body.model_dump(exclude_unset=True)
+    if not updates:
+        raise BizException(40000, "至少更新一个字段")
+
+    applied = {k: v for k, v in updates.items() if k in WHITELIST}
+    for k, v in applied.items():
+        setattr(bill, k, v)
+
+    # audit: 用户修正后给 remark 加 "[修正] " 前缀
+    # TODO(T-AUDIT): 引入 updated_at 列后可移除此前缀
+    base_remark = applied.get("remark", bill.remark)
+    bill.remark = f"[修正] {base_remark}"
+
+    db.commit()
+    db.refresh(bill)
     return ok(BillItem(
         id=bill.id,
         amount=float(bill.amount),

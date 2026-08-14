@@ -175,3 +175,175 @@ def test_get_bill_id_must_be_int(client, auth_headers):
     body = res.json()
     assert body["code"] == 40000
     assert isinstance(body["data"], list)
+
+
+# ----------------------------- T-003: update_bill ----------------------------- #
+
+def test_update_bill_success(client, auth_headers):
+    bill_id = _save_one(client, auth_headers)
+    res = client.put(
+        f"/api/v1/bill/{bill_id}",
+        json={
+            "amount": 99.5,
+            "category": "交通",
+            "merchant": "滴滴出行",
+            "pay_method": "支付宝",
+            "bill_time": "2026-08-12T18:00:00",
+            "remark": "加班打车",
+        },
+        headers=auth_headers,
+    )
+    assert res.status_code == 200
+    body = res.json()
+    assert body["code"] == 0
+    data = body["data"]
+    assert data["id"] == bill_id
+    assert data["amount"] == 99.5
+    assert data["category"] == "交通"
+    assert data["merchant"] == "滴滴出行"
+    assert data["pay_method"] == "支付宝"
+    assert data["bill_time"].startswith("2026-08-12T18:00:00")
+    # audit 前缀
+    assert data["remark"] == "[修正] 加班打车"
+    # 非白名单字段保持原值
+    assert data["source"] == "image_ai"
+    assert data["ai_score"] == 0.85
+
+
+def test_update_bill_partial_only_amount(client, auth_headers):
+    bill_id = _save_one(client, auth_headers)
+    res = client.put(
+        f"/api/v1/bill/{bill_id}",
+        json={"amount": 99.9},
+        headers=auth_headers,
+    )
+    assert res.status_code == 200
+    body = res.json()
+    assert body["code"] == 0
+    data = body["data"]
+    assert data["amount"] == 99.9
+    # 其他 5 个白名单字段保持原值
+    assert data["category"] == "餐饮"
+    assert data["merchant"] == "星巴克"
+    assert data["pay_method"] == "微信支付"
+    assert data["bill_time"].startswith("2026-08-11T12:30:00")
+    assert data["remark"] == "[修正] "  # audit 前缀
+
+
+def test_update_bill_ignores_source_in_body(client, auth_headers):
+    bill_id = _save_one(client, auth_headers)
+    res = client.put(
+        f"/api/v1/bill/{bill_id}",
+        json={"amount": 10.0, "source": "manual"},
+        headers=auth_headers,
+    )
+    assert res.status_code == 200
+    body = res.json()
+    assert body["code"] == 0
+    assert body["data"]["source"] == "image_ai"
+
+
+def test_update_bill_ignores_ai_score_in_body(client, auth_headers):
+    bill_id = _save_one(client, auth_headers)
+    res = client.put(
+        f"/api/v1/bill/{bill_id}",
+        json={"amount": 10.0, "ai_score": 0.1},
+        headers=auth_headers,
+    )
+    assert res.status_code == 200
+    body = res.json()
+    assert body["code"] == 0
+    assert body["data"]["ai_score"] == 0.85
+
+
+def test_update_bill_not_found(client, auth_headers):
+    res = client.put(
+        "/api/v1/bill/999999",
+        json={"amount": 50.0},
+        headers=auth_headers,
+    )
+    assert res.status_code == 200
+    body = res.json()
+    assert body["code"] == 40400
+
+
+def test_update_bill_forbidden_returns_404(client):
+    # 用户 A 创建账单
+    res_a = client.post("/api/v1/user/login", json={"code": "user-a"})
+    headers_a = {"Authorization": f"Bearer {res_a.json()['data']['token']}"}
+    bill_id = _save_one(client, headers_a)
+
+    # 用户 B 登录并尝试修改
+    res_b = client.post("/api/v1/user/login", json={"code": "other-user"})
+    headers_b = {"Authorization": f"Bearer {res_b.json()['data']['token']}"}
+    res = client.put(
+        f"/api/v1/bill/{bill_id}",
+        json={"amount": 1.0},
+        headers=headers_b,
+    )
+    assert res.status_code == 200
+    body = res.json()
+    assert body["code"] == 40400
+    # 与 not_found 响应等价（侧信道）
+    res_missing = client.put(
+        "/api/v1/bill/999999",
+        json={"amount": 1.0},
+        headers=headers_b,
+    )
+    assert res_missing.status_code == res.status_code
+    assert res_missing.json() == res.json()
+
+
+def test_update_bill_requires_auth(client):
+    res = client.put("/api/v1/bill/1", json={"amount": 50.0})
+    assert res.status_code == 401
+    assert res.json()["code"] == 40100
+
+
+def test_update_bill_rejects_non_positive_amount(client, auth_headers):
+    bill_id = _save_one(client, auth_headers)
+    for bad_amount in (0, -1):
+        res = client.put(
+            f"/api/v1/bill/{bill_id}",
+            json={"amount": bad_amount},
+            headers=auth_headers,
+        )
+        assert res.status_code == 422
+        assert res.json()["code"] == 40000
+
+
+def test_update_bill_empty_body_rejected(client, auth_headers):
+    bill_id = _save_one(client, auth_headers)
+    res = client.put(
+        f"/api/v1/bill/{bill_id}",
+        json={},
+        headers=auth_headers,
+    )
+    assert res.status_code == 200
+    body = res.json()
+    assert body["code"] == 40000
+    assert "至少更新一个字段" in body["message"]
+
+
+def test_update_bill_id_must_be_int(client, auth_headers):
+    res = client.put(
+        "/api/v1/bill/abc",
+        json={"amount": 50.0},
+        headers=auth_headers,
+    )
+    assert res.status_code == 422
+    body = res.json()
+    assert body["code"] == 40000
+
+
+def test_update_bill_adds_correction_marker_to_remark(client, auth_headers):
+    bill_id = _save_one(client, auth_headers, remark="午餐")
+    res = client.put(
+        f"/api/v1/bill/{bill_id}",
+        json={"amount": 60.0},
+        headers=auth_headers,
+    )
+    assert res.status_code == 200
+    body = res.json()
+    assert body["code"] == 0
+    assert body["data"]["remark"] == "[修正] 午餐"
