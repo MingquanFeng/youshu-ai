@@ -15,3 +15,12 @@ export const saveBill = (body: any) =>
 
 export const listBills = (params: BillListParams): Promise<BillListResp> =>
   request<BillListResp>('/bill/list', { data: params })
+
+export const getBillDetail = (id: number) =>
+  request<BillItem>(`/bill/${id}`)
+
+export const updateBill = (id: number, data: Partial<BillItem>) =>
+  request<{ id: number }>(`/bill/${id}`, { method: 'PUT', data })
+
+export const removeBill = (id: number) =>
+  request<{ id: number }>(`/bill/${id}`, { method: 'DELETE' })

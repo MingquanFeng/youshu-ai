@@ -106,9 +106,8 @@ function formatTime(iso: string): string {
   return `${mm}-${dd} ${hh}:${mi}`
 }
 
-function onItemTap(_b: BillItem) {
-  // T-006 占位：详情页即将上线
-  uni.showToast({ title: '详情页即将上线', icon: 'none' })
+function onItemTap(b: BillItem) {
+  uni.navigateTo({ url: '/pages/bill/detail?id=' + b.id })
 }
 
 function goRecognize() {

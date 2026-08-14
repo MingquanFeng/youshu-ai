@@ -11,7 +11,8 @@
         "backgroundTextStyle": "light"
       }
     },
-    { "path": "pages/analysis/analysis", "style": { "navigationBarTitleText": "消费分析" } }
+    { "path": "pages/analysis/analysis", "style": { "navigationBarTitleText": "消费分析" } },
+    { "path": "pages/bill/detail", "style": { "navigationBarTitleText": "账单详情" } }
   ],
   "globalStyle": {
     "navigationBarTextStyle": "black",
