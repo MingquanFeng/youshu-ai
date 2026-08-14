@@ -31,5 +31,8 @@ class Bill(Base):
     created_at: Mapped[dt.datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )
+    deleted_at: Mapped[dt.datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True, default=None, index=True
+    )
 
     __table_args__ = (Index("ix_bill_user_time", "user_id", "bill_time"),)

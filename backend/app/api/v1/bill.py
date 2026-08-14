@@ -1,6 +1,7 @@
 """账单相关接口：上传、AI 识别、保存、列表。"""
 from __future__ import annotations
 
+import datetime as dt
 import logging
 import os
 import uuid
@@ -114,7 +115,10 @@ def list_bills(
     user_id: int = Depends(get_current_user),
     db: Session = Depends(get_db),
 ) -> dict:
-    q = db.query(Bill).filter(Bill.user_id == user_id)
+    q = db.query(Bill).filter(
+        Bill.user_id == user_id,
+        Bill.deleted_at.is_(None),
+    )
     if category:
         q = q.filter(Bill.category == category)
     if date:
@@ -160,10 +164,17 @@ def get_bill(
     user_id: int = Depends(get_current_user),
     db: Session = Depends(get_db),
 ) -> dict:
-    bill = db.query(Bill).filter(Bill.id == bill_id).one_or_none()
-    if bill is None or bill.user_id != user_id:
+    bill = (
+        db.query(Bill)
+        .filter(
+            Bill.id == bill_id,
+            Bill.user_id == user_id,
+            Bill.deleted_at.is_(None),
+        )
+        .one_or_none()
+    )
+    if bill is None:
         raise BizException(40400, "账单不存在")
-    # TODO(T-004): 加 deleted_at 过滤
     return ok(BillItem(
         id=bill.id,
         amount=float(bill.amount),
@@ -187,10 +198,17 @@ def update_bill(
     user_id: int = Depends(get_current_user),
     db: Session = Depends(get_db),
 ) -> dict:
-    bill = db.query(Bill).filter(Bill.id == bill_id).one_or_none()
-    if bill is None or bill.user_id != user_id:
+    bill = (
+        db.query(Bill)
+        .filter(
+            Bill.id == bill_id,
+            Bill.user_id == user_id,
+            Bill.deleted_at.is_(None),
+        )
+        .one_or_none()
+    )
+    if bill is None:
         raise BizException(40400, "账单不存在")
-    # TODO(T-004): 加 deleted_at 过滤
 
     updates = body.model_dump(exclude_unset=True)
     if not updates:
@@ -218,6 +236,36 @@ def update_bill(
         source=bill.source,
         ai_score=float(bill.ai_score),
     ).model_dump(mode="json"))
+
+
+# ----------------------------- T-004: 软删 ----------------------------- #
+
+def _now() -> dt.datetime:
+    """应用层 UTC 时间戳；与 SQLAlchemy 默认 server_default=func.now() 区分。"""
+    return dt.datetime.now(dt.UTC)
+
+
+@router.delete("/{bill_id}", response_model=None, summary="软删账单")
+def delete_bill(
+    bill_id: int,
+    user_id: int = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> dict:
+    bill = (
+        db.query(Bill)
+        .filter(
+            Bill.id == bill_id,
+            Bill.user_id == user_id,
+            Bill.deleted_at.is_(None),
+        )
+        .one_or_none()
+    )
+    if bill is None:
+        raise BizException(40400, "账单不存在")
+    bill.deleted_at = _now()
+    db.commit()
+    db.refresh(bill)
+    return ok({"id": bill.id, "deleted_at": bill.deleted_at.isoformat()})
 
 
 # ------------------------------ 工具 ------------------------------ #

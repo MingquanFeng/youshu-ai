@@ -347,3 +347,109 @@ def test_update_bill_adds_correction_marker_to_remark(client, auth_headers):
     body = res.json()
     assert body["code"] == 0
     assert body["data"]["remark"] == "[修正] 午餐"
+
+
+# ----------------------------- T-004: delete_bill ----------------------------- #
+
+def _login_headers(client, code: str = "pytest") -> dict[str, str]:
+    """登录拿到 token，返回可直接放进请求头的 dict（不同于 session-scoped auth_headers）。"""
+    res = client.post("/api/v1/user/login", json={"code": code})
+    assert res.status_code == 200
+    return {"Authorization": f"Bearer {res.json()['data']['token']}"}
+
+
+def test_delete_bill_success(client, auth_headers):
+    bill_id = _save_one(client, auth_headers)
+    res = client.delete(f"/api/v1/bill/{bill_id}", headers=auth_headers)
+    assert res.status_code == 200
+    body = res.json()
+    assert body["code"] == 0
+    assert body["data"]["id"] == bill_id
+    assert body["data"]["deleted_at"]  # 非空字符串
+
+
+def test_delete_bill_soft_deleted_hidden_from_list(client, auth_headers):
+    bill_id = _save_one(client, auth_headers)
+    # 删前能查到
+    lst_before = client.get("/api/v1/bill/list", headers=auth_headers).json()
+    assert any(item["id"] == bill_id for item in lst_before["data"]["items"])
+
+    # 软删
+    client.delete(f"/api/v1/bill/{bill_id}", headers=auth_headers)
+
+    # 删后查不到
+    lst_after = client.get("/api/v1/bill/list", headers=auth_headers).json()
+    assert all(item["id"] != bill_id for item in lst_after["data"]["items"])
+
+
+def test_delete_bill_get_returns_404_after_delete(client, auth_headers):
+    bill_id = _save_one(client, auth_headers)
+    client.delete(f"/api/v1/bill/{bill_id}", headers=auth_headers)
+    res = client.get(f"/api/v1/bill/{bill_id}", headers=auth_headers)
+    assert res.status_code == 200
+    body = res.json()
+    assert body["code"] == 40400
+    assert body["message"]
+
+
+def test_delete_bill_update_returns_404_after_delete(client, auth_headers):
+    bill_id = _save_one(client, auth_headers)
+    client.delete(f"/api/v1/bill/{bill_id}", headers=auth_headers)
+    res = client.put(
+        f"/api/v1/bill/{bill_id}",
+        json={"amount": 99.0},
+        headers=auth_headers,
+    )
+    assert res.status_code == 200
+    body = res.json()
+    assert body["code"] == 40400
+
+
+def test_delete_bill_repeat_returns_404(client, auth_headers):
+    bill_id = _save_one(client, auth_headers)
+    # 第一次删成功
+    first = client.delete(f"/api/v1/bill/{bill_id}", headers=auth_headers)
+    assert first.json()["code"] == 0
+
+    # 重复删：deleted_at 已非空，filter 查不到，返 404
+    second = client.delete(f"/api/v1/bill/{bill_id}", headers=auth_headers)
+    assert second.status_code == 200
+    assert second.json()["code"] == 40400
+
+
+def test_delete_bill_not_found(client, auth_headers):
+    res = client.delete("/api/v1/bill/999999", headers=auth_headers)
+    assert res.status_code == 200
+    body = res.json()
+    assert body["code"] == 40400
+
+
+def test_delete_bill_forbidden_returns_404(client):
+    # 用户 A 创建账单
+    headers_a = _login_headers(client, "user-a")
+    bill_id = _save_one(client, headers_a)
+
+    # 用户 B 登录并尝试删除
+    headers_b = _login_headers(client, "other-user")
+    res = client.delete(f"/api/v1/bill/{bill_id}", headers=headers_b)
+    assert res.status_code == 200
+    body = res.json()
+    assert body["code"] == 40400
+    # 与 not_found 响应等价（侧信道）
+    res_missing = client.delete("/api/v1/bill/999999", headers=headers_b)
+    assert res_missing.status_code == res.status_code
+    assert res_missing.json() == res.json()
+
+
+def test_delete_bill_requires_auth(client):
+    res = client.delete("/api/v1/bill/1")
+    assert res.status_code == 401
+    assert res.json()["code"] == 40100
+
+
+def test_delete_bill_id_must_be_int(client, auth_headers):
+    res = client.delete("/api/v1/bill/abc", headers=auth_headers)
+    assert res.status_code == 422
+    body = res.json()
+    assert body["code"] == 40000
+    assert isinstance(body["data"], list)
