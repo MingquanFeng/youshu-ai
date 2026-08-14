@@ -80,3 +80,16 @@ class MonthlyAnalysisOut(BaseModel):
     total: float
     top_category: str
     advice: str
+
+
+class DailyIn(BaseModel):
+    days: int = Field(default=30, ge=1, le=365, description="回溯天数（含今天）")
+
+
+class DailyItem(BaseModel):
+    date: str        # YYYY-MM-DD
+    total: float     # 当日总金额，无数据为 0
+
+
+class DailyOut(BaseModel):
+    days: list[DailyItem]

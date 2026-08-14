@@ -2,9 +2,9 @@
 from __future__ import annotations
 
 from collections import Counter
-from datetime import datetime
+from datetime import date, datetime, timedelta
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Body, Depends
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
@@ -12,7 +12,7 @@ from app.core.response import ok
 from app.core.security import get_current_user
 from app.db.session import get_db
 from app.models.bill import Bill
-from app.schemas import MonthlyAnalysisOut
+from app.schemas import DailyIn, DailyItem, DailyOut, MonthlyAnalysisOut
 
 router = APIRouter(prefix="/analysis", tags=["analysis"])
 
@@ -47,6 +47,40 @@ def monthly(
             advice=advice,
         ).model_dump()
     )
+
+
+@router.post("/daily", response_model=None, summary="近 N 天每日消费趋势")
+def daily(
+    body: DailyIn = Body(default_factory=DailyIn),
+    user_id: int = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> dict:
+    today = date.today()
+    start = today - timedelta(days=body.days - 1)
+
+    # 时区安全：用 substr(1,10) 按存储格式截取 YYYY-MM-DD，避免 SQLite func.date() 按 UTC 切日期
+    rows = (
+        db.query(
+            func.substr(Bill.bill_time, 1, 10).label("d"),
+            func.sum(Bill.amount).label("s"),
+        )
+        .filter(
+            Bill.user_id == user_id,
+            Bill.deleted_at.is_(None),
+            func.substr(Bill.bill_time, 1, 10) >= start.isoformat(),
+            func.substr(Bill.bill_time, 1, 10) <= today.isoformat(),
+        )
+        .group_by(func.substr(Bill.bill_time, 1, 10))
+        .all()
+    )
+    totals = {d: float(s) for d, s in rows}
+
+    items = []
+    for i in range(body.days):
+        d = start + timedelta(days=i)
+        items.append(DailyItem(date=d.isoformat(), total=totals.get(d.isoformat(), 0)))
+
+    return ok(DailyOut(days=items).model_dump())
 
 
 def _make_advice(category: str, ratio: float, total: float) -> str:

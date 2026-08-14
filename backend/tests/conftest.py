@@ -56,8 +56,14 @@ def client(db) -> Iterator[TestClient]:
 
 @pytest.fixture()
 def auth_headers(client: TestClient) -> dict[str, str]:
-    """登录拿到 token，返回可直接放进请求头的 dict。"""
-    res = client.post("/api/v1/user/login", json={"code": "pytest"})
+    """登录拿到 token，返回可直接放进请求头的 dict。
+
+    每次用随机 code 登录，确保每个测试用例使用独立用户，数据互不干扰。
+    """
+    import uuid
+
+    code = f"pytest_{uuid.uuid4().hex[:8]}"
+    res = client.post("/api/v1/user/login", json={"code": code})
     assert res.status_code == 200
     token = res.json()["data"]["token"]
     return {"Authorization": f"Bearer {token}"}
