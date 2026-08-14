@@ -23,3 +23,12 @@ export interface BillListResp {
   size: number
   items: BillItem[]
 }
+
+export interface RecognizeResult {
+  amount: number
+  merchant: string
+  category: string
+  time: string
+  payment: string
+  score: number
+}

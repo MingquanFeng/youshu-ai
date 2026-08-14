@@ -8,3 +8,9 @@
 
 # T-005 QA screenshots
 docs/screenshots/
+
+# 根目录运行产物（避免 commit 误提交）
+storage/
+youshu_ai.db
+*.db
+*.sqlite
