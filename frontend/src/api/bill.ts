@@ -1,4 +1,5 @@
 import { request, uploadFile } from '@/utils/request'
+import type { BillItem, BillListParams, BillListResp } from '@/types/bill'
 
 export const login = (code: string) =>
   request<{ token: string; user_id: number }>('/user/login', { method: 'POST', data: { code } })
@@ -12,5 +13,5 @@ export const recognizeImage = (image_id: string) =>
 export const saveBill = (body: any) =>
   request('/bill/save', { method: 'POST', data: body })
 
-export const listBills = (params: { page: number; size: number; category?: string; date?: string }) =>
-  request('/bill/list', { data: params })
+export const listBills = (params: BillListParams): Promise<BillListResp> =>
+  request<BillListResp>('/bill/list', { data: params })

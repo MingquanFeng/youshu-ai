@@ -2,7 +2,15 @@
   "pages": [
     { "path": "pages/index/index", "style": { "navigationBarTitleText": "AI 记账助手" } },
     { "path": "pages/recognize/recognize", "style": { "navigationBarTitleText": "AI 记账" } },
-    { "path": "pages/bill/bill", "style": { "navigationBarTitleText": "账单列表" } },
+    {
+      "path": "pages/bill/bill",
+      "style": {
+        "navigationBarTitleText": "账单列表",
+        "enablePullDownRefresh": true,
+        "backgroundColor": "#f8fafc",
+        "backgroundTextStyle": "light"
+      }
+    },
     { "path": "pages/analysis/analysis", "style": { "navigationBarTitleText": "消费分析" } }
   ],
   "globalStyle": {
