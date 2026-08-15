@@ -38,10 +38,13 @@ Page({
         bar_width: Math.max(0, Math.min(100, Number(c.percent) * 100)) + '%'
       }))
 
-      const dailyList = (daily && daily.days || []).map(d => ({
+      const dailyRaw = (daily && daily.days || [])
+      const maxDaily = dailyRaw.reduce((m, d) => Math.max(m, Number(d.total) || 0), 0)
+      const dailyList = dailyRaw.map(d => ({
         ...d,
         date_short: d.date.slice(5),
-        total_str: Number(d.total).toFixed(2)
+        total_str: Number(d.total).toFixed(2),
+        bar_width: maxDaily > 0 ? Math.max(0, Math.min(100, (Number(d.total) / maxDaily) * 100)) + '%' : '0%'
       }))
 
       this.setData({

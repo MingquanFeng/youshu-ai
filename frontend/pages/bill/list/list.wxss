@@ -1,72 +1,97 @@
-.page { padding: 24rpx; background-color: #f8fafc; min-height: 100vh; }
+/* bill/list — 账本主页 (Long Document / Newsprint) */
 
-.error-bar {
-  background: #fef2f2;
-  border: 1rpx solid #fecaca;
-  border-radius: 8rpx;
-  padding: 16rpx 24rpx;
-  margin-bottom: 16rpx;
+.page {
+  padding: var(--space-5) var(--space-4) var(--space-7);
+  min-height: 100vh;
 }
-.error-text { color: #b91c1c; font-size: 24rpx; }
 
-.item {
-  background: #fff;
-  padding: 28rpx 24rpx;
-  border-radius: 16rpx;
+/* 报头 */
+.ledger-head {
+  margin-bottom: var(--space-3);
+}
+.ledger-head__title {
+  font-size: var(--text-4xl);
+  margin: var(--space-2) 0;
+  letter-spacing: -0.04em;
+}
+
+/* 账本条目 */
+.ledger {
+  background: var(--color-paper-2);
+  border-top: 2rpx solid var(--color-ink);
+  border-bottom: 2rpx solid var(--color-ink);
+}
+
+.ledger-row {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16rpx;
-  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, .04);
+  align-items: stretch;
+  padding: var(--space-3) var(--space-3);
+  border-bottom: 1rpx solid var(--color-rule);
+  transition: background-color var(--dur-base) var(--ease-out);
+  gap: var(--space-3);
 }
+.ledger-row:last-child { border-bottom: none; }
+.ledger-row--hover { background: var(--color-paper); }
 
-.item-left { flex: 1; display: flex; flex-direction: column; gap: 8rpx; min-width: 0; }
-
-.merchant { font-size: 30rpx; font-weight: 600; color: #111827; }
-
-.meta-row { display: flex; align-items: center; gap: 12rpx; }
-
-.badge {
-  display: inline-block;
-  font-size: 22rpx;
-  color: #2563eb;
-  background: #eff6ff;
-  padding: 2rpx 12rpx;
-  border-radius: 6rpx;
-}
-
-.meta-time { font-size: 22rpx; color: #6b7280; }
-
-.source-tag { font-size: 20rpx; color: #9ca3af; }
-
-.amount {
-  color: #ef4444;
-  font-size: 32rpx;
-  font-weight: 600;
-  align-self: center;
-  flex-shrink: 0;
-  margin-left: 16rpx;
-}
-
-.empty {
+/* 左侧：日期 + 分类 */
+.ledger-row__date {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  padding: 120rpx 0;
-  gap: 32rpx;
+  justify-content: center;
+  width: 180rpx;
+  flex-shrink: 0;
+  gap: var(--space-1);
+}
+.ledger-row__date-num {
+  font-size: var(--text-md);
+  color: var(--color-ink);
+  font-weight: 600;
+}
+.ledger-row .chip {
+  align-self: flex-start;
 }
 
-.empty-text { color: #9ca3af; font-size: 28rpx; }
-
-.empty-btn {
-  background: #2563eb;
-  color: #fff;
-  font-size: 26rpx;
-  border-radius: 999rpx;
-  padding: 0 40rpx;
-  line-height: 64rpx;
-  height: 64rpx;
+/* 中间：商家 + meta */
+.ledger-row__body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--space-1);
+}
+.ledger-row__merchant {
+  font-family: var(--font-display);
+  font-size: var(--text-md);
+  font-weight: 600;
+  color: var(--color-ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ledger-row__meta {
+  font-size: var(--text-xs);
+  color: var(--color-ink-3);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.footer { text-align: center; padding: 32rpx 0; }
-.footer-text { color: #9ca3af; font-size: 22rpx; }
+/* 右侧：金额（大字号 monospace） */
+.ledger-row__amount {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-1);
+  flex-shrink: 0;
+}
+.ledger-row__amount .amount-lg { font-size: var(--text-lg); color: var(--color-ink-3); font-weight: 400; }
+.ledger-row__amount .amount-xl { font-size: var(--text-2xl); color: var(--color-ink); }
+
+/* 脚 */
+.ledger-foot {
+  text-align: center;
+  padding: var(--space-5) 0;
+  border-top: 1rpx solid var(--color-rule);
+}

@@ -1,34 +1,58 @@
 <view class="page">
+  <!-- 报头 -->
+  <view class="ledger-head">
+    <view class="row between">
+      <text class="label">§ 02 · 账本</text>
+      <text class="label muted">共 {{total}} 条</text>
+    </view>
+    <text class="h1 ledger-head__title">流水</text>
+    <view class="hairline--thick"></view>
+  </view>
+
   <!-- 错误条 -->
-  <view wx:if="{{errorMsg}}" class="error-bar">
-    <text class="error-text">{{errorMsg}}</text>
+  <view wx:if="{{errorMsg}}" class="state-bar state-bar--error">
+    {{errorMsg}}
   </view>
 
   <!-- 列表 -->
   <block wx:if="{{items.length > 0}}">
-    <view wx:for="{{items}}" wx:key="id" class="item" bindtap="onItemTap" data-item="{{item}}">
-      <view class="item-left">
-        <text class="merchant">{{item.merchant || item.category}}</text>
-        <view class="meta-row">
-          <text class="badge">{{item.category}}</text>
-          <text class="meta-time">{{item.bill_time_short}}</text>
+    <view class="ledger">
+      <view
+        wx:for="{{items}}"
+        wx:key="id"
+        class="ledger-row"
+        bindtap="onItemTap"
+        data-item="{{item}}"
+        hover-class="ledger-row--hover"
+      >
+        <view class="ledger-row__date">
+          <text class="mono ledger-row__date-num">{{item.bill_time_short}}</text>
+          <view class="chip chip--accent">{{item.category}}</view>
         </view>
-        <text class="source-tag">{{item.source === 'image_ai' ? '🤖 AI 识别' : '✍️ 手动'}}</text>
+        <view class="ledger-row__body">
+          <text class="ledger-row__merchant">{{item.merchant || item.category}}</text>
+          <text class="ledger-row__meta mono">{{item.pay_method || '—'}} · {{item.source === 'image_ai' ? 'AI 识别' : '手动'}}</text>
+        </view>
+        <view class="ledger-row__amount">
+          <text class="amount-lg">¥</text>
+          <text class="amount-xl">{{item.amount_str}}</text>
+        </view>
       </view>
-      <text class="amount">¥ {{item.amount_str}}</text>
+    </view>
+
+    <!-- 加载更多脚 -->
+    <view class="ledger-foot">
+      <text wx:if="{{loading}}" class="label">加载中 …</text>
+      <text wx:elif="{{!hasMore}}" class="label muted">— 已经到底 —</text>
+      <text wx:elif="{{hasMore}}" class="label muted">↑ 上拉加载更多</text>
     </view>
   </block>
 
   <!-- 空态 -->
   <view wx:elif="{{!loading}}" class="empty">
-    <text class="empty-text">暂无账单</text>
-    <button class="empty-btn" bindtap="goRecognize">去记一笔 →</button>
-  </view>
-
-  <!-- 底部 -->
-  <view class="footer">
-    <text wx:if="{{loading}}" class="footer-text">加载中…</text>
-    <text wx:elif="{{!hasMore && items.length > 0}}" class="footer-text">- 已经到底啦 -</text>
-    <text wx:elif="{{hasMore}}" class="footer-text">上拉加载更多</text>
+    <text class="empty__title mono">N° 000</text>
+    <view class="hairline" style="width:80rpx;margin:var(--space-3) auto;"></view>
+    <text class="empty__hint">还没有一笔记录</text>
+    <button class="btn" style="margin-top:var(--space-5);width:280rpx;" bindtap="goRecognize">记下第一笔</button>
   </view>
 </view>

@@ -1,22 +1,51 @@
 <view class="page">
-  <view class="header">
-    <text class="title">AI 记账助手</text>
-    <text class="subtitle">上传截图，自动记账</text>
+  <!-- Masthead: 期号 + 日期 + 标题 -->
+  <view class="masthead">
+    <view class="masthead__meta row between">
+      <text class="label">N° 001 · 账本</text>
+      <text class="label">EST. 2026</text>
+    </view>
+    <view class="masthead__rule"></view>
+    <text class="masthead__title h1">AI 记账</text>
+    <text class="masthead__sub">一记一得，记我所支</text>
+    <view class="masthead__rule masthead__rule--double"></view>
   </view>
 
-  <view class="card primary" bindtap="goRecognize">
-    <text class="card-title-white">📷 AI 记账</text>
-    <text class="card-desc-white">拍照 / 上传支付截图</text>
+  <!-- 主入口：识别（primary action） -->
+  <view class="section">
+    <text class="label section__num">§ 01</text>
+    <view class="entry entry--primary" bindtap="goRecognize" hover-class="entry--hover">
+      <view class="col gap-2 flex-1">
+        <text class="label">CHAPTER ONE</text>
+        <text class="h2">拍下支付截图</text>
+        <text class="dim mono" style="font-size:24rpx;">AI 读出金额 / 商家 / 时间</text>
+      </view>
+      <text class="mono h1 accent">→</text>
+    </view>
   </view>
 
-  <view class="row">
-    <view class="card small" bindtap="goBill">
-      <text class="card-title">📋 账单</text>
-      <text class="card-desc">查看全部</text>
+  <!-- 次入口：账本 + 分析 -->
+  <view class="section">
+    <text class="label section__num">§ 02</text>
+    <view class="entry-grid">
+      <view class="entry entry--half" bindtap="goBill" hover-class="entry--hover">
+        <text class="label">CHAPTER TWO</text>
+        <text class="h3">账本</text>
+        <text class="dim mono" style="font-size:22rpx;">查看全部</text>
+      </view>
+      <view class="entry__rule entry__rule--v"></view>
+      <view class="entry entry--half" bindtap="goAnalysis" hover-class="entry--hover">
+        <text class="label">CHAPTER THREE</text>
+        <text class="h3">分析</text>
+        <text class="dim mono" style="font-size:22rpx;">消费洞察</text>
+      </view>
     </view>
-    <view class="card small" bindtap="goAnalysis">
-      <text class="card-title">📊 分析</text>
-      <text class="card-desc">消费洞察</text>
-    </view>
+  </view>
+
+  <!-- Footer: 落款 -->
+  <view class="colophon">
+    <view class="hairline"></view>
+    <text class="label">Y O U S H U · A I</text>
+    <text class="dim mono" style="font-size:20rpx; margin-top:8rpx;">v0.2 · 编辑部</text>
   </view>
 </view>

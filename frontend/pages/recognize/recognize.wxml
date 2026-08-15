@@ -1,89 +1,114 @@
 <view class="page">
-  <!-- 加载中 -->
-  <view wx:if="{{loading}}" class="state-wrap">
-    <text class="state-text">AI 识别中…</text>
+  <!-- 章节头 -->
+  <view class="chapter">
+    <view class="row between">
+      <text class="label">§ 01 · 识别</text>
+      <text class="label muted" wx:if="{{imageId}}">已上传</text>
+    </view>
+    <text class="h1 chapter__title">拍下截图</text>
+    <text class="dim chapter__sub">AI 将从图中读出金额 / 商家 / 时间</text>
   </view>
 
-  <!-- 已选图：预览 -->
-  <block wx:elif="{{imageUrl}}">
-    <view class="preview-card" bindtap="pickImage">
-      <image src="{{imageUrl}}" mode="aspectFit" class="preview-img" />
-      <text class="preview-hint">点击重新上传 / 拍照</text>
-    </view>
-  </block>
+  <view class="hairline--thick"></view>
 
-  <!-- 未选图 -->
-  <view wx:else class="upload-card" bindtap="pickImage">
-    <text class="upload-icon">+</text>
-    <text class="upload-text">点击上传 / 拍照</text>
+  <!-- 加载 -->
+  <view wx:if="{{loading}}" class="state-bar state-bar--loading">
+    AI 识别中 …
   </view>
 
   <!-- 错误 -->
-  <view wx:if="{{errorMsg}}" class="error-bar">
-    <text class="error-text">{{errorMsg}}</text>
-    <button class="reset-btn" bindtap="clearError">重试</button>
+  <view wx:if="{{errorMsg}}" class="state-bar state-bar--error">
+    {{errorMsg}}
   </view>
+
+  <!-- 上传区 -->
+  <block wx:if="{{!imageUrl}}">
+    <view class="upload" bindtap="pickImage" hover-class="upload--hover">
+      <view class="upload__icon mono">+</view>
+      <text class="upload__title">点击上传 / 拍照</text>
+      <text class="upload__hint">支持微信 / 支付宝 / 商品小票</text>
+    </view>
+  </block>
+
+  <!-- 预览 -->
+  <block wx:else>
+    <view class="preview" bindtap="pickImage">
+      <image src="{{imageUrl}}" mode="aspectFit" class="preview__img" />
+      <view class="preview__cap">点击重传</view>
+    </view>
+  </block>
 
   <!-- 识别结果 -->
   <block wx:if="{{result && !loading}}">
-    <view class="card display-card">
-      <view class="display-row">
+    <view class="chapter chapter--sub">
+      <text class="label">§ 02 · 校对</text>
+      <text class="h2">核对结果</text>
+    </view>
+    <view class="hairline"></view>
+
+    <view class="result-card">
+      <view class="result-row">
         <text class="label">商家</text>
-        <text class="value">{{result.merchant || '-'}}</text>
+        <text class="value ink">{{result.merchant || '—'}}</text>
       </view>
-      <view class="display-row">
+      <view class="result-row">
         <text class="label">分类</text>
-        <text class="badge">{{result.category}}</text>
+        <view class="chip chip--accent">{{result.category || '其他'}}</view>
       </view>
-      <view class="display-row">
+      <view class="result-row result-row--xl">
         <text class="label">金额</text>
-        <text class="amount">¥ {{result.amount_str}}</text>
+        <text class="amount-xl">¥ {{result.amount_str}}</text>
       </view>
-      <view class="display-row">
-        <text class="label">支付方式</text>
-        <text class="value">{{result.payment || '-'}}</text>
+      <view class="result-row">
+        <text class="label">支付</text>
+        <text class="value ink">{{result.payment || '—'}}</text>
       </view>
-      <view class="display-row">
+      <view class="result-row">
         <text class="label">时间</text>
-        <text class="value">{{result.time_short}}</text>
+        <text class="value mono">{{result.time_short}}</text>
       </view>
-      <view class="display-row">
+      <view class="result-row">
         <text class="label">置信度</text>
-        <text class="score-badge {{scoreClass}}">{{result.score_pct}}</text>
+        <view class="chip {{scoreClass}}">{{result.score_pct}}</view>
       </view>
     </view>
 
-    <view class="card form-card">
-      <text class="card-title">编辑（确认后保存）</text>
+    <view class="chapter chapter--sub">
+      <text class="label">§ 03 · 编辑</text>
+      <text class="h2">修订</text>
+    </view>
+    <view class="hairline"></view>
+
+    <view class="form">
       <view class="form-row">
         <text class="form-label">金额</text>
-        <input class="form-input" type="digit" value="{{form.amount}}" bindinput="onAmountInput" />
+        <input class="input" type="digit" value="{{form.amount}}" bindinput="onAmountInput" />
       </view>
       <view class="form-row">
         <text class="form-label">分类</text>
-        <input class="form-input" type="text" value="{{form.category}}" bindinput="onFieldInput" data-field="category" />
+        <input class="input" type="text" value="{{form.category}}" bindinput="onFieldInput" data-field="category" />
       </view>
       <view class="form-row">
         <text class="form-label">商家</text>
-        <input class="form-input" type="text" value="{{form.merchant}}" bindinput="onFieldInput" data-field="merchant" />
+        <input class="input" type="text" value="{{form.merchant}}" bindinput="onFieldInput" data-field="merchant" />
       </view>
       <view class="form-row">
-        <text class="form-label">支付方式</text>
-        <input class="form-input" type="text" value="{{form.pay_method}}" bindinput="onFieldInput" data-field="pay_method" />
+        <text class="form-label">支付</text>
+        <input class="input" type="text" value="{{form.pay_method}}" bindinput="onFieldInput" data-field="pay_method" />
       </view>
       <view class="form-row">
         <text class="form-label">时间</text>
-        <input class="form-input" type="text" value="{{form.bill_time}}" bindinput="onFieldInput" data-field="bill_time" placeholder="2026-08-11T12:30:00" />
+        <input class="input" type="text" value="{{form.bill_time}}" bindinput="onFieldInput" data-field="bill_time" placeholder="2026-08-14T12:30:00" />
       </view>
-      <view class="form-row">
+      <view class="form-row form-row--top">
         <text class="form-label">备注</text>
-        <textarea class="form-textarea" value="{{form.remark}}" bindinput="onFieldInput" data-field="remark" />
+        <textarea class="textarea" value="{{form.remark}}" bindinput="onFieldInput" data-field="remark" />
       </view>
     </view>
 
     <view class="actions">
-      <button class="reco-btn" disabled="{{saving}}" bindtap="reset">重新识别</button>
-      <button class="save-btn" disabled="{{saving}}" bindtap="save">{{saving ? '保存中…' : '保存'}}</button>
+      <button class="btn btn--ghost" disabled="{{saving}}" bindtap="reset">重新识别</button>
+      <button class="btn" disabled="{{saving}}" bindtap="save">{{saving ? '保存中 …' : '保存入册'}}</button>
     </view>
   </block>
 </view>
