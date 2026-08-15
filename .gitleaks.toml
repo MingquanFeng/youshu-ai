@@ -1,0 +1,26 @@
+# .gitleaks.toml — gitleaks 配置
+# 用于在本地 pre-commit 拦截敏感信息泄露
+# 参考：https://github.com/gitleaks/gitleaks
+
+title = "youshu-ai gitleaks config"
+
+# 跳过扫描的路径
+[extend]
+useDefault = true
+
+# 自定义规则：匹配我们项目里的已知 ID 占位符 + 历史泄露 ID
+[[rules]]
+id = "wechat-appid-known"
+description = "WeChat MiniApp AppID 18位hex（含真实历史ID）"
+regex = '''wxf8d81725b62b2252'''
+tags = ["wechat", "history-leaked"]
+
+# 允许的文件白名单（这些文件即使包含上述规则也放过）
+[allowlist]
+paths = [
+  '''docs/SECURITY\.md''',       # SECURITY.md 文档里必须出现已知 ID（事故留痕）
+  '''docs/.*''',                 # docs 目录下全部放行（设计文档含示例）
+]
+
+# 允许的 commit 历史（gitleaks 默认扫描 working tree，不需要历史 allowlist）
+# description: "youshu-ai 安全扫描规则：默认 + wechat-appid-known，docs 目录白名单"
