@@ -32,8 +32,15 @@
     "packNpmManually": false,
     "packNpmRelationList": [],
     "minifyWXSS": true,
-    "disableSWC": false,
-    "minifyWXML": true
+    "disableSWC": true,
+    "minifyWXML": true,
+    "compileWorklet": false,
+    "enhance": false,
+    "localPlugins": false,
+    "disableUseStrict": false,
+    "useCompilerPlugins": false,
+    "condition": false,
+    "swc": false
   },
   "compileType": "miniprogram",
   "libVersion": "3.17.0",
@@ -43,5 +50,6 @@
   "editorSetting": {
     "tabIndent": "insertSpaces",
     "tabSize": 2
-  }
+  },
+  "simulatorPluginLibVersion": {}
 }
