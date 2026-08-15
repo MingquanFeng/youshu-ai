@@ -1,0 +1,53 @@
+<view class="page">
+  <!-- 加载中 -->
+  <view wx:if="{{loading}}" class="state-wrap">分析中…</view>
+
+  <block wx:else>
+    <!-- KPI 双卡 -->
+    <view class="kpi-row">
+      <view class="kpi-card">
+        <text class="kpi-label">本月支出</text>
+        <text class="kpi-value">¥ {{monthly.total_str}}</text>
+      </view>
+      <view class="kpi-card">
+        <text class="kpi-label">Top 分类</text>
+        <text class="kpi-value small">{{monthly.top_category || '-'}}</text>
+      </view>
+    </view>
+
+    <!-- 分类占比（水平条形列表） -->
+    <view class="card">
+      <text class="card-title">分类占比</text>
+      <block wx:if="{{categories.length > 0}}">
+        <view wx:for="{{categories}}" wx:key="category" class="cat-row">
+          <view class="cat-head">
+            <text class="cat-name">{{item.category}}</text>
+            <text class="cat-amt">¥ {{item.amount_str}} · {{item.percent_str}}</text>
+          </view>
+          <view class="cat-bar-bg">
+            <view class="cat-bar-fill" style="width: {{item.bar_width}};"></view>
+          </view>
+        </view>
+      </block>
+      <view wx:else class="empty">本月暂无消费</view>
+    </view>
+
+    <!-- 近 30 天趋势 -->
+    <view class="card">
+      <text class="card-title">近 30 天趋势</text>
+      <block wx:if="{{daily.length > 0}}">
+        <view wx:for="{{daily}}" wx:key="date" class="day-row">
+          <text class="day-date">{{item.date_short}}</text>
+          <text class="day-amt">¥ {{item.total_str}}</text>
+        </view>
+      </block>
+      <view wx:else class="empty">本月暂无消费</view>
+    </view>
+
+    <!-- 建议 -->
+    <view class="advice-card">
+      <text class="advice-title">本月建议</text>
+      <text class="advice-text">{{monthly.advice || '暂无建议'}}</text>
+    </view>
+  </block>
+</view>

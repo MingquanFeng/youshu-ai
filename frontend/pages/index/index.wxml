@@ -1,0 +1,22 @@
+<view class="page">
+  <view class="header">
+    <text class="title">AI 记账助手</text>
+    <text class="subtitle">上传截图，自动记账</text>
+  </view>
+
+  <view class="card primary" bindtap="goRecognize">
+    <text class="card-title-white">📷 AI 记账</text>
+    <text class="card-desc-white">拍照 / 上传支付截图</text>
+  </view>
+
+  <view class="row">
+    <view class="card small" bindtap="goBill">
+      <text class="card-title">📋 账单</text>
+      <text class="card-desc">查看全部</text>
+    </view>
+    <view class="card small" bindtap="goAnalysis">
+      <text class="card-title">📊 分析</text>
+      <text class="card-desc">消费洞察</text>
+    </view>
+  </view>
+</view>

@@ -1,6 +1,19 @@
-node_modules/
-dist/
-unpackage/
-.vscode/
+# OS / IDE
 .DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Node
+node_modules/
+package-lock.json
+
+# Build artifacts
+dist/
+miniprogram_npm/
+
+# Local IDE config
+project.private.config.json
+
+# Logs
 *.log

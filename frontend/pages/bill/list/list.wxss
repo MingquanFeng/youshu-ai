@@ -1,0 +1,72 @@
+.page { padding: 24rpx; background-color: #f8fafc; min-height: 100vh; }
+
+.error-bar {
+  background: #fef2f2;
+  border: 1rpx solid #fecaca;
+  border-radius: 8rpx;
+  padding: 16rpx 24rpx;
+  margin-bottom: 16rpx;
+}
+.error-text { color: #b91c1c; font-size: 24rpx; }
+
+.item {
+  background: #fff;
+  padding: 28rpx 24rpx;
+  border-radius: 16rpx;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, .04);
+}
+
+.item-left { flex: 1; display: flex; flex-direction: column; gap: 8rpx; min-width: 0; }
+
+.merchant { font-size: 30rpx; font-weight: 600; color: #111827; }
+
+.meta-row { display: flex; align-items: center; gap: 12rpx; }
+
+.badge {
+  display: inline-block;
+  font-size: 22rpx;
+  color: #2563eb;
+  background: #eff6ff;
+  padding: 2rpx 12rpx;
+  border-radius: 6rpx;
+}
+
+.meta-time { font-size: 22rpx; color: #6b7280; }
+
+.source-tag { font-size: 20rpx; color: #9ca3af; }
+
+.amount {
+  color: #ef4444;
+  font-size: 32rpx;
+  font-weight: 600;
+  align-self: center;
+  flex-shrink: 0;
+  margin-left: 16rpx;
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 120rpx 0;
+  gap: 32rpx;
+}
+
+.empty-text { color: #9ca3af; font-size: 28rpx; }
+
+.empty-btn {
+  background: #2563eb;
+  color: #fff;
+  font-size: 26rpx;
+  border-radius: 999rpx;
+  padding: 0 40rpx;
+  line-height: 64rpx;
+  height: 64rpx;
+}
+
+.footer { text-align: center; padding: 32rpx 0; }
+.footer-text { color: #9ca3af; font-size: 22rpx; }

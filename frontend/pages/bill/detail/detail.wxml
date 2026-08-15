@@ -1,0 +1,73 @@
+<view class="page">
+  <!-- 加载中 -->
+  <view wx:if="{{loading}}" class="state-wrap">
+    <text class="state-text">加载中…</text>
+  </view>
+
+  <!-- 不存在 -->
+  <view wx:elif="{{notFound}}" class="state-wrap">
+    <text class="state-text state-err">账单不存在</text>
+    <button class="back-btn" bindtap="goBack">返回列表</button>
+  </view>
+
+  <!-- 加载失败 -->
+  <view wx:elif="{{errorMsg}}" class="state-wrap">
+    <text class="state-text state-err">{{errorMsg}}</text>
+    <button class="back-btn" bindtap="reload">重试</button>
+  </view>
+
+  <!-- 内容 -->
+  <block wx:elif="{{bill}}">
+    <view class="card display-card">
+      <view class="display-row">
+        <text class="label">商家</text>
+        <text class="value">{{bill.merchant || '-'}}</text>
+      </view>
+      <view class="display-row">
+        <text class="label">分类</text>
+        <text class="badge">{{bill.category}}</text>
+      </view>
+      <view class="display-row">
+        <text class="label">金额</text>
+        <text class="amount">¥ {{bill.amount_str}}</text>
+      </view>
+      <view class="display-row">
+        <text class="label">支付方式</text>
+        <text class="value">{{bill.pay_method || '-'}}</text>
+      </view>
+      <view class="display-row">
+        <text class="label">时间</text>
+        <text class="value">{{bill.bill_time_short}}</text>
+      </view>
+      <view class="display-row">
+        <text class="label">备注</text>
+        <text class="value">{{bill.remark || '-'}}</text>
+      </view>
+    </view>
+
+    <view class="card form-card">
+      <text class="card-title">编辑</text>
+      <view class="form-row">
+        <text class="form-label">金额</text>
+        <input class="form-input" type="digit" value="{{form.amount}}" bindinput="onAmountInput" />
+      </view>
+      <view class="form-row">
+        <text class="form-label">分类</text>
+        <input class="form-input" type="text" value="{{form.category}}" bindinput="onFieldInput" data-field="category" />
+      </view>
+      <view class="form-row">
+        <text class="form-label">商家</text>
+        <input class="form-input" type="text" value="{{form.merchant}}" bindinput="onFieldInput" data-field="merchant" />
+      </view>
+      <view class="form-row">
+        <text class="form-label">备注</text>
+        <textarea class="form-textarea" value="{{form.remark}}" bindinput="onFieldInput" data-field="remark" />
+      </view>
+    </view>
+
+    <view class="actions">
+      <button class="save-btn" disabled="{{saving}}" bindtap="save">{{saving ? '保存中…' : '保存'}}</button>
+      <button class="delete-btn" disabled="{{saving}}" bindtap="confirmDelete">删除</button>
+    </view>
+  </block>
+</view>

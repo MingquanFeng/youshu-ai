@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "账单列表",
+  "enablePullDownRefresh": true,
+  "backgroundColor": "#f8fafc",
+  "backgroundTextStyle": "light",
+  "usingComponents": {}
+}

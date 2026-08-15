@@ -1,0 +1,117 @@
+.page { padding: 24rpx; background-color: #f8fafc; min-height: 100vh; }
+
+.state-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 160rpx 0;
+  gap: 32rpx;
+}
+.state-text { color: #6b7280; font-size: 28rpx; }
+.state-err { color: #b91c1c; }
+.back-btn {
+  background: #2563eb;
+  color: #fff;
+  font-size: 26rpx;
+  border-radius: 999rpx;
+  padding: 0 40rpx;
+  line-height: 64rpx;
+  height: 64rpx;
+}
+
+.card {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 28rpx 24rpx;
+  margin-bottom: 24rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, .04);
+}
+
+.display-card { display: flex; flex-direction: column; gap: 20rpx; }
+
+.display-row { display: flex; align-items: center; justify-content: space-between; }
+
+.label { color: #6b7280; font-size: 26rpx; }
+.value { color: #111827; font-size: 28rpx; }
+
+.badge {
+  display: inline-block;
+  font-size: 22rpx;
+  color: #2563eb;
+  background: #eff6ff;
+  padding: 2rpx 12rpx;
+  border-radius: 6rpx;
+}
+
+.amount { color: #ef4444; font-size: 36rpx; font-weight: 700; }
+
+.card-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #0f172a;
+  margin-bottom: 16rpx;
+  display: block;
+}
+
+.form-card { display: flex; flex-direction: column; }
+
+.form-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20rpx;
+  gap: 16rpx;
+}
+
+.form-label {
+  width: 120rpx;
+  color: #374151;
+  font-size: 26rpx;
+  flex-shrink: 0;
+}
+
+.form-input {
+  flex: 1;
+  height: 72rpx;
+  background: #f9fafb;
+  border: 1rpx solid #e5e7eb;
+  border-radius: 8rpx;
+  padding: 0 20rpx;
+  font-size: 28rpx;
+  color: #111827;
+}
+
+.form-textarea {
+  flex: 1;
+  height: 144rpx;
+  background: #f9fafb;
+  border: 1rpx solid #e5e7eb;
+  border-radius: 8rpx;
+  padding: 16rpx 20rpx;
+  font-size: 28rpx;
+  color: #111827;
+  box-sizing: border-box;
+}
+
+.actions { display: flex; gap: 24rpx; margin-top: 16rpx; }
+
+.save-btn {
+  flex: 1;
+  background: #2563eb;
+  color: #fff;
+  font-size: 28rpx;
+  border-radius: 999rpx;
+  line-height: 80rpx;
+  box-shadow: 0 4rpx 12rpx rgba(37, 99, 235, .25);
+}
+.save-btn[disabled] { opacity: .6; }
+
+.delete-btn {
+  flex: 1;
+  background: #fff;
+  color: #ef4444;
+  border: 1rpx solid #fecaca;
+  font-size: 28rpx;
+  border-radius: 999rpx;
+  line-height: 80rpx;
+}
+.delete-btn[disabled] { opacity: .6; }

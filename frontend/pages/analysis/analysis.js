@@ -1,0 +1,62 @@
+// pages/analysis/analysis.js — 消费分析（无图表版）
+import { monthlyAnalysis, dailyAnalysis, categoryAnalysis } from '../../api/analysis'
+
+Page({
+  data: {
+    monthly: { total: 0, top_category: '', advice: '', total_str: '0.00' },
+    categories: [],
+    daily: [],
+    loading: true
+  },
+
+  onShow() {
+    this.loadAll()
+  },
+
+  async loadAll() {
+    this.setData({ loading: true })
+    try {
+      const [mRes, cRes, dRes] = await Promise.allSettled([
+        monthlyAnalysis(),
+        categoryAnalysis(1),
+        dailyAnalysis(30)
+      ])
+
+      const failedCount = [mRes, cRes, dRes].filter(r => r.status === 'rejected').length
+      if (failedCount > 0) {
+        wx.showToast({ title: '分析加载失败', icon: 'none' })
+      }
+
+      const monthly = mRes.status === 'fulfilled' ? mRes.value : null
+      const category = cRes.status === 'fulfilled' ? cRes.value : null
+      const daily = dRes.status === 'fulfilled' ? dRes.value : null
+
+      const categories = (category && category.categories || []).map(c => ({
+        ...c,
+        amount_str: Number(c.amount).toFixed(2),
+        percent_str: (Number(c.percent) * 100).toFixed(1) + '%',
+        bar_width: Math.max(0, Math.min(100, Number(c.percent) * 100)) + '%'
+      }))
+
+      const dailyList = (daily && daily.days || []).map(d => ({
+        ...d,
+        date_short: d.date.slice(5),
+        total_str: Number(d.total).toFixed(2)
+      }))
+
+      this.setData({
+        monthly: {
+          total: monthly ? monthly.total : 0,
+          top_category: monthly ? monthly.top_category : '',
+          advice: monthly ? monthly.advice : '',
+          total_str: monthly ? Number(monthly.total).toFixed(2) : '0.00'
+        },
+        categories,
+        daily: dailyList,
+        loading: false
+      })
+    } catch (e) {
+      this.setData({ loading: false })
+    }
+  }
+})

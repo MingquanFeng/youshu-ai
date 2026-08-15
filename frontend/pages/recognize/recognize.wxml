@@ -1,0 +1,89 @@
+<view class="page">
+  <!-- 加载中 -->
+  <view wx:if="{{loading}}" class="state-wrap">
+    <text class="state-text">AI 识别中…</text>
+  </view>
+
+  <!-- 已选图：预览 -->
+  <block wx:elif="{{imageUrl}}">
+    <view class="preview-card" bindtap="pickImage">
+      <image src="{{imageUrl}}" mode="aspectFit" class="preview-img" />
+      <text class="preview-hint">点击重新上传 / 拍照</text>
+    </view>
+  </block>
+
+  <!-- 未选图 -->
+  <view wx:else class="upload-card" bindtap="pickImage">
+    <text class="upload-icon">+</text>
+    <text class="upload-text">点击上传 / 拍照</text>
+  </view>
+
+  <!-- 错误 -->
+  <view wx:if="{{errorMsg}}" class="error-bar">
+    <text class="error-text">{{errorMsg}}</text>
+    <button class="reset-btn" bindtap="clearError">重试</button>
+  </view>
+
+  <!-- 识别结果 -->
+  <block wx:if="{{result && !loading}}">
+    <view class="card display-card">
+      <view class="display-row">
+        <text class="label">商家</text>
+        <text class="value">{{result.merchant || '-'}}</text>
+      </view>
+      <view class="display-row">
+        <text class="label">分类</text>
+        <text class="badge">{{result.category}}</text>
+      </view>
+      <view class="display-row">
+        <text class="label">金额</text>
+        <text class="amount">¥ {{result.amount_str}}</text>
+      </view>
+      <view class="display-row">
+        <text class="label">支付方式</text>
+        <text class="value">{{result.payment || '-'}}</text>
+      </view>
+      <view class="display-row">
+        <text class="label">时间</text>
+        <text class="value">{{result.time_short}}</text>
+      </view>
+      <view class="display-row">
+        <text class="label">置信度</text>
+        <text class="score-badge {{scoreClass}}">{{result.score_pct}}</text>
+      </view>
+    </view>
+
+    <view class="card form-card">
+      <text class="card-title">编辑（确认后保存）</text>
+      <view class="form-row">
+        <text class="form-label">金额</text>
+        <input class="form-input" type="digit" value="{{form.amount}}" bindinput="onAmountInput" />
+      </view>
+      <view class="form-row">
+        <text class="form-label">分类</text>
+        <input class="form-input" type="text" value="{{form.category}}" bindinput="onFieldInput" data-field="category" />
+      </view>
+      <view class="form-row">
+        <text class="form-label">商家</text>
+        <input class="form-input" type="text" value="{{form.merchant}}" bindinput="onFieldInput" data-field="merchant" />
+      </view>
+      <view class="form-row">
+        <text class="form-label">支付方式</text>
+        <input class="form-input" type="text" value="{{form.pay_method}}" bindinput="onFieldInput" data-field="pay_method" />
+      </view>
+      <view class="form-row">
+        <text class="form-label">时间</text>
+        <input class="form-input" type="text" value="{{form.bill_time}}" bindinput="onFieldInput" data-field="bill_time" placeholder="2026-08-11T12:30:00" />
+      </view>
+      <view class="form-row">
+        <text class="form-label">备注</text>
+        <textarea class="form-textarea" value="{{form.remark}}" bindinput="onFieldInput" data-field="remark" />
+      </view>
+    </view>
+
+    <view class="actions">
+      <button class="reco-btn" disabled="{{saving}}" bindtap="reset">重新识别</button>
+      <button class="save-btn" disabled="{{saving}}" bindtap="save">{{saving ? '保存中…' : '保存'}}</button>
+    </view>
+  </block>
+</view>

@@ -1,0 +1,20 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/recognize/recognize",
+    "pages/bill/list/list",
+    "pages/bill/detail/detail",
+    "pages/analysis/analysis"
+  ],
+  "window": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "AI 记账助手",
+    "navigationBarBackgroundColor": "#ffffff",
+    "backgroundColor": "#f8fafc",
+    "backgroundTextStyle": "light",
+    "enablePullDownRefresh": false
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents"
+}
