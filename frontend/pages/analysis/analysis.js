@@ -31,11 +31,13 @@ Page({
       const category = cRes.status === 'fulfilled' ? cRes.value : null
       const daily = dRes.status === 'fulfilled' ? dRes.value : null
 
+      const catKeyMap = { '餐饮': 'food', '交通': 'transport', '购物': 'shop', '居家': 'home', '娱乐': 'fun', '医疗': 'medical', '工资': 'income' }
       const categories = (category && category.categories || []).map(c => ({
         ...c,
         amount_str: Number(c.amount).toFixed(2),
         percent_str: (Number(c.percent) * 100).toFixed(1) + '%',
-        bar_width: Math.max(0, Math.min(100, Number(c.percent) * 100)) + '%'
+        bar_width: Math.max(0, Math.min(100, Number(c.percent) * 100)) + '%',
+        category_key: catKeyMap[c.category] || 'other'
       }))
 
       const dailyRaw = (daily && daily.days || [])

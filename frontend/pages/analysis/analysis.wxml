@@ -1,96 +1,104 @@
 <view class="page">
-  <!-- 报头 -->
-  <view class="report-head">
-    <view class="row between">
-      <text class="label">本月报告</text>
-      <text class="label muted">月度</text>
-    </view>
-    <text class="h1 report-head__title">本月账目</text>
-    <view class="hairline--thick"></view>
+  <!-- 顶部: 月份 + 报告 -->
+  <view class="topbar">
+    <text class="topbar__title">本月账目</text>
+    <text class="muted" style="font-size: 22rpx;">{{monthly.top_category || '暂无数据'}}</text>
   </view>
 
   <!-- 加载 -->
   <view wx:if="{{loading}}" class="state-bar state-bar--loading">统计中 …</view>
 
   <block wx:else>
-    <!-- KPI 顶格 -->
+    <!-- KPI 双卡: 总览 + Top 分类 -->
     <view class="kpi-row">
-      <view class="kpi">
-        <text class="label">TOTAL · 本月支出</text>
-        <text class="amount-xl">¥ {{monthly.total_str}}</text>
+      <view class="kpi-card">
+        <text class="label">本月支出</text>
+        <text class="amount-md" style="font-size: 48rpx; font-weight: 500; margin-top: var(--space-2);">¥ {{monthly.total_str}}</text>
       </view>
-      <view class="kpi-divider"></view>
-      <view class="kpi">
-        <text class="label">TOP · 最大类目</text>
-        <text class="h2" style="margin-top:var(--space-1);">{{monthly.top_category || '—'}}</text>
-      </view>
-    </view>
-
-    <!-- 分类占比 -->
-    <view class="section">
-      <view class="row between">
-        <text class="label">分类构成</text>
-        <text class="label muted">{{categories.length}} 类</text>
-      </view>
-      <text class="h2" style="margin:var(--space-2) 0;">构成</text>
-      <view class="hairline"></view>
-
-      <block wx:if="{{categories.length > 0}}">
-        <view class="bar-list">
-          <view wx:for="{{categories}}" wx:key="category" class="bar-item">
-            <view class="row between">
-              <text class="bar-item__name">{{item.category}}</text>
-              <text class="bar-item__pct mono">{{item.percent_str}}</text>
-            </view>
-            <view class="bar-item__track">
-              <view class="bar-item__fill" style="width: {{item.bar_width}};"></view>
-            </view>
-            <view class="row between bar-item__amt">
-              <text class="mono dim" style="font-size:20rpx;">¥ {{item.amount_str}}</text>
-            </view>
-          </view>
-        </view>
-      </block>
-      <view wx:else class="empty" style="padding:var(--space-6) 0;">
-        <text class="dim mono">N° 000 · 暂无数据</text>
+      <view class="kpi-card kpi-card--accent">
+        <text class="label">Top 分类</text>
+        <text class="h3" style="margin-top: var(--space-2);">{{monthly.top_category || '—'}}</text>
       </view>
     </view>
 
-    <!-- 30 天趋势 -->
+    <!-- 饼图 (MUJI 借鉴参考图: 大圆环 + 粗描边) -->
     <view class="section">
-      <view class="row between">
-        <text class="label">近 30 天</text>
-        <text class="label muted">{{daily.length}} 天</text>
+      <view class="row between section-head">
+        <text class="h4">分类构成</text>
+        <text class="muted" style="font-size: 22rpx;">{{categories.length}} 类</text>
       </view>
-      <text class="h2" style="margin:var(--space-2) 0;">逐日流水</text>
-      <view class="hairline"></view>
 
-      <block wx:if="{{daily.length > 0}}">
-        <view class="daily-list">
-          <view wx:for="{{daily}}" wx:key="date" class="daily-row">
-            <text class="label daily-row__date">{{item.date_short}}</text>
-            <view class="daily-row__bar">
-              <view class="daily-row__fill" style="width: {{item.bar_width || '0%'}};"></view>
+      <view wx:if="{{categories.length > 0}}" class="pie-wrap">
+        <!-- 简化的圆环图 (用 conic-gradient 不支持, 改用 inline 进度条堆叠) -->
+        <view class="pie-stack">
+          <view wx:for="{{categories}}" wx:key="category"
+                class="pie-row">
+            <view class="pie-row__head">
+              <view class="row gap-2" style="align-items: center;">
+                <view class="pie-row__dot" style="background: var(--cat-{{item.category_key}});"></view>
+                <text class="h4">{{item.category}}</text>
+              </view>
+              <view class="row gap-3" style="align-items: baseline;">
+                <text class="amount-sm" style="font-size: var(--text-md);">¥ {{item.amount_str}}</text>
+                <text class="muted mono" style="font-size: var(--text-sm); min-width: 60rpx; text-align: right;">{{item.percent_str}}</text>
+              </view>
             </view>
-            <text class="mono daily-row__amt">¥ {{item.total_str}}</text>
+            <view class="bar-track" style="margin-top: 6rpx;">
+              <view class="bar-fill" style="width: {{item.bar_width}}; background: var(--cat-{{item.category_key}});"></view>
+            </view>
           </view>
         </view>
-      </block>
-      <view wx:else class="empty" style="padding:var(--space-6) 0;">
-        <text class="dim mono">N° 000 · 暂无数据</text>
+      </view>
+      <view wx:else class="empty">
+        <text class="muted" style="font-size: 22rpx;">N° 000 · 暂无数据</text>
+      </view>
+    </view>
+
+    <!-- 30 天趋势 (MUJI 借鉴参考图: 双色细线) -->
+    <view class="section">
+      <view class="row between section-head">
+        <text class="h4">近 30 天</text>
+        <text class="muted" style="font-size: 22rpx;">{{daily.length}} 天</text>
+      </view>
+
+      <view wx:if="{{daily.length > 0}}" class="daily-list">
+        <view wx:for="{{daily}}" wx:key="date" class="daily-row">
+          <text class="muted mono" style="font-size: 22rpx; width: 80rpx;">{{item.date_short}}</text>
+          <view class="bar-track" style="flex: 1; height: 4rpx;">
+            <view class="bar-fill" style="width: {{item.bar_width || '0%'}}; background: var(--color-primary);"></view>
+          </view>
+          <text class="amount-sm muted" style="font-size: 22rpx; min-width: 100rpx; text-align: right;">¥ {{item.total_str}}</text>
+        </view>
+      </view>
+      <view wx:else class="empty">
+        <text class="muted" style="font-size: 22rpx;">N° 000 · 暂无数据</text>
       </view>
     </view>
 
     <!-- AI 建议 -->
     <view wx:if="{{monthly.advice}}" class="advice">
-      <view class="hairline--thick"></view>
-      <text class="label">建议</text>
+      <text class="label">本月建议</text>
       <text class="advice__text">{{monthly.advice}}</text>
     </view>
-
-    <!-- 报尾 -->
-    <view class="colophon">
-      <text class="dim mono" style="font-size:20rpx; letter-spacing:var(--tracking-wide);">— END OF REPORT —</text>
-    </view>
   </block>
+
+  <!-- 4-tab bar -->
+  <view class="tabbar">
+    <view class="tab" bindtap="goBill">
+      <text class="tab__icon">▣</text>
+      <text class="tab__label">首页</text>
+    </view>
+    <view class="tab" bindtap="goRecognize">
+      <text class="tab__icon">▤</text>
+      <text class="tab__label">统计</text>
+    </view>
+    <view class="tab tab--active">
+      <text class="tab__icon">⊞</text>
+      <text class="tab__label">资产</text>
+    </view>
+    <view class="tab">
+      <text class="tab__icon">●</text>
+      <text class="tab__label">我的</text>
+    </view>
+  </view>
 </view>

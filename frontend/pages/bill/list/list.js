@@ -43,11 +43,19 @@ Page({
     this.setData({ loading: true, errorMsg: '' })
     try {
       const res = await listBills({ page: p, size: PAGE_SIZE })
-      const mapped = res.items.map(b => ({
-        ...b,
-        bill_time_short: formatBillTime(b.bill_time),
-        amount_str: Number(b.amount).toFixed(2)
-      }))
+      const mapped = res.items.map(b => {
+        const cat = (b.category || '其他')
+        const isIncome = b.amount > 0 || cat === '工资' || cat === 'income'
+        return {
+          ...b,
+          bill_time_short: formatBillTime(b.bill_time),
+          amount_str: Number(b.amount).toFixed(2),
+          amount_sign: isIncome ? '+¥ ' + Number(b.amount).toFixed(2) : '−¥ ' + Number(b.amount).toFixed(2),
+          amount_color: isIncome ? 'color: var(--color-success);' : '',
+          icon_char: cat.charAt(0),
+          icon_bg: 'var(--cat-' + ({ '餐饮': 'food', '交通': 'transport', '购物': 'shop', '居家': 'home', '娱乐': 'fun', '医疗': 'medical', '工资': 'income' }[cat] || 'other') + '-soft);'
+        }
+      })
       const merged = mode === 'reset' ? mapped : this.data.items.concat(mapped)
       this.setData({
         items: merged,

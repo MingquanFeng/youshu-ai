@@ -1,45 +1,41 @@
 <view class="page">
-  <!-- 加载 / 错误 -->
+  <!-- 状态条 -->
   <view wx:if="{{loading}}" class="state-bar state-bar--loading">载入中 …</view>
   <view wx:elif="{{notFound}}" class="state-bar state-bar--error">此条记录不存在或已删除</view>
   <view wx:elif="{{errorMsg}}" class="state-bar state-bar--error">{{errorMsg}}</view>
 
   <block wx:elif="{{bill}}">
-    <!-- 报头 -->
-    <view class="detail-head">
-      <view class="row between">
-        <text class="label">单条 · N° {{bill.id}}</text>
-        <text class="label muted">{{bill.source === 'image_ai' ? 'AI 识别' : '手动'}}</text>
-      </view>
-      <text class="amount-xl detail-head__amount">¥ {{bill.amount_str}}</text>
-      <text class="h2 detail-head__merchant">{{bill.merchant || bill.category || '—'}}</text>
-      <text class="mono dim detail-head__time">{{bill.bill_time_short}}</text>
-      <view class="hairline--thick"></view>
-    </view>
-
-    <!-- 信息卡 -->
-    <view class="info-card">
-      <view class="info-row">
-        <text class="label">分类</text>
-        <view class="chip chip--accent">{{bill.category}}</view>
-      </view>
-      <view class="info-row">
-        <text class="label">支付</text>
-        <text class="value ink">{{bill.pay_method || '—'}}</text>
-      </view>
-      <view class="info-row">
-        <text class="label">备注</text>
-        <text class="value dim">{{bill.remark || '—'}}</text>
+    <!-- 顶部: 单条信息 -->
+    <view class="topbar">
+      <view class="row gap-3" style="align-items: center;">
+        <view class="topbar__icon" style="background: var(--cat-{{bill.category_key}}-soft);">
+          <text class="topbar__icon-char">{{bill.category_char || '?'}}</text>
+        </view>
+        <view class="col">
+          <text class="topbar__merchant">{{bill.merchant || bill.category || '—'}}</text>
+          <text class="muted" style="font-size: 22rpx;">{{bill.bill_time_short}} · {{bill.source === 'image_ai' ? 'AI 识别' : '手动'}}</text>
+        </view>
       </view>
     </view>
 
-    <!-- 编辑章节 -->
-    <view class="chapter chapter--sub">
-      <text class="h3">修订</text>
+    <!-- 大金额 card (MUJI 借鉴参考图) -->
+    <view class="amount-card">
+      <text class="label">金额</text>
+      <text class="amount-md" style="font-size: 80rpx; font-weight: 500; margin-top: var(--space-3);">¥ {{bill.amount_str}}</text>
+      <view class="row gap-2" style="margin-top: var(--space-3);">
+        <view class="chip chip--food">
+          <view class="chip__dot"></view>
+          <text>{{bill.category}}</text>
+        </view>
+        <view class="muted" style="font-size: 22rpx;">·</view>
+        <text class="muted" style="font-size: 22rpx;">{{bill.pay_method || '未指定'}}</text>
+      </view>
+      <view wx:if="{{bill.remark}}" class="muted" style="font-size: 24rpx; margin-top: var(--space-3); line-height: 1.6;">{{bill.remark}}</view>
     </view>
-    <view class="hairline"></view>
 
-    <view class="form">
+    <!-- 编辑表单 (card 化) -->
+    <view class="form-card">
+      <text class="label">编辑</text>
       <view class="form-row">
         <text class="form-label">金额</text>
         <input class="input" type="digit" value="{{form.amount}}" bindinput="onAmountInput" />
@@ -58,6 +54,7 @@
       </view>
     </view>
 
+    <!-- 按钮组 -->
     <view class="actions">
       <button class="btn btn--danger" disabled="{{saving}}" bindtap="confirmDelete">删除</button>
       <button class="btn" disabled="{{saving}}" bindtap="save">{{saving ? '保存中 …' : '保存修订'}}</button>

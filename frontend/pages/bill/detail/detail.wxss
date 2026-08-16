@@ -1,84 +1,121 @@
-/* bill/detail — 单条详情 (Long Document / Newsprint) */
+/* bill/detail — 详情 (MUJI v5.3) */
 
 .page {
-  padding: var(--space-5) var(--space-4) var(--space-7);
+  padding: var(--space-5) var(--space-5) var(--space-7);
   min-height: 100vh;
+  background: var(--color-bg);
+  color: var(--color-fg);
 }
 
-/* 报头：金额 + 商家 */
-.detail-head {
-  margin-bottom: var(--space-4);
+.topbar {
+  margin-bottom: var(--space-5);
 }
-.detail-head__amount {
-  font-size: var(--text-4xl);
-  margin: var(--space-3) 0 var(--space-2);
-  letter-spacing: -0.04em;
-}
-.detail-head__merchant {
-  font-family: var(--font-display);
-  font-size: var(--text-xl);
-  font-weight: 700;
-  color: var(--color-ink);
-  margin-bottom: var(--space-1);
-  letter-spacing: -0.02em;
-}
-.detail-head__time {
-  font-size: var(--text-sm);
-  color: var(--color-ink-3);
-  letter-spacing: var(--tracking-wide);
-  text-transform: uppercase;
-}
-
-/* 信息卡 */
-.info-card {
-  background: var(--color-paper-2);
-  border-top: var(--border-thick);
-  border-bottom: var(--border-thick);
-  padding: var(--space-3) 0;
-  margin: var(--space-3) 0 var(--space-5);
-}
-.info-row {
+.topbar__icon {
+  width: 88rpx;
+  height: 88rpx;
+  border-radius: 50%;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: var(--space-2) var(--space-3);
+  justify-content: center;
+  flex-shrink: 0;
+  background: var(--cat-other-soft);
 }
-.value {
-  font-size: var(--text-md);
+.topbar__icon-char {
+  font-family: var(--font-display);
+  font-size: 36rpx;
   font-weight: 500;
-  color: var(--color-ink);
+  color: var(--color-fg);
+  line-height: 1;
+}
+.topbar__merchant {
+  font-size: var(--text-lg);
+  font-weight: 500;
+  color: var(--color-fg);
+  line-height: var(--leading-tight);
+  margin-bottom: 2rpx;
 }
 
-/* Chapter */
-.chapter { margin-top: var(--space-6); margin-bottom: var(--space-3); }
-.chapter--sub { margin-top: var(--space-5); }
+/* 大金额 card */
+.amount-card {
+  background: var(--color-bg-2);
+  border: 1rpx solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  margin-bottom: var(--space-4);
+  box-shadow: 0 1rpx 2rpx rgba(58, 58, 58, 0.04);
+}
+.amount-card .amount-md {
+  font-family: var(--font-mono);
+  color: var(--color-primary);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
 
-/* Form */
-.form { margin: var(--space-3) 0 var(--space-5); }
+/* 编辑表单 card (同 recognize) */
+.form-card {
+  background: var(--color-bg-2);
+  border: 1rpx solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4) var(--space-5);
+  margin-bottom: var(--space-5);
+  box-shadow: 0 1rpx 2rpx rgba(58, 58, 58, 0.04);
+}
+.form-card .label { margin-bottom: var(--space-3); }
 .form-row {
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  margin-bottom: var(--space-2);
+  padding: var(--space-2) 0;
+  border-bottom: 1rpx solid var(--color-border);
 }
+.form-row:last-child { border-bottom: none; }
 .form-row--top { align-items: flex-start; }
 .form-label {
-  width: 120rpx;
+  width: 100rpx;
   flex-shrink: 0;
-  font-family: var(--font-label);
-  font-size: var(--text-xs);
-  letter-spacing: var(--tracking-wide);
-  text-transform: uppercase;
-  color: var(--color-ink-3);
+  color: var(--color-fg-2);
+  font-size: var(--text-sm);
 }
 .form-row .input,
-.form-row .textarea { flex: 1; min-width: 0; }
-.form-row .textarea { min-height: 120rpx; }
+.form-row .textarea {
+  flex: 1;
+  min-width: 0;
+}
+.form-row .textarea {
+  min-height: 80rpx;
+}
 
-/* Actions */
+/* 分类 chip */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4rpx;
+  font-size: var(--text-xs);
+  font-weight: 500;
+  padding: 4rpx 12rpx;
+  border-radius: var(--radius-pill);
+  background: var(--color-bg-3);
+  color: var(--color-fg-2);
+}
+.chip__dot {
+  width: 8rpx;
+  height: 8rpx;
+  border-radius: 50%;
+  background: var(--color-fg-3);
+}
+.chip--food      { background: var(--cat-food-soft); color: var(--cat-food); }
+.chip--transport { background: var(--cat-transport-soft); color: var(--cat-transport); }
+.chip--shop      { background: var(--cat-shop-soft); color: var(--cat-shop); }
+.chip--home      { background: var(--cat-home-soft); color: var(--cat-home); }
+.chip--fun       { background: var(--cat-fun-soft); color: var(--cat-fun); }
+.chip--medical   { background: var(--cat-medical-soft); color: var(--cat-medical); }
+.chip--income    { background: var(--cat-income-soft); color: var(--cat-income); }
+.chip--other     { background: var(--cat-other-soft); color: var(--cat-other); }
+
+/* 按钮组 */
 .actions {
   display: flex;
   gap: var(--space-3);
-  margin-top: var(--space-5);
+  margin-top: var(--space-3);
 }
 .actions .btn { flex: 1; min-width: 0; }

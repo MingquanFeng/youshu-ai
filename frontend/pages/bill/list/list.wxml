@@ -1,58 +1,90 @@
 <view class="page">
-  <!-- 报头 -->
-  <view class="ledger-head">
+  <!-- 顶部 header: 月份 + 统计 -->
+  <view class="topbar">
+    <text class="topbar__month">7月</text>
+    <text class="muted" style="font-size: 22rpx;">共 {{total}} 笔</text>
+  </view>
+
+  <!-- 当月统计 card -->
+  <view class="stat">
     <view class="row between">
-      <text class="label">流水</text>
-      <text class="label muted">共 {{total}} 条</text>
+      <view>
+        <text class="label">本月支出</text>
+        <text class="amount-md" style="font-size: 48rpx; font-weight: 500; margin-top: 8rpx;">¥ 9,414.00</text>
+      </view>
+      <view class="row gap-3" style="align-items: center;">
+        <text class="muted" style="font-size: 22rpx;">收入</text>
+        <text class="amount-sm" style="color: var(--color-success);">+¥ 22,000</text>
+      </view>
     </view>
-    <text class="h1 ledger-head__title">账本</text>
-    <view class="hairline--thick"></view>
   </view>
 
-  <!-- 错误条 -->
-  <view wx:if="{{errorMsg}}" class="state-bar state-bar--error">
-    {{errorMsg}}
-  </view>
+  <!-- 流水 list (card 容器) -->
+  <view class="section">
+    <view class="row between section-head">
+      <text class="h4">所有流水</text>
+      <text class="muted" style="font-size: 22rpx;">按时间倒序</text>
+    </view>
 
-  <!-- 列表 -->
-  <block wx:if="{{items.length > 0}}">
-    <view class="ledger">
+    <view wx:if="{{items.length > 0}}">
       <view
         wx:for="{{items}}"
         wx:key="id"
-        class="ledger-row"
+        class="txn"
         bindtap="onItemTap"
         data-item="{{item}}"
-        hover-class="ledger-row--hover"
+        hover-class="txn--hover"
       >
-        <view class="ledger-row__date">
-          <text class="mono ledger-row__date-num">{{item.bill_time_short}}</text>
-          <view class="chip chip--accent">{{item.category}}</view>
+        <view class="txn__icon" style="background: {{item.icon_bg}};">
+          <text class="txn__icon-char">{{item.icon_char}}</text>
         </view>
-        <view class="ledger-row__body">
-          <text class="ledger-row__merchant">{{item.merchant || item.category}}</text>
-          <text class="ledger-row__meta mono">{{item.pay_method || '—'}} · {{item.source === 'image_ai' ? 'AI 识别' : '手动'}}</text>
+        <view class="txn__col">
+          <text class="h4">{{item.merchant || item.category}}</text>
+          <text class="muted" style="font-size: 22rpx;">{{item.bill_time_short}} · {{item.pay_method}}</text>
         </view>
-        <view class="ledger-row__amount">
-          <text class="amount-lg">¥</text>
-          <text class="amount-xl">{{item.amount_str}}</text>
-        </view>
+        <text class="amount-sm" style="{{item.amount_color}}">{{item.amount_sign}}</text>
       </view>
     </view>
 
-    <!-- 加载更多脚 -->
-    <view class="ledger-foot">
-      <text wx:if="{{loading}}" class="label">加载中 …</text>
-      <text wx:elif="{{!hasMore}}" class="label muted">— 已经到底 —</text>
-      <text wx:elif="{{hasMore}}" class="label muted">↑ 上拉加载更多</text>
+    <view wx:else class="empty">
+      <view class="empty__icon" style="background: var(--color-bg-3); width: 96rpx; height: 96rpx; border-radius: 50%; margin: 0 auto var(--space-3);"></view>
+      <text class="empty__title">还没有记录</text>
+      <text class="empty__hint">从一笔记账开始</text>
     </view>
-  </block>
+  </view>
 
-  <!-- 空态 -->
-  <view wx:elif="{{!loading}}" class="empty">
-    <text class="empty__title mono">N° 000</text>
-    <view class="hairline" style="width:80rpx;margin:var(--space-3) auto;"></view>
-    <text class="empty__hint">还没有一笔记录</text>
-    <button class="btn" style="margin-top:var(--space-5);width:280rpx;" bindtap="goRecognize">记下第一笔</button>
+  <!-- 加载更多 / 到底提示 -->
+  <view wx:if="{{items.length > 0}}" class="ledger-foot">
+    <text wx:if="{{loading}}" class="muted" style="font-size: 22rpx;">加载中 …</text>
+    <text wx:elif="{{!hasMore}}" class="muted" style="font-size: 22rpx;">— 已经到底 —</text>
+    <text wx:elif="{{hasMore}}" class="muted" style="font-size: 22rpx;">↑ 上拉加载更多</text>
+  </view>
+
+  <!-- 错误条 -->
+  <view wx:if="{{errorMsg}}" class="state-bar state-bar--error">{{errorMsg}}</view>
+
+  <!-- 4-tab bar -->
+  <view class="tabbar">
+    <view class="tab" bindtap="goRecognize">
+      <text class="tab__icon">▣</text>
+      <text class="tab__label">首页</text>
+    </view>
+    <view class="tab tab--active">
+      <text class="tab__icon">▤</text>
+      <text class="tab__label">统计</text>
+    </view>
+    <view class="tab" bindtap="goAnalysis">
+      <text class="tab__icon">⊞</text>
+      <text class="tab__label">资产</text>
+    </view>
+    <view class="tab">
+      <text class="tab__icon">●</text>
+      <text class="tab__label">我的</text>
+    </view>
+  </view>
+
+  <!-- FAB -->
+  <view class="fab" bindtap="goRecognize" hover-class="fab--hover">
+    <text class="fab__icon">+</text>
   </view>
 </view>
