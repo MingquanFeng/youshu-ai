@@ -1,77 +1,86 @@
 <view class="page">
-  <!-- 极简顶栏：只有月名, 没有任何装饰 -->
+  <!-- 顶部: 极简, 只有月名 + 问候 -->
   <view class="topbar">
-    <text class="h2">8月</text>
+    <text class="topbar__greeting">早上好</text>
+    <text class="muted" style="font-size: 22rpx; margin-top: 4rpx;">7月28日 星期一</text>
   </view>
 
-  <!-- 极简 KPI: 不巨大, 不夸张, 不用大色块 -->
+  <!-- 本月剩余 card (浅米色背景 + 极淡 shadow) -->
   <view class="stat">
-    <text class="label">本月支出</text>
-    <view class="row baseline gap-1" style="margin-top: 8rpx;">
-      <text class="amount-md" style="font-size: 56rpx; font-weight: 300; line-height: 1.1;">¥ 1,248.50</text>
+    <text class="label">本月剩余</text>
+    <text class="amount-md" style="font-size: 64rpx; font-weight: 500; line-height: 1.05; margin-top: 12rpx;">¥ 12,586.00</text>
+    <view class="bar-track" style="margin-top: var(--space-3);">
+      <view class="bar-fill" style="width: 36%;"></view>
     </view>
-    <text class="muted" style="font-size: 24rpx; margin-top: 8rpx;">日均 ¥ 41.6</text>
+    <view class="row between" style="margin-top: var(--space-3);">
+      <text class="muted" style="font-size: 22rpx;">收入 ¥ 22,000.00</text>
+      <text class="muted" style="font-size: 22rpx;">支出 ¥ 9,414.00</text>
+    </view>
   </view>
 
-  <!-- 极细 hairline 分隔 -->
-  <view class="hairline"></view>
-
-  <!-- 文字按钮风格的主 CTA (MUJI 偏好) -->
-  <view class="action">
-    <text class="btn--text" bindtap="goRecognize">记一笔 →</text>
-  </view>
-
-  <view class="hairline"></view>
-
-  <!-- 极简流水列表: 文字 + 单色, 无 Card 无背景色块 -->
+  <!-- 今天 card (流水列表) -->
   <view class="section">
     <view class="row between section-head">
-      <text class="label">最近</text>
+      <text class="h4">今天</text>
       <text class="muted" bindtap="goBill" style="font-size: 22rpx;">查看全部 →</text>
     </view>
 
-    <view class="txn" bindtap="goBill">
-      <view class="txn__stripe txn__stripe--shop"></view>
+    <view class="txn" bindtap="goBill" hover-class="txn--hover">
+      <view class="txn__icon" style="background: var(--cat-shop-soft);">
+        <text class="txn__icon-char">盒</text>
+      </view>
       <view class="txn__col">
         <text class="h4">盒马鲜生</text>
-        <text class="muted" style="font-size: 22rpx;">08-14 · 微信支付</text>
+        <text class="muted" style="font-size: 22rpx;">09:48 · 微信</text>
       </view>
-      <text class="amount-sm">−88.00</text>
+      <text class="amount-sm">−23.00</text>
     </view>
 
-    <view class="hairline" style="margin: 0;"></view>
-
-    <view class="txn" bindtap="goBill">
-      <view class="txn__stripe txn__stripe--transport"></view>
+    <view class="txn" bindtap="goBill" hover-class="txn--hover">
+      <view class="txn__icon" style="background: var(--cat-transport-soft);">
+        <text class="txn__icon-char">滴</text>
+      </view>
       <view class="txn__col">
         <text class="h4">滴滴出行</text>
-        <text class="muted" style="font-size: 22rpx;">08-14 · 支付宝</text>
+        <text class="muted" style="font-size: 22rpx;">10:30 · 支付宝</text>
       </view>
-      <text class="amount-sm">−23.50</text>
+      <text class="amount-sm">−12.00</text>
     </view>
 
-    <view class="hairline" style="margin: 0;"></view>
-
-    <view class="txn" bindtap="goBill">
-      <view class="txn__stripe txn__stripe--food"></view>
-      <view class="txn__col">
-        <text class="h4">麦当劳</text>
-        <text class="muted" style="font-size: 22rpx;">08-13 · 微信支付</text>
+    <view class="txn" bindtap="goBill" hover-class="txn--hover">
+      <view class="txn__icon" style="background: var(--cat-income-soft);">
+        <text class="txn__icon-char">资</text>
       </view>
-      <text class="amount-sm">−35.00</text>
+      <view class="txn__col">
+        <text class="h4">工资到账</text>
+        <text class="muted" style="font-size: 22rpx;">10:30 · 招商银行</text>
+      </view>
+      <text class="amount-sm" style="color: var(--color-success);">+¥ 12,000.00</text>
     </view>
   </view>
 
-  <!-- 极简底部 tab bar: 文字风格, 无图标无背景 -->
+  <!-- 底部 tab bar: 4 个 (首页 / 统计 / 资产 / 我的) -->
   <view class="tabbar">
     <view class="tab tab--active">
+      <text class="tab__icon">▣</text>
       <text class="tab__label">首页</text>
     </view>
     <view class="tab" bindtap="goBill">
-      <text class="tab__label">账本</text>
+      <text class="tab__icon">▤</text>
+      <text class="tab__label">统计</text>
     </view>
     <view class="tab" bindtap="goAnalysis">
-      <text class="tab__label">分析</text>
+      <text class="tab__icon">⊞</text>
+      <text class="tab__label">资产</text>
     </view>
+    <view class="tab">
+      <text class="tab__icon">●</text>
+      <text class="tab__label">我的</text>
+    </view>
+  </view>
+
+  <!-- 浮动绿色 + 按钮 (主 CTA) -->
+  <view class="fab" bindtap="goRecognize" hover-class="fab--hover">
+    <text class="fab__icon">+</text>
   </view>
 </view>

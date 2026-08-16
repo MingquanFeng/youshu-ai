@@ -21,7 +21,18 @@ page {
   --color-fg-3:        #9E9E9E;   /* 提示 */
   --color-fg-4:        #C4C4C4;   /* 占位 */
 
-  /* Brand: 原木色 (只有一个 accent, 不抢眼) */
+  /* 分类色 — 浅色背景版 (用于 icon 圆形底色) */
+  --cat-food-soft:      rgba(200, 150, 105, 0.15);
+  --cat-transport-soft: rgba(139, 157, 175, 0.18);
+  --cat-shop-soft:      rgba(160, 147, 125, 0.18);
+  --cat-home-soft:      rgba(168, 162, 158, 0.18);
+  --cat-fun-soft:       rgba(155, 138, 173, 0.15);
+  --cat-medical-soft:   rgba(184, 155, 139, 0.18);
+  --cat-income-soft:    rgba(125, 153, 136, 0.20);
+  --cat-other-soft:     rgba(158, 158, 158, 0.15);
+
+  /* Accent: 草药绿 (FAB 主 CTA 用) */
+  --color-accent-green: #7E8B6A;
   --color-primary:     #8B7355;   /* 原木棕 */
   --color-primary-2:   #75603F;   /* hover */
   --color-primary-3:   #A89274;   /* 浅 */
