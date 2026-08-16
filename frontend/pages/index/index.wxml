@@ -1,40 +1,33 @@
 <view class="page">
-  <!-- Masthead: 报头 -->
-  <view class="masthead">
-    <text class="masthead__date label">记账本 · v0.2</text>
-    <text class="masthead__title h1">AI 记账</text>
-    <text class="masthead__sub">一记一得，记我所支</text>
-    <view class="masthead__rule masthead__rule--double"></view>
+  <!-- Hero -->
+  <view class="hero">
+    <text class="label-sm">AI 记账 · v0.2</text>
+    <text class="hero__title h1">记账，\n变得简单。</text>
+    <text class="hero__sub">拍下支付截图，自动识别金额、商家、时间。</text>
+
+    <!-- 主 CTA -->
+    <button class="btn hero__cta" bindtap="goRecognize" hover-class="btn--hover">
+      <text>拍下支付截图</text>
+    </button>
+    <text class="hero__hint mono">免登录 · 即拍即记</text>
   </view>
 
-  <!-- 主入口：识别（primary action） -->
-  <view class="entry entry--primary" bindtap="goRecognize" hover-class="entry--hover">
-    <view class="col gap-2 flex-1">
-      <text class="label">识别</text>
-      <text class="h2">拍下支付截图</text>
-      <text class="dim mono" style="font-size:24rpx;">AI 读出金额 / 商家 / 时间</text>
+  <!-- 次要功能：双卡 -->
+  <view class="feature-grid">
+    <view class="feature-card" bindtap="goBill" hover-class="card--hover">
+      <text class="feature-card__num mono">01</text>
+      <text class="h4">账本</text>
+      <text class="muted">查看全部流水</text>
     </view>
-    <text class="mono h1 accent">→</text>
-  </view>
-
-  <!-- 次入口：账本 + 分析 -->
-  <view class="entry-grid">
-    <view class="entry entry--half" bindtap="goBill" hover-class="entry--hover">
-      <text class="label">账本</text>
-      <text class="h3">流水</text>
-      <text class="dim mono" style="font-size:22rpx;">查看全部</text>
-    </view>
-    <view class="entry__rule entry__rule--v"></view>
-    <view class="entry entry--half" bindtap="goAnalysis" hover-class="entry--hover">
-      <text class="label">分析</text>
-      <text class="h3">洞察</text>
-      <text class="dim mono" style="font-size:22rpx;">消费趋势</text>
+    <view class="feature-card" bindtap="goAnalysis" hover-class="card--hover">
+      <text class="feature-card__num mono">02</text>
+      <text class="h4">分析</text>
+      <text class="muted">消费洞察</text>
     </view>
   </view>
 
-  <!-- 落款 -->
-  <view class="colophon">
-    <view class="hairline"></view>
-    <text class="label">Y O U S H U · A I</text>
+  <!-- 页脚 -->
+  <view class="footer">
+    <text class="muted mono" style="font-size:20rpx;">YOUSHU · AI</text>
   </view>
 </view>
