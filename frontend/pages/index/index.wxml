@@ -2,26 +2,26 @@
   <!-- 顶部 header -->
   <view class="topbar">
     <view class="row between">
-      <text class="h3">YOUSHU</text>
-      <view class="row gap-3">
+      <text class="h3 primary">YOUSHU</text>
+      <view class="row gap-2">
         <text class="muted">8月</text>
-        <text class="badge-dot"></text>
+        <text class="dot"></text>
       </view>
     </view>
   </view>
 
-  <!-- 当月支出大卡 -->
-  <view class="card card--primary stat-card">
-    <text class="label" style="color:rgba(255,255,255,0.7);">本月支出</text>
+  <!-- 当月支出大卡：焦橙 -->
+  <view class="card stat-card">
+    <text class="label" style="color:rgba(255,255,255,0.85);">本月支出</text>
     <view class="row baseline gap-1">
-      <text class="amount-xl" style="color:#fff;font-size:64rpx;">¥1,248</text>
-      <text class="muted" style="color:rgba(255,255,255,0.6);">.50</text>
+      <text class="amount-xl" style="color:#fff; font-size:64rpx;">¥1,248</text>
+      <text class="muted" style="color:rgba(255,255,255,0.7);">.50</text>
     </view>
     <view class="row between" style="margin-top:var(--space-3);">
-      <text class="muted" style="color:rgba(255,255,255,0.7);">日均 ¥ 41.6</text>
-      <text class="muted" style="color:rgba(255,255,255,0.7);">预算剩余 ¥ 752</text>
+      <text class="muted" style="color:rgba(255,255,255,0.85);">日均 ¥ 41.6</text>
+      <text class="muted" style="color:rgba(255,255,255,0.85);">预算剩余 ¥ 752</text>
     </view>
-    <view class="bar-track" style="margin-top:var(--space-2); background:rgba(255,255,255,0.2);">
+    <view class="bar-track" style="margin-top:var(--space-2); background:rgba(255,255,255,0.25);">
       <view class="bar-fill" style="width:62%; background:#fff;"></view>
     </view>
   </view>
@@ -50,11 +50,11 @@
     </view>
   </view>
 
-  <!-- 最近 3 笔 -->
+  <!-- 最近 3 笔：分类色色块 -->
   <view class="section">
     <view class="row between section-head">
-      <text class="h4">最近</text>
-      <text class="muted" bindtap="goBill">查看全部 →</text>
+      <text class="h3">最近</text>
+      <text class="primary" bindtap="goBill">查看全部 →</text>
     </view>
 
     <view class="txn-list">
@@ -87,7 +87,7 @@
     </view>
   </view>
 
-  <!-- 底部 tab bar -->
+  <!-- 底部 tab bar (固定) -->
   <view class="tabbar">
     <view class="tab tab--active">
       <text class="tab__icon">●</text>

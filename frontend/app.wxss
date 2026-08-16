@@ -1,55 +1,53 @@
-/* ui-ux-pro-max v3 · "年轻实用派" (Shark-Accounting-inspired)
- * Theme: Light + Colorful category palette
- * Background: #F4F5F7 (iOS 浅灰)
- * Card: 白底 + 1px 浅灰 border + 8-12 圆角
- * Typography: -apple-system / PingFang SC (系统字体, wx 不支持 web font)
- * 风格: 高信息密度, 大数字 monospace, 分类色块
- * 6 色调色板 + 主色 trust-blue
+/* ui-ux-pro-max v4 · "焦橙+奶油"
+ * 配色: 焦橙主色 #FF6B35 + 淡奶油背景 #FFF8F0
+ * 风格: 温暖年轻 + 强分类对比 + 高密度
+ * Typography: -apple-system / PingFang SC (wx 小程序无 web font)
  * 8 状态: default · hover · focus-visible · active · disabled · loading · error · success
  */
 
-/* ============ Color tokens (Light) ============ */
+/* ============ Color tokens (焦橙 + 奶油) ============ */
 page {
   /* Surfaces */
-  --color-bg:          #F4F5F7;   /* iOS 浅灰 主背景 */
+  --color-bg:          #FFF8F0;   /* 淡奶油, 主背景 */
   --color-bg-2:        #FFFFFF;   /* 卡片白底 */
-  --color-bg-3:        #F9FAFB;   /* 凹陷（输入框底） */
+  --color-bg-3:        #F5EFE0;   /* 凹陷（输入框底） */
   --color-bg-elevated: #FFFFFF;
+  --color-bg-warm:     #FFE8D6;   /* 暖色提示背景 */
 
   /* Text */
-  --color-fg:          #0F172A;   /* slate-900, 主文字 */
-  --color-fg-2:        #475569;   /* slate-600, 次文字 */
-  --color-fg-3:        #94A3B8;   /* slate-400, 提示 */
-  --color-fg-4:        #CBD5E1;   /* 占位 */
+  --color-fg:          #1A1A1A;   /* 主文字 (近黑) */
+  --color-fg-2:        #6B6B6B;   /* 次文字 */
+  --color-fg-3:        #A8A8A8;   /* 提示 */
+  --color-fg-4:        #D4D4D4;   /* 占位 */
 
-  /* Brand: 信任蓝 */
-  --color-primary:     #1E40AF;   /* blue-800 */
-  --color-primary-2:   #1D4ED8;   /* hover */
-  --color-primary-3:   #2563EB;   /* active / 浅 */
+  /* Brand: 焦橙 */
+  --color-primary:     #FF6B35;   /* 焦橙-600 */
+  --color-primary-2:   #E55A2B;   /* hover */
+  --color-primary-3:   #FF8A5C;   /* active / 浅 */
   --color-on-primary:  #FFFFFF;
 
   /* Borders */
-  --color-border:      #E5E7EB;   /* gray-200, 主边框 */
-  --color-border-2:    #F1F5F9;   /* gray-100, 极淡 */
-  --color-rule:        rgba(15, 23, 42, 0.06);
+  --color-border:      #F0E6D2;   /* 奶米色 hairline */
+  --color-border-2:    #FAEEDC;
+  --color-rule:        rgba(26, 26, 26, 0.06);
 
   /* Status */
-  --color-error:       #DC2626;   /* red-600 */
-  --color-error-soft:  #FEF2F2;
-  --color-success:     #10B981;   /* emerald-500 */
-  --color-success-soft:#ECFDF5;
-  --color-warning:     #F59E0B;
-  --color-warning-soft:#FFFBEB;
+  --color-error:       #D32F2F;   /* 深红 */
+  --color-error-soft:  #FFEBEE;
+  --color-success:     #00897B;   /* 森绿 */
+  --color-success-soft:#E0F2F1;
+  --color-warning:     #F57C00;
+  --color-warning-soft:#FFF3E0;
 
-  /* Category palette (6 colors) */
-  --cat-food:          #F97316;   /* 餐饮 - orange-500 */
-  --cat-transport:     #3B82F6;   /* 交通 - blue-500 */
-  --cat-shop:          #10B981;   /* 购物 - emerald-500 */
-  --cat-home:          #EAB308;   /* 居家 - yellow-500 */
-  --cat-fun:           #A855F7;   /* 娱乐 - purple-500 */
-  --cat-medical:       #EF4444;   /* 医疗 - red-500 */
-  --cat-income:        #06B6D4;   /* 工资 - cyan-500 */
-  --cat-other:         #6B7280;   /* gray-500 */
+  /* Category palette (6 高对比色 + 2 辅助) */
+  --cat-food:          #FF6B35;   /* 餐饮 - 焦橙 (主色复用) */
+  --cat-transport:     #1A1A1A;   /* 交通 - 纯黑 (对比) */
+  --cat-shop:          #E91E63;   /* 购物 - 品红 */
+  --cat-home:          #FFD600;   /* 居家 - 柠檬黄 */
+  --cat-fun:           #6B3FA0;   /* 娱乐 - 深紫 */
+  --cat-medical:       #D32F2F;   /* 医疗 - 深红 */
+  --cat-income:        #00897B;   /* 工资 - 森绿 */
+  --cat-other:         #9E9E9E;   /* 其他 - 灰 */
 
   background-color: var(--color-bg);
   color: var(--color-fg);
@@ -58,7 +56,7 @@ page {
   line-height: 1.5;
 }
 
-/* ============ Typography tokens ============ */
+/* ============ Typography ============ */
 page {
   --font-display: -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif;
   --font-body:    -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif;
@@ -81,7 +79,7 @@ page {
   --tracking-wide:   0.05em;
 }
 
-/* ============ Spacing tokens (4pt) ============ */
+/* ============ Spacing (4pt) ============ */
 page {
   --space-1:  8rpx;
   --space-2:  12rpx;
@@ -92,7 +90,7 @@ page {
   --space-7:  64rpx;
 }
 
-/* ============ Border / Radius tokens ============ */
+/* ============ Border / Radius ============ */
 page {
   --radius-sm:  8rpx;
   --radius-md:  12rpx;
@@ -104,7 +102,7 @@ page {
   --border-thick: 2rpx solid var(--color-primary);
 }
 
-/* ============ Motion tokens (150-300ms) ============ */
+/* ============ Motion (150-300ms) ============ */
 page {
   --dur-fast: 150ms;
   --dur-base: 200ms;
@@ -114,14 +112,14 @@ page {
   --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* ============ Shadow tokens ============ */
+/* ============ Shadow ============ */
 page {
-  --shadow-sm: 0 1rpx 2rpx rgba(15, 23, 42, 0.04);
-  --shadow-md: 0 2rpx 8rpx rgba(15, 23, 42, 0.06);
-  --shadow-lg: 0 4rpx 16rpx rgba(15, 23, 42, 0.08);
+  --shadow-sm: 0 1rpx 2rpx rgba(255, 107, 53, 0.06);
+  --shadow-md: 0 2rpx 8rpx rgba(255, 107, 53, 0.10);
+  --shadow-lg: 0 4rpx 16rpx rgba(255, 107, 53, 0.14);
 }
 
-/* ============ Layout utilities ============ */
+/* ============ Layout utils ============ */
 .row { display: flex; flex-direction: row; align-items: center; }
 .col { display: flex; flex-direction: column; }
 .between { justify-content: space-between; }
@@ -133,7 +131,7 @@ page {
 .gap-5 { gap: var(--space-5); }
 .flex-1 { flex: 1; min-width: 0; }
 
-/* ============ Type utilities ============ */
+/* ============ Type utils ============ */
 .h1 { font-family: var(--font-display); font-size: var(--text-xl); font-weight: 700; line-height: var(--leading-tight); letter-spacing: var(--tracking-tight); color: var(--color-fg); }
 .h2 { font-family: var(--font-display); font-size: var(--text-lg); font-weight: 700; line-height: var(--leading-tight); color: var(--color-fg); }
 .h3 { font-family: var(--font-display); font-size: var(--text-md); font-weight: 600; color: var(--color-fg); }
@@ -151,7 +149,7 @@ page {
 .amount-md { font-family: var(--font-mono); font-size: var(--text-lg); font-weight: 700; color: var(--color-fg); letter-spacing: -0.02em; line-height: 1; font-variant-numeric: tabular-nums; }
 .amount-sm { font-family: var(--font-mono); font-size: var(--text-md); font-weight: 600; color: var(--color-fg); font-variant-numeric: tabular-nums; }
 
-/* ============ Card (浅色 + 圆角大) ============ */
+/* ============ Card ============ */
 .card {
   background: var(--color-bg-2);
   border: 1rpx solid var(--color-border);
@@ -163,14 +161,12 @@ page {
   background: var(--color-primary);
   border: none;
   color: var(--color-on-primary);
+  box-shadow: var(--shadow-md);
 }
 .card--primary .label,
-.card--primary .muted { color: rgba(255,255,255,0.85); }
-.card--accent {
-  background: var(--color-success-soft);
-  border: 1rpx solid var(--color-success);
-}
-.card--hover { background: var(--color-bg-3); border-color: var(--color-fg-3); }
+.card--primary .muted { color: rgba(255, 255, 255, 0.85); }
+.card--warm { background: var(--color-bg-warm); border-color: rgba(255, 107, 53, 0.18); }
+.card--hover { background: var(--color-bg-3); border-color: var(--color-primary); }
 
 /* ============ Button (8 states) ============ */
 .btn {
@@ -191,35 +187,29 @@ page {
 }
 .btn:hover, .btn.is-hover { background: var(--color-primary-2); }
 .btn:focus-visible, .btn.is-focus { outline: 3rpx solid var(--color-primary-3); outline-offset: 2rpx; }
-.btn:active, .btn.is-active { background: var(--color-primary-3); transform: scale(0.98); }
+.btn:active, .btn.is-active { background: var(--color-primary-2); transform: scale(0.98); }
 .btn[disabled], .btn.is-disabled, .btn:disabled { background: var(--color-bg-3); color: var(--color-fg-3); cursor: not-allowed; }
 .btn.is-loading { opacity: 0.6; pointer-events: none; }
 .btn.is-loading::after { content: " …"; }
 .btn.is-error { background: var(--color-error); }
 .btn.is-success { background: var(--color-success); }
-
-/* Pill 圆形主 CTA */
 .btn--pill { border-radius: var(--radius-pill); min-height: 96rpx; font-size: var(--text-lg); }
 
-/* Ghost */
 .btn--ghost {
   background: var(--color-bg-2);
   color: var(--color-fg);
   border: 1rpx solid var(--color-border);
 }
-.btn--ghost:hover, .btn--ghost.is-hover { background: var(--color-bg-3); border-color: var(--color-fg-3); }
-.btn--ghost:focus-visible { outline: 3rpx solid var(--color-primary-3); outline-offset: 2rpx; }
-.btn--ghost:active, .btn--ghost.is-active { background: var(--color-border); }
+.btn--ghost:hover, .btn--ghost.is-hover { background: var(--color-bg-3); border-color: var(--color-primary); }
+.btn--ghost:focus-visible { outline: 3rpx solid var(--color-primary); outline-offset: 2rpx; }
 .btn--ghost[disabled] { color: var(--color-fg-3); }
 
-/* Danger */
 .btn--danger {
   background: var(--color-bg-2);
   color: var(--color-error);
   border: 1rpx solid var(--color-error);
 }
 .btn--danger:hover, .btn--danger.is-hover { background: var(--color-error); color: var(--color-on-primary); }
-.btn--danger:focus-visible { outline: 3rpx solid var(--color-error); outline-offset: 2rpx; }
 
 /* ============ Input ============ */
 .input {
@@ -257,7 +247,7 @@ page {
 }
 .textarea:focus, .textarea.is-focus { border-color: var(--color-primary); background: var(--color-bg-2); outline: none; }
 
-/* ============ Category chip (色块 + 名字) ============ */
+/* ============ Chip + 分类色 ============ */
 .chip {
   display: inline-flex;
   align-items: center;
@@ -277,7 +267,6 @@ page {
   background: var(--color-fg-3);
   flex-shrink: 0;
 }
-/* 8 类别染色 */
 .chip--food      .chip__dot, .cat-food      { background: var(--cat-food); }
 .chip--transport .chip__dot, .cat-transport { background: var(--cat-transport); }
 .chip--shop      .chip__dot, .cat-shop      { background: var(--cat-shop); }
@@ -287,16 +276,16 @@ page {
 .chip--income    .chip__dot, .cat-income    { background: var(--cat-income); }
 .chip--other     .chip__dot, .cat-other     { background: var(--cat-other); }
 
-.chip--food      { background: rgba(249, 115, 22, 0.12); color: var(--cat-food); }
-.chip--transport { background: rgba(59, 130, 246, 0.12); color: var(--cat-transport); }
-.chip--shop      { background: rgba(16, 185, 129, 0.12); color: var(--cat-shop); }
-.chip--home      { background: rgba(234, 179, 8, 0.12);  color: #A16207; }
-.chip--fun       { background: rgba(168, 85, 247, 0.12); color: var(--cat-fun); }
-.chip--medical   { background: rgba(239, 68, 68, 0.12);  color: var(--cat-medical); }
-.chip--income    { background: rgba(6, 182, 212, 0.12);  color: #0E7490; }
+.chip--food      { background: rgba(255, 107, 53, 0.12); color: var(--cat-food); }
+.chip--transport { background: rgba(26, 26, 26, 0.08); color: var(--cat-transport); }
+.chip--shop      { background: rgba(233, 30, 99, 0.10); color: var(--cat-shop); }
+.chip--home      { background: rgba(255, 214, 0, 0.20); color: #B45309; }
+.chip--fun       { background: rgba(107, 63, 160, 0.12); color: var(--cat-fun); }
+.chip--medical   { background: rgba(211, 47, 47, 0.10); color: var(--cat-medical); }
+.chip--income    { background: rgba(0, 137, 123, 0.12); color: #00695C; }
 .chip--other     { background: var(--color-bg-3); color: var(--color-fg-2); }
 
-/* ============ Category 色块（用在卡片/列表项的左侧/背景） ============ */
+/* ============ Category 色块（卡片/列表左侧） ============ */
 .cat-stripe {
   width: 4rpx;
   align-self: stretch;
@@ -334,7 +323,7 @@ page {
 .hairline { height: 1rpx; background: var(--color-border); margin: var(--space-3) 0; }
 .hairline--thick { height: 2rpx; background: var(--color-fg-3); margin: var(--space-4) 0; }
 
-/* ============ Progress / bar ============ */
+/* ============ Progress bar ============ */
 .bar-track {
   width: 100%;
   height: 8rpx;
@@ -350,7 +339,7 @@ page {
 .bar-fill--primary { background: var(--color-primary); }
 .bar-fill--success { background: var(--color-success); }
 
-/* ============ Reduced motion (mandatory) ============ */
+/* ============ Reduced motion ============ */
 @media (prefers-reduced-motion: reduce) {
   view, text, button, image, input, textarea, scroll-view {
     transition: none !important;
