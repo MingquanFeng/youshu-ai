@@ -1,9 +1,9 @@
-/* index — MUJI 无印良品 (极简, 留白, 纸张感) — v5.1: 增强边界感 */
+/* index — MUJI 无印良品 (极简, 留白, 纸张感) — v5.2: 增强立体感 */
 
 .page {
-  padding: var(--space-7) var(--space-5) 140rpx;  /* MUJI 偏好的大留白 */
+  padding: var(--space-7) var(--space-5) 140rpx;
   min-height: 100vh;
-  background: var(--color-bg);
+  background: var(--color-bg);  /* 米白 #F8F5EE 主背景, 比卡片深一阶 */
   color: var(--color-fg);
 }
 
@@ -12,36 +12,63 @@
   margin-bottom: var(--space-6);
 }
 .topbar .h2 {
-  font-weight: 400;  /* MUJI 用 weight 400 而不是 700 */
+  font-weight: 400;
   letter-spacing: 0.02em;
 }
 
-/* KPI 区域: 不巨大, 不浮夸 — 加左侧原木色细线做视觉锚点 */
+/* KPI 区域: 升级为浅米色 card (比背景深一阶, 创造层次) */
 .stat {
-  margin-bottom: var(--space-4);
-  padding-left: var(--space-3);
-  border-left: 3rpx solid var(--color-primary);  /* 极细左侧色块, 强边界感 */
+  margin-bottom: var(--space-5);
+  padding: var(--space-5) var(--space-4) var(--space-4) var(--space-4);
+  background: var(--color-bg-2);  /* #F2EEE5 浅米, 比背景深一阶 */
+  border: 1rpx solid var(--color-border);
+  border-radius: var(--radius-lg);  /* 8px (MUJI 极克制的圆角) */
+  box-shadow: 0 1rpx 2rpx rgba(58, 58, 58, 0.04);  /* 极淡 shadow, 提立体感 */
+  position: relative;
+  overflow: hidden;
+}
+/* 左侧 4rpx 原木色细块 (主区视觉锚点) */
+.stat::before {
+  content: '';
+  position: absolute;
+  top: 0; bottom: 0; left: 0;
+  width: 4rpx;
+  background: var(--color-primary);
 }
 .stat .row.baseline { align-items: baseline; }
 
-/* Action: 文字按钮风格 (MUJI 偏好) — 加下划线缩进对齐 KPI */
+/* KPI 数字加粗 (从 300 → 500, 立) */
+.stat .amount-md {
+  font-size: 60rpx;
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--color-fg);
+}
+
+/* Action: 文字按钮 (与 KPI card 缩进对齐) */
 .action {
-  padding: var(--space-3) 0 var(--space-2) var(--space-3);  /* 与 KPI 缩进对齐 */
+  padding: var(--space-3) var(--space-4);
 }
 .action .btn--text {
   font-size: var(--text-md);
   font-weight: 500;
 }
 
-/* Section: 极简 */
+/* Section: 浅米色 card 容器 (流水 list) */
 .section {
   margin-bottom: var(--space-5);
-  padding-left: var(--space-3);
-  border-left: 1rpx solid var(--color-border);  /* 比 KPI 更轻的左线 */
+  background: var(--color-bg-2);
+  border: 1rpx solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 1rpx 2rpx rgba(58, 58, 58, 0.04);
+  padding: var(--space-3) var(--space-4) var(--space-3) var(--space-4);
 }
-.section-head { margin-bottom: var(--space-3); }
+.section-head {
+  padding: var(--space-2) 0 var(--space-2);
+}
 
-/* 流水: 文字 + 左侧 4rpx 分类色块, 无 Card 无背景 */
+/* 流水: 文字 + 左侧 4rpx 分类色块, 无 Card (内部条目无背景) */
 .txn {
   display: flex;
   align-items: center;
@@ -56,6 +83,11 @@
   flex-direction: column;
   gap: 4rpx;
 }
+/* 金额加粗立 (500) */
+.txn .amount-sm {
+  font-weight: 500;
+  color: var(--color-fg);
+}
 .txn__stripe {
   width: 4rpx;
   height: 32rpx;
@@ -63,7 +95,6 @@
   border-radius: 2rpx;
   flex-shrink: 0;
 }
-/* 分类色 stripe (8 类别) */
 .txn__stripe--food      { background: var(--cat-food); }
 .txn__stripe--transport { background: var(--cat-transport); }
 .txn__stripe--shop      { background: var(--cat-shop); }
@@ -73,14 +104,13 @@
 .txn__stripe--income    { background: var(--cat-income); }
 .txn__stripe--other     { background: var(--cat-other); }
 
-/* 底部 tab bar: 极简文字风格, 无图标 */
+/* 底部 tab bar: 立体感 (顶部加阴影 + 背景色加深) */
 .tabbar {
   position: fixed;
   left: 0; right: 0; bottom: 0;
-  background: rgba(248, 245, 238, 0.92);
-  backdrop-filter: saturate(180%) blur(20rpx);
-  -webkit-backdrop-filter: saturate(180%) blur(20rpx);
+  background: var(--color-bg-2);
   border-top: 1rpx solid var(--color-border);
+  box-shadow: 0 -2rpx 8rpx rgba(58, 58, 58, 0.04);
   display: flex;
   padding: var(--space-3) var(--space-5);
   padding-bottom: calc(var(--space-3) + env(safe-area-inset-bottom));
@@ -102,11 +132,10 @@
 }
 .tab--active { color: var(--color-fg); }
 .tab--active .tab__label { font-weight: 500; }
-/* active tab 加底部细线作锚点 */
 .tab--active::after {
   content: '';
   position: absolute;
-  bottom: -1rpx;  /* 覆盖在 border-top 上 */
+  bottom: -1rpx;
   left: 50%;
   transform: translateX(-50%);
   width: 32rpx;
