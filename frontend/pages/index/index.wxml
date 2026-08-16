@@ -1,33 +1,105 @@
 <view class="page">
-  <!-- Hero -->
-  <view class="hero">
-    <text class="label-sm">AI 记账 · v0.2</text>
-    <text class="hero__title h1">记账，\n变得简单。</text>
-    <text class="hero__sub">拍下支付截图，自动识别金额、商家、时间。</text>
-
-    <!-- 主 CTA -->
-    <button class="btn hero__cta" bindtap="goRecognize" hover-class="btn--hover">
-      <text>拍下支付截图</text>
-    </button>
-    <text class="hero__hint mono">免登录 · 即拍即记</text>
+  <!-- 顶部 header -->
+  <view class="topbar">
+    <view class="row between">
+      <text class="h3">YOUSHU</text>
+      <view class="row gap-3">
+        <text class="muted">8月</text>
+        <text class="badge-dot"></text>
+      </view>
+    </view>
   </view>
 
-  <!-- 次要功能：双卡 -->
-  <view class="feature-grid">
-    <view class="feature-card" bindtap="goBill" hover-class="card--hover">
-      <text class="feature-card__num mono">01</text>
+  <!-- 当月支出大卡 -->
+  <view class="card card--primary stat-card">
+    <text class="label" style="color:rgba(255,255,255,0.7);">本月支出</text>
+    <view class="row baseline gap-1">
+      <text class="amount-xl" style="color:#fff;font-size:64rpx;">¥1,248</text>
+      <text class="muted" style="color:rgba(255,255,255,0.6);">.50</text>
+    </view>
+    <view class="row between" style="margin-top:var(--space-3);">
+      <text class="muted" style="color:rgba(255,255,255,0.7);">日均 ¥ 41.6</text>
+      <text class="muted" style="color:rgba(255,255,255,0.7);">预算剩余 ¥ 752</text>
+    </view>
+    <view class="bar-track" style="margin-top:var(--space-2); background:rgba(255,255,255,0.2);">
+      <view class="bar-fill" style="width:62%; background:#fff;"></view>
+    </view>
+  </view>
+
+  <!-- 4 宫格快捷 -->
+  <view class="quick-grid">
+    <view class="quick-card" bindtap="goRecognize" hover-class="card--hover">
+      <view class="quick-icon" style="background:var(--cat-food);">+</view>
+      <text class="h4">记一笔</text>
+      <text class="muted">拍下截图</text>
+    </view>
+    <view class="quick-card" bindtap="goBill" hover-class="card--hover">
+      <view class="quick-icon" style="background:var(--cat-shop);">≡</view>
       <text class="h4">账本</text>
-      <text class="muted">查看全部流水</text>
+      <text class="muted">共 12 笔</text>
     </view>
-    <view class="feature-card" bindtap="goAnalysis" hover-class="card--hover">
-      <text class="feature-card__num mono">02</text>
+    <view class="quick-card" bindtap="goAnalysis" hover-class="card--hover">
+      <view class="quick-icon" style="background:var(--cat-transport);">◐</view>
       <text class="h4">分析</text>
-      <text class="muted">消费洞察</text>
+      <text class="muted">本月报告</text>
+    </view>
+    <view class="quick-card" hover-class="card--hover">
+      <view class="quick-icon" style="background:var(--cat-fun);">★</view>
+      <text class="h4">预算</text>
+      <text class="muted">设置</text>
     </view>
   </view>
 
-  <!-- 页脚 -->
-  <view class="footer">
-    <text class="muted mono" style="font-size:20rpx;">YOUSHU · AI</text>
+  <!-- 最近 3 笔 -->
+  <view class="section">
+    <view class="row between section-head">
+      <text class="h4">最近</text>
+      <text class="muted" bindtap="goBill">查看全部 →</text>
+    </view>
+
+    <view class="txn-list">
+      <view class="txn" bindtap="goBill" hover-class="card--hover">
+        <view class="cat-stripe cat-shop"></view>
+        <view class="txn__body">
+          <text class="h4">盒马鲜生</text>
+          <text class="muted mono">08-14 19:24 · 微信支付</text>
+        </view>
+        <text class="amount-md">−88.00</text>
+      </view>
+
+      <view class="txn" bindtap="goBill" hover-class="card--hover">
+        <view class="cat-stripe cat-transport"></view>
+        <view class="txn__body">
+          <text class="h4">滴滴出行</text>
+          <text class="muted mono">08-14 09:15 · 支付宝</text>
+        </view>
+        <text class="amount-md">−23.50</text>
+      </view>
+
+      <view class="txn" bindtap="goBill" hover-class="card--hover">
+        <view class="cat-stripe cat-food"></view>
+        <view class="txn__body">
+          <text class="h4">麦当劳</text>
+          <text class="muted mono">08-13 12:30 · 微信支付</text>
+        </view>
+        <text class="amount-md">−35.00</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部 tab bar -->
+  <view class="tabbar">
+    <view class="tab tab--active">
+      <text class="tab__icon">●</text>
+      <text class="tab__label">首页</text>
+    </view>
+    <view class="tab" bindtap="goBill">
+      <text class="tab__icon">≡</text>
+      <text class="tab__label">账本</text>
+    </view>
+    <view class="tab" bindtap="goAnalysis">
+      <text class="tab__icon">◐</text>
+      <text class="tab__label">分析</text>
+    </view>
   </view>
 </view>
