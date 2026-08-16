@@ -1,4 +1,4 @@
-/* index — MUJI 无印良品 (极简, 留白, 纸张感) */
+/* index — MUJI 无印良品 (极简, 留白, 纸张感) — v5.1: 增强边界感 */
 
 .page {
   padding: var(--space-7) var(--space-5) 140rpx;  /* MUJI 偏好的大留白 */
@@ -9,42 +9,69 @@
 
 /* 顶部: 极简, 只有月名 */
 .topbar {
-  margin-bottom: var(--space-7);
+  margin-bottom: var(--space-6);
 }
 .topbar .h2 {
   font-weight: 400;  /* MUJI 用 weight 400 而不是 700 */
   letter-spacing: 0.02em;
 }
 
-/* KPI 区域: 不巨大, 不浮夸 */
+/* KPI 区域: 不巨大, 不浮夸 — 加左侧原木色细线做视觉锚点 */
 .stat {
-  margin-bottom: var(--space-3);
+  margin-bottom: var(--space-4);
+  padding-left: var(--space-3);
+  border-left: 3rpx solid var(--color-primary);  /* 极细左侧色块, 强边界感 */
 }
 .stat .row.baseline { align-items: baseline; }
 
-/* Action: 文字按钮风格 (MUJI 偏好) */
+/* Action: 文字按钮风格 (MUJI 偏好) — 加下划线缩进对齐 KPI */
 .action {
-  padding: var(--space-3) 0 var(--space-2);
+  padding: var(--space-3) 0 var(--space-2) var(--space-3);  /* 与 KPI 缩进对齐 */
+}
+.action .btn--text {
+  font-size: var(--text-md);
+  font-weight: 500;
 }
 
 /* Section: 极简 */
-.section { margin-bottom: var(--space-5); }
+.section {
+  margin-bottom: var(--space-5);
+  padding-left: var(--space-3);
+  border-left: 1rpx solid var(--color-border);  /* 比 KPI 更轻的左线 */
+}
 .section-head { margin-bottom: var(--space-3); }
 
-/* 流水: 文字 + monospace 数字, 无 Card 无背景 */
+/* 流水: 文字 + 左侧 4rpx 分类色块, 无 Card 无背景 */
 .txn {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: var(--space-3);
   padding: var(--space-3) 0;
   transition: opacity var(--dur-base) var(--ease-out);
 }
 .txn:active, .txn.is-hover { opacity: 0.5; }
 .txn__col {
+  flex: 1;
   display: flex;
   flex-direction: column;
   gap: 4rpx;
 }
+.txn__stripe {
+  width: 4rpx;
+  height: 32rpx;
+  background: var(--color-fg-3);
+  border-radius: 2rpx;
+  flex-shrink: 0;
+}
+/* 分类色 stripe (8 类别) */
+.txn__stripe--food      { background: var(--cat-food); }
+.txn__stripe--transport { background: var(--cat-transport); }
+.txn__stripe--shop      { background: var(--cat-shop); }
+.txn__stripe--home      { background: var(--cat-home); }
+.txn__stripe--fun       { background: var(--cat-fun); }
+.txn__stripe--medical   { background: var(--cat-medical); }
+.txn__stripe--income    { background: var(--cat-income); }
+.txn__stripe--other     { background: var(--cat-other); }
 
 /* 底部 tab bar: 极简文字风格, 无图标 */
 .tabbar {
@@ -67,6 +94,7 @@
   padding: var(--space-1) 0;
   color: var(--color-fg-3);
   transition: color var(--dur-fast) var(--ease-out);
+  position: relative;
 }
 .tab__label {
   font-size: var(--text-sm);
@@ -74,3 +102,14 @@
 }
 .tab--active { color: var(--color-fg); }
 .tab--active .tab__label { font-weight: 500; }
+/* active tab 加底部细线作锚点 */
+.tab--active::after {
+  content: '';
+  position: absolute;
+  bottom: -1rpx;  /* 覆盖在 border-top 上 */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 32rpx;
+  height: 2rpx;
+  background: var(--color-primary);
+}

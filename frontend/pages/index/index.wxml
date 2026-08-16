@@ -31,6 +31,7 @@
     </view>
 
     <view class="txn" bindtap="goBill">
+      <view class="txn__stripe txn__stripe--shop"></view>
       <view class="txn__col">
         <text class="h4">盒马鲜生</text>
         <text class="muted" style="font-size: 22rpx;">08-14 · 微信支付</text>
@@ -41,6 +42,7 @@
     <view class="hairline" style="margin: 0;"></view>
 
     <view class="txn" bindtap="goBill">
+      <view class="txn__stripe txn__stripe--transport"></view>
       <view class="txn__col">
         <text class="h4">滴滴出行</text>
         <text class="muted" style="font-size: 22rpx;">08-14 · 支付宝</text>
@@ -51,6 +53,7 @@
     <view class="hairline" style="margin: 0;"></view>
 
     <view class="txn" bindtap="goBill">
+      <view class="txn__stripe txn__stripe--food"></view>
       <view class="txn__col">
         <text class="h4">麦当劳</text>
         <text class="muted" style="font-size: 22rpx;">08-13 · 微信支付</text>
