@@ -1,122 +1,120 @@
-/* ui-ux-pro-max v4 · "焦橙+奶油"
- * 配色: 焦橙主色 #FF6B35 + 淡奶油背景 #FFF8F0
- * 风格: 温暖年轻 + 强分类对比 + 高密度
- * Typography: -apple-system / PingFang SC (wx 小程序无 web font)
+/* ui-ux-pro-max v5 · "MUJI 无印良品"
+ * 风格: 极简 / 克制 / 安静 / 自然 / 留白 / 朴素
+ * 颜色: 米白 + 暖灰 + 原木 + 深灰 (低饱和自然色)
+ * 避免: 渐变 / 强阴影 / 大圆角 / 大量 Card / 巨大数字 / Emoji / 科技感
+ * 字体: -apple-system / PingFang SC (wx 不支持 web font, MUJI 本身只用 Helvetica + 自家字体)
+ * 原则: Less is More · 内容优先 · 留白本身就是设计
  * 8 状态: default · hover · focus-visible · active · disabled · loading · error · success
  */
 
-/* ============ Color tokens (焦橙 + 奶油) ============ */
+/* ============ Color tokens (MUJI — 低饱和自然色) ============ */
 page {
-  /* Surfaces */
-  --color-bg:          #FFF8F0;   /* 淡奶油, 主背景 */
-  --color-bg-2:        #FFFFFF;   /* 卡片白底 */
-  --color-bg-3:        #F5EFE0;   /* 凹陷（输入框底） */
-  --color-bg-elevated: #FFFFFF;
-  --color-bg-warm:     #FFE8D6;   /* 暖色提示背景 */
+  /* Surfaces — 纸张感米白 */
+  --color-bg:          #F8F5EE;   /* 主背景 — 米白 */
+  --color-bg-2:        #F2EEE5;   /* 次级表面 */
+  --color-bg-3:        #EBE5D8;   /* 凹陷 (输入框) */
+  --color-bg-elevated: #F8F5EE;
 
-  /* Text */
-  --color-fg:          #1A1A1A;   /* 主文字 (近黑) */
+  /* Text — 深灰 (不是纯黑) */
+  --color-fg:          #3A3A3A;   /* 主文字 — 深灰 */
   --color-fg-2:        #6B6B6B;   /* 次文字 */
-  --color-fg-3:        #A8A8A8;   /* 提示 */
-  --color-fg-4:        #D4D4D4;   /* 占位 */
+  --color-fg-3:        #9E9E9E;   /* 提示 */
+  --color-fg-4:        #C4C4C4;   /* 占位 */
 
-  /* Brand: 焦橙 */
-  --color-primary:     #FF6B35;   /* 焦橙-600 */
-  --color-primary-2:   #E55A2B;   /* hover */
-  --color-primary-3:   #FF8A5C;   /* active / 浅 */
+  /* Brand: 原木色 (只有一个 accent, 不抢眼) */
+  --color-primary:     #8B7355;   /* 原木棕 */
+  --color-primary-2:   #75603F;   /* hover */
+  --color-primary-3:   #A89274;   /* 浅 */
   --color-on-primary:  #FFFFFF;
 
-  /* Borders */
-  --color-border:      #F0E6D2;   /* 奶米色 hairline */
-  --color-border-2:    #FAEEDC;
-  --color-rule:        rgba(26, 26, 26, 0.06);
+  /* Borders — 1px 极细 hairline */
+  --color-border:      #E8E2D5;   /* 极淡米色 */
+  --color-border-2:    #F0EAD9;
+  --color-rule:        rgba(58, 58, 58, 0.08);
 
-  /* Status */
-  --color-error:       #D32F2F;   /* 深红 */
-  --color-error-soft:  #FFEBEE;
-  --color-success:     #00897B;   /* 森绿 */
-  --color-success-soft:#E0F2F1;
-  --color-warning:     #F57C00;
-  --color-warning-soft:#FFF3E0;
+  /* Status — 全部低饱和 */
+  --color-error:       #B85A4A;   /* 砖红 */
+  --color-error-soft:  #F7E8E3;
+  --color-success:     #6B8265;   /* 橄榄绿 */
+  --color-success-soft:#E8EFE5;
+  --color-warning:     #C89669;   /* 浅琥珀 */
+  --color-warning-soft:#F5EBDF;
 
-  /* Category palette (6 高对比色 + 2 辅助) */
-  --cat-food:          #FF6B35;   /* 餐饮 - 焦橙 (主色复用) */
-  --cat-transport:     #1A1A1A;   /* 交通 - 纯黑 (对比) */
-  --cat-shop:          #E91E63;   /* 购物 - 品红 */
-  --cat-home:          #FFD600;   /* 居家 - 柠檬黄 */
-  --cat-fun:           #6B3FA0;   /* 娱乐 - 深紫 */
-  --cat-medical:       #D32F2F;   /* 医疗 - 深红 */
-  --cat-income:        #00897B;   /* 工资 - 森绿 */
-  --cat-other:         #9E9E9E;   /* 其他 - 灰 */
+  /* 分类色 — 全部低饱和自然色 (MUJI palette) */
+  --cat-food:          #C89669;   /* 餐饮 - 浅琥珀 */
+  --cat-transport:     #8B9DAF;   /* 交通 - 灰蓝 */
+  --cat-shop:          #A0937D;   /* 购物 - 暖灰褐 */
+  --cat-home:          #A8A29E;   /* 居家 - 米灰 */
+  --cat-fun:           #9B8AAD;   /* 娱乐 - 淡紫 */
+  --cat-medical:       #B89B8B;   /* 医疗 - 玫瑰灰 */
+  --cat-income:        #7D9988;   /* 工资 - 鼠尾草绿 */
+  --cat-other:         #9E9E9E;   /* 其他 - 中灰 */
 
   background-color: var(--color-bg);
   color: var(--color-fg);
   font-size: 28rpx;
   font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", sans-serif;
-  line-height: 1.5;
+  line-height: 1.55;
 }
 
-/* ============ Typography ============ */
+/* ============ Typography (克制 — 不巨大) ============ */
 page {
   --font-display: -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif;
-  --font-body:    -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif;
+  --font-body:    -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", sans-serif;
   --font-mono:    "SF Mono", "Menlo", "Courier New", monospace;
 
-  --text-xs:  20rpx;
-  --text-sm:  22rpx;
-  --text-md:  26rpx;
+  --text-xs:  22rpx;
+  --text-sm:  26rpx;
+  --text-md:  28rpx;
   --text-lg:  32rpx;
   --text-xl:  40rpx;
-  --text-2xl: 56rpx;
-  --text-3xl: 72rpx;
 
-  --leading-tight:  1.15;
-  --leading-normal: 1.45;
-  --leading-loose:  1.65;
+  --leading-tight:  1.2;
+  --leading-normal: 1.55;
+  --leading-loose:  1.7;
 
-  --tracking-tight:  -0.02em;
+  --tracking-tight:  -0.01em;
   --tracking-normal: 0;
-  --tracking-wide:   0.05em;
+  --tracking-wide:   0.02em;
 }
 
-/* ============ Spacing (4pt) ============ */
+/* ============ Spacing (8pt 主导, 更大间距) ============ */
 page {
   --space-1:  8rpx;
-  --space-2:  12rpx;
-  --space-3:  16rpx;
-  --space-4:  20rpx;
-  --space-5:  28rpx;
-  --space-6:  40rpx;
-  --space-7:  64rpx;
+  --space-2:  16rpx;
+  --space-3:  24rpx;
+  --space-4:  32rpx;
+  --space-5:  48rpx;
+  --space-6:  64rpx;
+  --space-7:  96rpx;
+  --space-8:  128rpx;
 }
 
-/* ============ Border / Radius ============ */
+/* ============ Radius (克制的 4-8px) ============ */
 page {
-  --radius-sm:  8rpx;
-  --radius-md:  12rpx;
-  --radius-lg:  16rpx;
-  --radius-xl:  20rpx;
+  --radius-sm:  4rpx;
+  --radius-md:  6rpx;
+  --radius-lg:  8rpx;
   --radius-pill: 999rpx;
 
   --border-thin:  1rpx solid var(--color-border);
   --border-thick: 2rpx solid var(--color-primary);
 }
 
-/* ============ Motion (150-300ms) ============ */
+/* ============ Motion (极轻 — 100-200ms) ============ */
 page {
-  --dur-fast: 150ms;
-  --dur-base: 200ms;
-  --dur-slow: 300ms;
+  --dur-fast: 120ms;
+  --dur-base: 180ms;
+  --dur-slow: 240ms;
   --ease-out:    cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in:     cubic-bezier(0.4, 0, 1, 1);
   --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* ============ Shadow ============ */
+/* ============ Shadow (极少用) ============ */
 page {
-  --shadow-sm: 0 1rpx 2rpx rgba(255, 107, 53, 0.06);
-  --shadow-md: 0 2rpx 8rpx rgba(255, 107, 53, 0.10);
-  --shadow-lg: 0 4rpx 16rpx rgba(255, 107, 53, 0.14);
+  --shadow-none: none;
+  --shadow-sm: 0 1rpx 2rpx rgba(58, 58, 58, 0.04);
 }
 
 /* ============ Layout utils ============ */
@@ -131,12 +129,12 @@ page {
 .gap-5 { gap: var(--space-5); }
 .flex-1 { flex: 1; min-width: 0; }
 
-/* ============ Type utils ============ */
-.h1 { font-family: var(--font-display); font-size: var(--text-xl); font-weight: 700; line-height: var(--leading-tight); letter-spacing: var(--tracking-tight); color: var(--color-fg); }
-.h2 { font-family: var(--font-display); font-size: var(--text-lg); font-weight: 700; line-height: var(--leading-tight); color: var(--color-fg); }
-.h3 { font-family: var(--font-display); font-size: var(--text-md); font-weight: 600; color: var(--color-fg); }
-.h4 { font-family: var(--font-display); font-size: var(--text-sm); font-weight: 600; color: var(--color-fg); }
-.label { font-family: var(--font-body); font-size: var(--text-xs); font-weight: 500; color: var(--color-fg-2); letter-spacing: var(--tracking-wide); }
+/* ============ Type utils (克制 — 不巨大) ============ */
+.h1 { font-family: var(--font-display); font-size: var(--text-xl); font-weight: 500; line-height: var(--leading-tight); letter-spacing: var(--tracking-tight); color: var(--color-fg); }
+.h2 { font-family: var(--font-display); font-size: var(--text-lg); font-weight: 500; line-height: var(--leading-tight); color: var(--color-fg); }
+.h3 { font-family: var(--font-display); font-size: var(--text-md); font-weight: 500; color: var(--color-fg); }
+.h4 { font-family: var(--font-display); font-size: var(--text-sm); font-weight: 500; color: var(--color-fg); }
+.label { font-family: var(--font-body); font-size: var(--text-xs); font-weight: 400; color: var(--color-fg-2); letter-spacing: 0.02em; }
 .mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
 .muted { color: var(--color-fg-2); }
 .dim { color: var(--color-fg-3); }
@@ -144,200 +142,183 @@ page {
 .primary { color: var(--color-primary); }
 .accent { color: var(--color-success); }
 .error { color: var(--color-error); }
-.amount-xl { font-family: var(--font-mono); font-size: var(--text-2xl); font-weight: 700; color: var(--color-fg); letter-spacing: -0.02em; line-height: 1; font-variant-numeric: tabular-nums; }
-.amount-lg { font-family: var(--font-mono); font-size: var(--text-xl); font-weight: 700; color: var(--color-fg); letter-spacing: -0.02em; line-height: 1; font-variant-numeric: tabular-nums; }
-.amount-md { font-family: var(--font-mono); font-size: var(--text-lg); font-weight: 700; color: var(--color-fg); letter-spacing: -0.02em; line-height: 1; font-variant-numeric: tabular-nums; }
-.amount-sm { font-family: var(--font-mono); font-size: var(--text-md); font-weight: 600; color: var(--color-fg); font-variant-numeric: tabular-nums; }
+.amount-md { font-family: var(--font-mono); font-size: var(--text-lg); font-weight: 400; color: var(--color-fg); letter-spacing: -0.01em; font-variant-numeric: tabular-nums; }
+.amount-sm { font-family: var(--font-mono); font-size: var(--text-md); font-weight: 400; color: var(--color-fg); font-variant-numeric: tabular-nums; }
 
-/* ============ Card ============ */
+/* ============ Card (极淡) ============ */
 .card {
   background: var(--color-bg-2);
-  border: 1rpx solid var(--color-border);
-  border-radius: var(--radius-lg);
+  border: var(--border-thin);
+  border-radius: var(--radius-md);
   padding: var(--space-4);
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-none);
 }
-.card--primary {
-  background: var(--color-primary);
-  border: none;
-  color: var(--color-on-primary);
-  box-shadow: var(--shadow-md);
-}
-.card--primary .label,
-.card--primary .muted { color: rgba(255, 255, 255, 0.85); }
-.card--warm { background: var(--color-bg-warm); border-color: rgba(255, 107, 53, 0.18); }
-.card--hover { background: var(--color-bg-3); border-color: var(--color-primary); }
+.card--hover { background: var(--color-bg-3); }
 
 /* ============ Button (8 states) ============ */
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 88rpx;
-  padding: 0 var(--space-5);
+  min-height: 80rpx;
+  padding: 0 var(--space-4);
   background: var(--color-primary);
   color: var(--color-on-primary);
   font-family: var(--font-display);
   font-size: var(--text-md);
-  font-weight: 600;
-  border: none;
+  font-weight: 500;
+  border: 1rpx solid var(--color-primary);
   border-radius: var(--radius-md);
-  transition: background-color var(--dur-base) var(--ease-out), transform var(--dur-fast) var(--ease-out);
+  transition: background-color var(--dur-base) var(--ease-out);
   cursor: pointer;
 }
-.btn:hover, .btn.is-hover { background: var(--color-primary-2); }
-.btn:focus-visible, .btn.is-focus { outline: 3rpx solid var(--color-primary-3); outline-offset: 2rpx; }
-.btn:active, .btn.is-active { background: var(--color-primary-2); transform: scale(0.98); }
-.btn[disabled], .btn.is-disabled, .btn:disabled { background: var(--color-bg-3); color: var(--color-fg-3); cursor: not-allowed; }
-.btn.is-loading { opacity: 0.6; pointer-events: none; }
-.btn.is-loading::after { content: " …"; }
-.btn.is-error { background: var(--color-error); }
-.btn.is-success { background: var(--color-success); }
-.btn--pill { border-radius: var(--radius-pill); min-height: 96rpx; font-size: var(--text-lg); }
+.btn:hover, .btn.is-hover { background: var(--color-primary-2); border-color: var(--color-primary-2); }
+.btn:focus-visible, .btn.is-focus { outline: 2rpx solid var(--color-primary); outline-offset: 2rpx; }
+.btn:active, .btn.is-active { background: var(--color-primary-2); }
+.btn[disabled], .btn.is-disabled, .btn:disabled { background: var(--color-bg-3); color: var(--color-fg-3); border-color: transparent; cursor: not-allowed; }
+.btn.is-loading { opacity: 0.5; pointer-events: none; }
+.btn.is-error { background: var(--color-error); border-color: var(--color-error); }
+.btn.is-success { background: var(--color-success); border-color: var(--color-success); }
 
+/* Ghost (主要按钮, MUJI 偏好的低调) */
 .btn--ghost {
-  background: var(--color-bg-2);
+  background: transparent;
   color: var(--color-fg);
   border: 1rpx solid var(--color-border);
 }
-.btn--ghost:hover, .btn--ghost.is-hover { background: var(--color-bg-3); border-color: var(--color-primary); }
-.btn--ghost:focus-visible { outline: 3rpx solid var(--color-primary); outline-offset: 2rpx; }
-.btn--ghost[disabled] { color: var(--color-fg-3); }
+.btn--ghost:hover, .btn--ghost.is-hover { background: var(--color-bg-2); border-color: var(--color-fg-3); }
+.btn--ghost:focus-visible { outline: 2rpx solid var(--color-primary); outline-offset: 2rpx; }
 
+/* Text-only (MUJI 风格的主 CTA 文字按钮) */
+.btn--text {
+  background: transparent;
+  color: var(--color-primary);
+  border: none;
+  text-decoration: underline;
+  text-underline-offset: 6rpx;
+  min-height: auto;
+  padding: 0;
+}
+.btn--text:hover, .btn--text.is-hover { color: var(--color-primary-2); }
+
+/* Danger */
 .btn--danger {
-  background: var(--color-bg-2);
+  background: transparent;
   color: var(--color-error);
   border: 1rpx solid var(--color-error);
 }
 .btn--danger:hover, .btn--danger.is-hover { background: var(--color-error); color: var(--color-on-primary); }
 
-/* ============ Input ============ */
+/* ============ Input (无 border, 极简) ============ */
 .input {
-  min-height: 80rpx;
+  min-height: 72rpx;
   padding: 0 var(--space-3);
-  background: var(--color-bg-3);
+  background: transparent;
   color: var(--color-fg);
   font-family: var(--font-mono);
   font-size: var(--text-md);
   font-variant-numeric: tabular-nums;
-  border: 1rpx solid transparent;
-  border-radius: var(--radius-md);
+  border: none;
+  border-bottom: 1rpx solid var(--color-border);
+  border-radius: 0;
   box-sizing: border-box;
-  transition: border-color var(--dur-base) var(--ease-out), background-color var(--dur-base) var(--ease-out);
+  transition: border-color var(--dur-base) var(--ease-out);
 }
 .input::placeholder { color: var(--color-fg-3); }
-.input:hover, .input.is-hover { border-color: var(--color-border); }
-.input:focus, .input.is-focus { border-color: var(--color-primary); background: var(--color-bg-2); outline: none; }
-.input[disabled] { background: var(--color-border); color: var(--color-fg-3); }
-.input.is-error { border-color: var(--color-error); background: var(--color-error-soft); }
-.input.is-success { border-color: var(--color-success); }
+.input:hover, .input.is-hover { border-bottom-color: var(--color-fg-3); }
+.input:focus, .input.is-focus { border-bottom-color: var(--color-primary); outline: none; }
+.input[disabled] { color: var(--color-fg-3); }
+.input.is-error { border-bottom-color: var(--color-error); }
+.input.is-success { border-bottom-color: var(--color-success); }
 
 .textarea {
-  min-height: 120rpx;
-  padding: var(--space-3);
-  background: var(--color-bg-3);
+  min-height: 100rpx;
+  padding: var(--space-2) 0;
+  background: transparent;
   color: var(--color-fg);
   font-family: var(--font-body);
   font-size: var(--text-md);
-  border: 1rpx solid transparent;
-  border-radius: var(--radius-md);
+  border: none;
+  border-bottom: 1rpx solid var(--color-border);
+  border-radius: 0;
   box-sizing: border-box;
   line-height: var(--leading-normal);
   transition: border-color var(--dur-base) var(--ease-out);
 }
-.textarea:focus, .textarea.is-focus { border-color: var(--color-primary); background: var(--color-bg-2); outline: none; }
+.textarea:focus, .textarea.is-focus { border-bottom-color: var(--color-primary); outline: none; }
 
-/* ============ Chip + 分类色 ============ */
+/* ============ 分类色 (text-only 风格, 无背景块) ============ */
 .chip {
   display: inline-flex;
   align-items: center;
   gap: 4rpx;
-  height: 32rpx;
-  padding: 0 var(--space-2);
   font-size: var(--text-xs);
-  font-weight: 500;
-  border-radius: var(--radius-pill);
-  background: var(--color-bg-3);
+  font-weight: 400;
   color: var(--color-fg-2);
+  padding: 0;
 }
 .chip__dot {
-  width: 12rpx;
-  height: 12rpx;
+  width: 6rpx;
+  height: 6rpx;
   border-radius: 50%;
   background: var(--color-fg-3);
   flex-shrink: 0;
 }
-.chip--food      .chip__dot, .cat-food      { background: var(--cat-food); }
-.chip--transport .chip__dot, .cat-transport { background: var(--cat-transport); }
-.chip--shop      .chip__dot, .cat-shop      { background: var(--cat-shop); }
-.chip--home      .chip__dot, .cat-home      { background: var(--cat-home); }
-.chip--fun       .chip__dot, .cat-fun       { background: var(--cat-fun); }
-.chip--medical   .chip__dot, .cat-medical   { background: var(--cat-medical); }
-.chip--income    .chip__dot, .cat-income    { background: var(--cat-income); }
-.chip--other     .chip__dot, .cat-other     { background: var(--cat-other); }
-
-.chip--food      { background: rgba(255, 107, 53, 0.12); color: var(--cat-food); }
-.chip--transport { background: rgba(26, 26, 26, 0.08); color: var(--cat-transport); }
-.chip--shop      { background: rgba(233, 30, 99, 0.10); color: var(--cat-shop); }
-.chip--home      { background: rgba(255, 214, 0, 0.20); color: #B45309; }
-.chip--fun       { background: rgba(107, 63, 160, 0.12); color: var(--cat-fun); }
-.chip--medical   { background: rgba(211, 47, 47, 0.10); color: var(--cat-medical); }
-.chip--income    { background: rgba(0, 137, 123, 0.12); color: #00695C; }
-.chip--other     { background: var(--color-bg-3); color: var(--color-fg-2); }
-
-/* ============ Category 色块（卡片/列表左侧） ============ */
-.cat-stripe {
-  width: 4rpx;
-  align-self: stretch;
-  border-radius: 2rpx;
-  flex-shrink: 0;
-}
+.chip--food      .chip__dot, .cat-food      { color: var(--cat-food); }
+.chip--transport .chip__dot, .cat-transport { color: var(--cat-transport); }
+.chip--shop      .chip__dot, .cat-shop      { color: var(--cat-shop); }
+.chip--home      .chip__dot, .cat-home      { color: var(--cat-home); }
+.chip--fun       .chip__dot, .cat-fun       { color: var(--cat-fun); }
+.chip--medical   .chip__dot, .cat-medical   { color: var(--cat-medical); }
+.chip--income    .chip__dot, .cat-income    { color: var(--cat-income); }
+.chip--other     .chip__dot, .cat-other     { color: var(--cat-other); }
+.chip--food      .chip__dot { background: var(--cat-food); }
+.chip--transport .chip__dot { background: var(--cat-transport); }
+.chip--shop      .chip__dot { background: var(--cat-shop); }
+.chip--home      .chip__dot { background: var(--cat-home); }
+.chip--fun       .chip__dot { background: var(--cat-fun); }
+.chip--medical   .chip__dot { background: var(--cat-medical); }
+.chip--income    .chip__dot { background: var(--cat-income); }
+.chip--other     .chip__dot { background: var(--cat-other); }
 
 /* ============ Empty state ============ */
 .empty {
   padding: var(--space-7) var(--space-4);
   text-align: center;
 }
-.empty__icon {
-  font-size: 64rpx;
-  color: var(--color-fg-3);
-  margin-bottom: var(--space-3);
-}
-.empty__title { font-size: var(--text-md); font-weight: 600; color: var(--color-fg); margin-bottom: var(--space-1); }
+.empty__title { font-size: var(--text-md); font-weight: 500; color: var(--color-fg); margin-bottom: var(--space-2); }
 .empty__hint { font-size: var(--text-sm); color: var(--color-fg-2); margin-bottom: var(--space-4); }
 
 /* ============ State bars ============ */
 .state-bar {
   padding: var(--space-2) var(--space-3);
   font-size: var(--text-sm);
-  font-weight: 500;
-  border-radius: var(--radius-md);
+  color: var(--color-fg-2);
+  border-radius: var(--radius-sm);
   text-align: center;
   margin-bottom: var(--space-3);
 }
 .state-bar--error { color: var(--color-error); background: var(--color-error-soft); }
-.state-bar--loading { color: var(--color-fg-2); background: var(--color-bg-3); }
+.state-bar--loading { color: var(--color-fg-2); background: var(--color-bg-2); }
 .state-bar--success { color: var(--color-success); background: var(--color-success-soft); }
 
-/* ============ Hairline ============ */
-.hairline { height: 1rpx; background: var(--color-border); margin: var(--space-3) 0; }
-.hairline--thick { height: 2rpx; background: var(--color-fg-3); margin: var(--space-4) 0; }
+/* ============ Hairline (MUJI 偏好的极细线) ============ */
+.hairline { height: 1rpx; background: var(--color-border); margin: var(--space-4) 0; }
+.hairline--thick { height: 1rpx; background: var(--color-fg); margin: var(--space-4) 0; }
 
-/* ============ Progress bar ============ */
+/* ============ Progress bar (极淡) ============ */
 .bar-track {
   width: 100%;
-  height: 8rpx;
-  background: var(--color-bg-3);
-  border-radius: var(--radius-pill);
+  height: 2rpx;
+  background: var(--color-border);
+  border-radius: 0;
   overflow: hidden;
 }
 .bar-fill {
   height: 100%;
-  border-radius: var(--radius-pill);
+  background: var(--color-primary);
   transition: width var(--dur-slow) var(--ease-out);
 }
-.bar-fill--primary { background: var(--color-primary); }
-.bar-fill--success { background: var(--color-success); }
 
 /* ============ Reduced motion ============ */
 @media (prefers-reduced-motion: reduce) {
