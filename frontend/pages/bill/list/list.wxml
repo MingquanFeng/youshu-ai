@@ -2,10 +2,10 @@
   <!-- 报头 -->
   <view class="ledger-head">
     <view class="row between">
-      <text class="label">§ 02 · 账本</text>
+      <text class="label">流水</text>
       <text class="label muted">共 {{total}} 条</text>
     </view>
-    <text class="h1 ledger-head__title">流水</text>
+    <text class="h1 ledger-head__title">账本</text>
     <view class="hairline--thick"></view>
   </view>
 

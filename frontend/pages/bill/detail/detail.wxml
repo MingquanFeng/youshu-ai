@@ -8,7 +8,7 @@
     <!-- 报头 -->
     <view class="detail-head">
       <view class="row between">
-        <text class="label">§ 单条 · N° {{bill.id}}</text>
+        <text class="label">单条 · N° {{bill.id}}</text>
         <text class="label muted">{{bill.source === 'image_ai' ? 'AI 识别' : '手动'}}</text>
       </view>
       <text class="amount-xl detail-head__amount">¥ {{bill.amount_str}}</text>
@@ -35,7 +35,6 @@
 
     <!-- 编辑章节 -->
     <view class="chapter chapter--sub">
-      <text class="label">§ 编辑</text>
       <text class="h3">修订</text>
     </view>
     <view class="hairline"></view>

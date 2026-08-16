@@ -2,7 +2,7 @@
   <!-- 报头 -->
   <view class="report-head">
     <view class="row between">
-      <text class="label">§ 05 · 分析报告</text>
+      <text class="label">本月报告</text>
       <text class="label muted">月度</text>
     </view>
     <text class="h1 report-head__title">本月账目</text>
@@ -29,7 +29,7 @@
     <!-- 分类占比 -->
     <view class="section">
       <view class="row between">
-        <text class="label">§ 分类构成</text>
+        <text class="label">分类构成</text>
         <text class="label muted">{{categories.length}} 类</text>
       </view>
       <text class="h2" style="margin:var(--space-2) 0;">构成</text>
@@ -59,7 +59,7 @@
     <!-- 30 天趋势 -->
     <view class="section">
       <view class="row between">
-        <text class="label">§ 近 30 天</text>
+        <text class="label">近 30 天</text>
         <text class="label muted">{{daily.length}} 天</text>
       </view>
       <text class="h2" style="margin:var(--space-2) 0;">逐日流水</text>
@@ -84,7 +84,7 @@
     <!-- AI 建议 -->
     <view wx:if="{{monthly.advice}}" class="advice">
       <view class="hairline--thick"></view>
-      <text class="label">§ 建议</text>
+      <text class="label">建议</text>
       <text class="advice__text">{{monthly.advice}}</text>
     </view>
 

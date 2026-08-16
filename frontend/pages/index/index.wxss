@@ -9,9 +9,9 @@
 .masthead {
   margin-bottom: var(--space-6);
 }
-.masthead__meta {
-  padding: 0 var(--space-1);
-  margin-bottom: var(--space-2);
+.masthead__date {
+  display: block;
+  margin-bottom: var(--space-3);
 }
 .masthead__rule {
   height: 1rpx;
@@ -37,16 +37,6 @@
   color: var(--color-ink-2);
   letter-spacing: var(--tracking-wide);
   margin-bottom: var(--space-3);
-}
-
-/* Section */
-.section {
-  margin-bottom: var(--space-6);
-}
-.section__num {
-  display: block;
-  margin-bottom: var(--space-3);
-  padding-left: var(--space-1);
 }
 
 /* Entry card hover state */

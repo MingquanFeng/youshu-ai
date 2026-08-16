@@ -2,7 +2,7 @@
   <!-- 章节头 -->
   <view class="chapter">
     <view class="row between">
-      <text class="label">§ 01 · 识别</text>
+      <text class="label">AI 识别</text>
       <text class="label muted" wx:if="{{imageId}}">已上传</text>
     </view>
     <text class="h1 chapter__title">拍下截图</text>
@@ -41,7 +41,6 @@
   <!-- 识别结果 -->
   <block wx:if="{{result && !loading}}">
     <view class="chapter chapter--sub">
-      <text class="label">§ 02 · 校对</text>
       <text class="h2">核对结果</text>
     </view>
     <view class="hairline"></view>
@@ -74,7 +73,6 @@
     </view>
 
     <view class="chapter chapter--sub">
-      <text class="label">§ 03 · 编辑</text>
       <text class="h2">修订</text>
     </view>
     <view class="hairline"></view>
