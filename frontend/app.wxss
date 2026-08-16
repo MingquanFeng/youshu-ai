@@ -285,7 +285,10 @@ page {
 .hairline { height: 1rpx; background: var(--color-rule); margin: var(--space-3) 0; }
 .hairline--thick { height: 2rpx; background: var(--color-ink); margin: var(--space-4) 0; }
 
-/* Prefers reduced motion (mandatory) */
+/* Prefers reduced motion (mandatory) — WXSS 不支持 * 通配符，列具体元素 */
 @media (prefers-reduced-motion: reduce) {
-  * { transition: none !important; animation: none !important; }
+  view, text, button, image, input, textarea, scroll-view {
+    transition: none !important;
+    animation: none !important;
+  }
 }

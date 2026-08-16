@@ -60,6 +60,26 @@ GitHub commit 历史永久记录 AppID
 
 下次任何 plan agent 涉及 `appid / appsecret / api_key / token / password` 字段，
 必须：
-- 用占位符（`__FIELD_NAME__` 或 `touristappid`）
+- 用占位符（`__FIELD_NAME__` 或 `touristappid`）——**但 `touristappid` 不可用于本地开发**，详见下方"AppID 占位符陷阱"
 - 在 commit message 显式声明："本配置含占位符，开发者需替换为真实值"
 - 不写 README/setup 里包含真实值的示例
+
+## AppID 占位符陷阱
+
+**问题**：Plan agent 默认会把 `appid` 填成 `touristappid`（GitHub README 里的示例占位符）。这导致：
+1. 微信开发者工具**拒绝**该值，弹"更改 AppID 失败 tourist appid"错误
+2. IDE 自动降级到**游客模式**，所有 `wx.*` API 失效（`wx.login` / `wx.request` / `wx.getStorageSync` 全部 mock 返回）
+3. App 能编译但**调不到后端**，用户看到空白页
+
+**正确做法**（适用于所有小程序项目）：
+1. **项目内**：`frontend/project.config.json` 填**真实 AppID**（`wx` + 16 hex）
+2. **本地不入 git**：`project.config.json` 已加入 `.gitignore`（commit `XXX`）
+3. **新 clone 项目**：开发者从微信小程序后台拿自己的 AppID → 在 IDE 里填入本地 `project.config.json` → IDE 自动忽略 gitignore（因为没在 git 里）
+4. **README 提供"占位符替换"说明**，不写 `touristappid` 字符串
+
+**为什么不能 commit touristappid 占位符到 git**：
+- 推上去后别人 clone，IDE 直接弹错，浪费时间排查
+- 占位符污染下游所有人的本地开发
+- "看起来对"的占位符是更糟糕的失败模式
+
+**教训修正**：Hallmark 守则"占位符必须用 `__FIELD_NAME__` 或 `touristappid`"中，**`touristappid` 应该替换为更明显的占位符**（如 `wx__REPLACE_ME__`），让任何人都能立刻识别"这是占位、必须替换"。
