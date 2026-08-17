@@ -5,8 +5,43 @@
     <text class="muted" style="font-size: 22rpx;">{{monthly.top_category || '暂无数据'}}</text>
   </view>
 
-  <!-- 加载 -->
-  <view wx:if="{{loading}}" class="state-bar state-bar--loading">统计中 …</view>
+  <!-- 加载骨架 -->
+  <block wx:if="{{loading}}">
+    <view class="kpi-row">
+      <view class="kpi-card">
+        <view class="skel skel--sm" style="width: 50%;"></view>
+        <view class="skel skel--lg" style="width: 70%; margin-top: 16rpx;"></view>
+      </view>
+      <view class="kpi-card kpi-card--accent">
+        <view class="skel skel--sm" style="width: 50%;"></view>
+        <view class="skel skel--md" style="width: 60%; margin-top: 16rpx;"></view>
+      </view>
+    </view>
+
+    <section-card padding="tight">
+      <view class="row between section-head">
+        <view class="skel skel--md" style="width: 120rpx;"></view>
+        <view class="skel skel--sm" style="width: 60rpx;"></view>
+      </view>
+      <view class="pie-wrap">
+        <view class="pie-stack">
+          <view wx:for="{{ [0,1,2] }}" wx:key="*this" class="pie-row">
+            <view class="pie-row__head">
+              <view class="row gap-2" style="align-items: center;">
+                <view class="skel" style="width: 14rpx; height: 14rpx; border-radius: 50%;"></view>
+                <view class="skel skel--md" style="width: 80rpx;"></view>
+              </view>
+              <view class="row gap-3" style="align-items: baseline;">
+                <view class="skel" style="width: 90rpx; height: 22rpx;"></view>
+                <view class="skel" style="width: 60rpx; height: 18rpx;"></view>
+              </view>
+            </view>
+            <view class="skel" style="width: 100%; height: 8rpx; margin-top: 6rpx; border-radius: 999rpx;"></view>
+          </view>
+        </view>
+      </view>
+    </section-card>
+  </block>
 
   <block wx:else>
     <!-- KPI 双卡: 总览 + Top 分类 -->

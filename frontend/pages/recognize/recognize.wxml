@@ -24,6 +24,48 @@
     </view>
   </block>
 
+  <!-- 识别中骨架 (替换识别结果, 提供 shimmer 反馈) -->
+  <block wx:elif="{{imageUrl && loading}}">
+    <view class="result-card">
+      <text class="label">识别结果</text>
+      <view class="result-amount">
+        <view class="skel" style="width: 48rpx; height: 48rpx;"></view>
+        <view class="skel" style="width: 320rpx; height: 64rpx;"></view>
+      </view>
+      <view class="result-meta">
+        <view class="result-row">
+          <view class="skel" style="width: 56rpx; height: 56rpx; border-radius: 50%;"></view>
+          <view class="result-row__col" style="gap: 8rpx;">
+            <view class="skel skel--sm"></view>
+            <view class="skel skel--md" style="width: 80%;"></view>
+          </view>
+        </view>
+        <view class="result-row">
+          <view class="skel" style="width: 56rpx; height: 56rpx; border-radius: 50%;"></view>
+          <view class="result-row__col" style="gap: 8rpx;">
+            <view class="skel skel--sm"></view>
+            <view class="skel skel--md" style="width: 70%;"></view>
+          </view>
+        </view>
+        <view class="result-row">
+          <view class="skel" style="width: 56rpx; height: 56rpx; border-radius: 50%;"></view>
+          <view class="result-row__col" style="gap: 8rpx;">
+            <view class="skel skel--sm"></view>
+            <view class="skel skel--md" style="width: 60%;"></view>
+          </view>
+        </view>
+        <view class="result-row">
+          <view class="skel" style="width: 56rpx; height: 56rpx; border-radius: 50%;"></view>
+          <view class="result-row__col" style="gap: 8rpx;">
+            <view class="skel skel--sm"></view>
+            <view class="skel skel--md" style="width: 75%;"></view>
+          </view>
+        </view>
+      </view>
+    </view>
+    <view class="state-bar state-bar--loading">AI 识别中 …</view>
+  </block>
+
   <!-- 识别结果 (card 化 + 顶部柔色高亮) -->
   <block wx:if="{{result && !loading}}">
     <view class="result-card">

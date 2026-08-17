@@ -26,7 +26,19 @@
       <text class="section-head__sub">按时间倒序</text>
     </view>
 
-    <view wx:if="{{items.length > 0}}">
+    <!-- 初次加载 skeleton -->
+    <view wx:if="{{ items.length === 0 && loading }}">
+      <view wx:for="{{ [0,1,2,3,4] }}" wx:key="*this" class="skel-row">
+        <view class="skel skel--circle" style="width: 64rpx; height: 64rpx;"></view>
+        <view class="skel-row__col" style="gap: 10rpx;">
+          <view class="skel skel--md" style="width: 40%;"></view>
+          <view class="skel skel--sm"></view>
+        </view>
+        <view class="skel" style="width: 100rpx; height: 26rpx;"></view>
+      </view>
+    </view>
+
+    <view wx:elif="{{items.length > 0}}">
       <txn-row
         wx:for="{{items}}"
         wx:key="id"
@@ -42,7 +54,7 @@
       />
     </view>
 
-    <view wx:else class="empty">
+    <view wx:elif class="empty">
       <view class="empty__icon"></view>
       <text class="empty__title">还没有记录</text>
       <text class="empty__hint">从一笔记账开始</text>

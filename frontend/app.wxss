@@ -623,6 +623,63 @@ page {
 .page--with-tabbar { padding: var(--space-5) var(--space-5) 220rpx; }
 .page--with-foot  { padding: var(--space-5) var(--space-5) var(--space-7); }
 
+/* ============ Skeleton (加载骨架, shimmer 动画) ============ */
+@keyframes skel-shimmer {
+  0%   { background-position: -200rpx 0; }
+  100% { background-position: 200rpx 0; }
+}
+.skel {
+  display: block;
+  background: linear-gradient(
+    90deg,
+    var(--color-bg-3) 0%,
+    var(--color-bg-2) 50%,
+    var(--color-bg-3) 100%
+  );
+  background-size: 400rpx 100%;
+  border-radius: var(--radius-sm);
+  animation: skel-shimmer 1.6s ease-in-out infinite;
+}
+.skel--block {
+  height: 200rpx;
+  border-radius: var(--radius-md);
+}
+.skel--lg {
+  height: 36rpx;
+}
+.skel--md {
+  height: 24rpx;
+}
+.skel--sm {
+  height: 18rpx;
+  width: 60%;
+}
+.skel--circle {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 50%;
+}
+.skel-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) 0;
+}
+.skel-row__col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+}
+.skel-row__amount {
+  width: 120rpx;
+  height: 28rpx;
+}
+@media (prefers-reduced-motion: reduce) {
+  .skel { animation: none; background: var(--color-bg-3); }
+}
+
 /* ============ Reduced motion ============ */
 @media (prefers-reduced-motion: reduce) {
   view, text, button, image, input, textarea, scroll-view {
