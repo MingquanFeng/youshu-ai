@@ -96,9 +96,5 @@
       <text class="tab__icon">⊞</text>
       <text class="tab__label">资产</text>
     </view>
-    <view class="tab">
-      <text class="tab__icon">●</text>
-      <text class="tab__label">我的</text>
-    </view>
   </view>
 </view>
