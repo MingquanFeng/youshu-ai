@@ -8,11 +8,11 @@
   <!-- 当月统计 card -->
   <view class="stat">
     <view class="row between">
-      <view>
+      <view class="stat__left">
         <text class="label">本月支出</text>
         <text class="stat__amount">¥ 9,414.00</text>
       </view>
-      <view class="row gap-3" style="align-items: center;">
+      <view class="stat__right">
         <text class="stat__label-pair">收入</text>
         <text class="stat__income-value">+¥ 22,000</text>
       </view>

@@ -24,6 +24,10 @@
   box-shadow: var(--shadow-sm);
   transition: transform var(--dur-base) var(--ease-spring),
               box-shadow var(--dur-base) var(--ease-out);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
 }
 .kpi-card:active { transform: scale(0.98); box-shadow: var(--shadow-press); }
 .kpi-card--accent {
@@ -35,17 +39,21 @@
   font-family: var(--font-mono);
   color: var(--color-fg);
   font-variant-numeric: tabular-nums;
-  line-height: 1;
-  font-size: 48rpx;
+  line-height: 1.1;
+  font-size: 44rpx;
   font-weight: 600;
   margin-top: var(--space-2);
   letter-spacing: -0.02em;
+  display: block;
+  min-width: 0;
+  word-break: keep-all;
 }
 .kpi-card .h3 {
   margin-top: var(--space-2);
   font-size: var(--text-md);
   font-weight: 600;
   color: var(--color-accent);
+  display: block;
 }
 
 /* Section (大圆角 + 大内边距) */

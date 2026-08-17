@@ -12,13 +12,14 @@
 /* 本月剩余 stat — 大数字 + 进度条 */
 .stat .stat__amount {
   font-family: var(--font-mono);
-  font-size: 72rpx;
+  font-size: 60rpx;
   font-weight: 600;
   color: var(--color-fg);
-  line-height: 1.05;
+  line-height: 1.1;
   margin-top: 12rpx;
   letter-spacing: -0.02em;
   font-variant-numeric: tabular-nums;
+  display: block;
 }
 .stat__income,
 .stat__expense {

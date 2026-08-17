@@ -18,13 +18,16 @@
 /* Stat card (本月支出) — 大数字 + 收入辅助 */
 .stat__amount {
   font-family: var(--font-mono);
-  font-size: 56rpx;
+  font-size: 48rpx;
   font-weight: 600;
   color: var(--color-fg);
-  line-height: 1.05;
+  line-height: 1.1;
   margin-top: 8rpx;
   letter-spacing: -0.02em;
   font-variant-numeric: tabular-nums;
+  display: block;
+  min-width: 0;
+  word-break: keep-all;
 }
 .stat__label-pair {
   font-size: 22rpx;
@@ -36,6 +39,23 @@
   font-weight: 500;
   color: var(--color-success);
   font-variant-numeric: tabular-nums;
+}
+/* stat 右侧 "收入 + 金额" 改纵向, 避免窄空间被压竖 */
+.stat__right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4rpx;
+  min-width: 0;
+}
+.stat__right .stat__income-value {
+  display: block;
+  text-align: right;
+}
+.stat__left {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
 }
 
 /* section-head 副标题 */
