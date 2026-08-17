@@ -25,7 +25,7 @@
   </block>
 
   <!-- 识别中骨架 (替换识别结果, 提供 shimmer 反馈) -->
-  <block wx:elif="{{imageUrl && loading}}">
+  <block wx:if="{{imageUrl && loading && !result}}">
     <view class="result-card">
       <text class="label">识别结果</text>
       <view class="result-amount">

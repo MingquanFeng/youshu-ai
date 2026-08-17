@@ -102,17 +102,10 @@ jobs:
             fi
           done < <(find . -name '*.wxml')
 
-          # wx:elif / wx:if 必须紧跟 = (即 wx:elif="{{ cond }}")
-          # 禁止 wx:elif 后跟空白 + 其他属性 (如 wx:elif class="..." 编译报错)
-          while IFS= read -r f; do
-            bad=$(grep -nE 'wx:(elif|if)[^=]+="[^"]+"' "$f" || true)
-            if [ -n "$bad" ]; then
-              while IFS= read -r line; do
-                echo "::error file=$f::$line — wx:elif/wx:if 必须带 {{...}} 条件"
-              done <<< "$bad"
-              status=1
-            fi
-          done < <(find . -name '*.wxml')
+          # wx:if/wx:elif/wx:else 条件链语法 (Node 脚本处理链完整性)
+          if ! node scripts/check_wxml.js .; then
+            status=1
+          fi
 
           exit $status
 
