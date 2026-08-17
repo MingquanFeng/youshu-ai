@@ -54,7 +54,7 @@
       />
     </view>
 
-    <view wx:elif class="empty">
+    <view wx:else class="empty">
       <view class="empty__icon"></view>
       <text class="empty__title">还没有记录</text>
       <text class="empty__hint">从一笔记账开始</text>
