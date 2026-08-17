@@ -1,0 +1,10 @@
+<view class="txn" bindtap="onTap" hover-class="txn--hover">
+  <view class="txn__icon" style="background: {{ iconBg }};">
+    <text class="txn__icon-char">{{ iconChar }}</text>
+  </view>
+  <view class="txn__col">
+    <text class="h4">{{ title }}</text>
+    <text class="muted" style="font-size: 22rpx;">{{ sub }}</text>
+  </view>
+  <text class="amount-sm" style="{{ amountStyle }}">{{ amount }}</text>
+</view>

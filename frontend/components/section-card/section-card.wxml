@@ -1,0 +1,3 @@
+<view class="section section--{{ padding }}">
+  <slot />
+</view>

@@ -1,0 +1,3 @@
+<view class="fab" bindtap="onTap" hover-class="fab--hover">
+  <text class="fab__icon">+</text>
+</view>

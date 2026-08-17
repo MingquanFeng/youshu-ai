@@ -6,7 +6,12 @@ Page({
     monthly: { total: 0, top_category: '', advice: '', total_str: '0.00' },
     categories: [],
     daily: [],
-    loading: true
+    loading: true,
+    tabs: [
+      { icon: '▣', label: '首页', handler: 'goIndex' },
+      { icon: '▤', label: '统计', handler: 'goBill' },
+      { icon: '⊞', label: '资产', handler: '' }
+    ]
   },
 
   onShow() {
@@ -76,5 +81,11 @@ Page({
   },
   goRecognize() {
     wx.navigateTo({ url: '/pages/recognize/recognize' })
+  },
+
+  // 组件事件分发
+  onTabSelect(e) {
+    const { handler } = e.detail || {}
+    if (handler && typeof this[handler] === 'function') this[handler]()
   }
 })

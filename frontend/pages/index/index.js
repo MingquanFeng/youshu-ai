@@ -3,7 +3,13 @@ import { login } from '../../api/bill'
 import { setToken, setUser } from '../../utils/storage'
 
 Page({
-  data: {},
+  data: {
+    tabs: [
+      { icon: '▣', label: '首页', handler: '' },
+      { icon: '▤', label: '统计', handler: 'goBill' },
+      { icon: '⊞', label: '资产', handler: 'goAnalysis' }
+    ]
+  },
 
   onLoad() {
     this.maybeLogin()
@@ -20,6 +26,20 @@ Page({
   },
   goIndex() {
     wx.reLaunch({ url: '/pages/index/index' })
+  },
+
+  // 组件事件分发: 子组件传 handler 名, 这里统一调用
+  onTabSelect(e) {
+    const { handler } = e.detail || {}
+    if (handler && typeof this[handler] === 'function') this[handler]()
+  },
+  onFabTap(e) {
+    const { handler } = e.detail || {}
+    if (handler && typeof this[handler] === 'function') this[handler]()
+  },
+  onTxnTap(e) {
+    const { handler } = e.detail || {}
+    if (handler && typeof this[handler] === 'function') this[handler]()
   },
 
   maybeLogin() {

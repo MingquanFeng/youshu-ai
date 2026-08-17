@@ -1,0 +1,35 @@
+/* tabbar 组件 — 复用 app.wxss 公共样式 (.tabbar / .tab / .tab__icon / .tab__label) */
+.tabbar {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: saturate(180%) blur(20rpx);
+  -webkit-backdrop-filter: saturate(180%) blur(20rpx);
+  border-top: 1rpx solid var(--color-border-2);
+  display: flex;
+  padding: var(--space-2) var(--space-2) calc(var(--space-2) + env(safe-area-inset-bottom));
+  z-index: 100;
+}
+.tab {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4rpx;
+  padding: var(--space-1) 0;
+  color: var(--color-fg-3);
+  transition: color var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out);
+}
+.tab__icon {
+  font-size: 36rpx;
+  line-height: 1;
+  transition: transform var(--dur-base) var(--ease-spring);
+}
+.tab__label {
+  font-size: 20rpx;
+  font-weight: 400;
+}
+.tab:active .tab__icon { transform: scale(0.92); }
+.tab--active { color: var(--color-fg); }
+.tab--active .tab__label { font-weight: 500; }
+.tab--active .tab__icon { color: var(--color-primary); transform: scale(1.05); }

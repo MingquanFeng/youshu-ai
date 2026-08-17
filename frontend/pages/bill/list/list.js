@@ -12,7 +12,12 @@ Page({
     loading: false,
     refreshing: false,
     errorMsg: '',
-    hasMore: false
+    hasMore: false,
+    tabs: [
+      { icon: '▣', label: '首页', handler: 'goIndex' },
+      { icon: '▤', label: '统计', handler: '' },
+      { icon: '⊞', label: '资产', handler: 'goAnalysis' }
+    ]
   },
 
   onLoad() {
@@ -86,5 +91,20 @@ Page({
   },
   goAnalysis() {
     wx.navigateTo({ url: '/pages/analysis/analysis' })
+  },
+
+  // 组件事件分发
+  onTabSelect(e) {
+    const { handler } = e.detail || {}
+    if (handler && typeof this[handler] === 'function') this[handler]()
+  },
+  onFabTap(e) {
+    const { handler } = e.detail || {}
+    if (handler && typeof this[handler] === 'function') this[handler]()
+  },
+  // txn-row 通过 dataset 传 item
+  onTxnTapWithItem(e) {
+    const { item } = e.currentTarget.dataset || {}
+    if (item) wx.navigateTo({ url: '/pages/bill/detail/detail?id=' + item.id })
   }
 })

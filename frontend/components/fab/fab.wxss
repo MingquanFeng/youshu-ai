@@ -1,0 +1,26 @@
+/* fab 组件 — 浮动翠绿主 CTA */
+.fab {
+  position: fixed;
+  right: 36rpx;
+  bottom: calc(140rpx + env(safe-area-inset-bottom));
+  width: 112rpx;
+  height: 112rpx;
+  border-radius: 50%;
+  background: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-fab);
+  transition: transform var(--dur-base) var(--ease-spring),
+              box-shadow var(--dur-base) var(--ease-out),
+              background-color var(--dur-base) var(--ease-out);
+  z-index: 101;
+}
+.fab--hover { transform: scale(0.94); box-shadow: 0 4rpx 14rpx rgba(16, 185, 129, 0.34); }
+.fab:active { background: var(--color-primary-2); }
+.fab__icon {
+  font-size: 64rpx;
+  font-weight: 300;
+  line-height: 1;
+  color: var(--color-on-primary);
+}

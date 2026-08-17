@@ -1,5 +1,10 @@
 {
   "navigationBarTitleText": "AI 记账助手",
   "enablePullDownRefresh": false,
-  "usingComponents": {}
+  "usingComponents": {
+    "tabbar": "/components/tabbar/tabbar",
+    "fab": "/components/fab/fab",
+    "section-card": "/components/section-card/section-card",
+    "txn-row": "/components/txn-row/txn-row"
+  }
 }

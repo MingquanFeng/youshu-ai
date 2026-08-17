@@ -13,26 +13,24 @@
     <view class="kpi-row">
       <view class="kpi-card">
         <text class="label">本月支出</text>
-        <text class="amount-md" style="font-size: 48rpx; font-weight: 500; margin-top: var(--space-2);">¥ {{monthly.total_str}}</text>
+        <text class="amount-md">¥ {{monthly.total_str}}</text>
       </view>
       <view class="kpi-card kpi-card--accent">
         <text class="label">Top 分类</text>
-        <text class="h3" style="margin-top: var(--space-2);">{{monthly.top_category || '—'}}</text>
+        <text class="h3">{{monthly.top_category || '—'}}</text>
       </view>
     </view>
 
-    <!-- 饼图 (MUJI 借鉴参考图: 大圆环 + 粗描边) -->
-    <view class="section">
+    <!-- 分类构成 -->
+    <section-card padding="tight">
       <view class="row between section-head">
         <text class="h4">分类构成</text>
         <text class="section-head__sub">{{categories.length}} 类</text>
       </view>
 
       <view wx:if="{{categories.length > 0}}" class="pie-wrap">
-        <!-- 简化的圆环图 (用 conic-gradient 不支持, 改用 inline 进度条堆叠) -->
         <view class="pie-stack">
-          <view wx:for="{{categories}}" wx:key="category"
-                class="pie-row">
+          <view wx:for="{{categories}}" wx:key="category" class="pie-row">
             <view class="pie-row__head">
               <view class="row gap-2" style="align-items: center;">
                 <view class="pie-row__dot" style="background: var(--cat-{{item.category_key}});"></view>
@@ -52,10 +50,10 @@
       <view wx:else class="empty">
         <text class="muted" style="font-size: 22rpx;">N° 000 · 暂无数据</text>
       </view>
-    </view>
+    </section-card>
 
-    <!-- 30 天趋势 (MUJI 借鉴参考图: 双色细线) -->
-    <view class="section">
+    <!-- 30 天趋势 -->
+    <section-card padding="tight">
       <view class="row between section-head">
         <text class="h4">近 30 天</text>
         <text class="section-head__sub">{{daily.length}} 天</text>
@@ -73,7 +71,7 @@
       <view wx:else class="empty">
         <text class="muted" style="font-size: 22rpx;">N° 000 · 暂无数据</text>
       </view>
-    </view>
+    </section-card>
 
     <!-- AI 建议 -->
     <view wx:if="{{monthly.advice}}" class="advice">
@@ -82,19 +80,6 @@
     </view>
   </block>
 
-  <!-- 4-tab bar -->
-  <view class="tabbar">
-    <view class="tab" bindtap="goIndex">
-      <text class="tab__icon">▣</text>
-      <text class="tab__label">首页</text>
-    </view>
-    <view class="tab" bindtap="goBill">
-      <text class="tab__icon">▤</text>
-      <text class="tab__label">统计</text>
-    </view>
-    <view class="tab tab--active">
-      <text class="tab__icon">⊞</text>
-      <text class="tab__label">资产</text>
-    </view>
-  </view>
+  <!-- 3-tab 底部导航 -->
+  <tabbar active="{{ 2 }}" items="{{ tabs }}" bind:select="onTabSelect" />
 </view>

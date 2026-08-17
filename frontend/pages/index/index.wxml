@@ -19,64 +19,45 @@
   </view>
 
   <!-- 今天 card (流水列表) -->
-  <view class="section">
+  <section-card>
     <view class="row between section-head">
       <text class="h4">今天</text>
       <text class="section-head__more" bindtap="goBill">查看全部 →</text>
     </view>
 
-    <view class="txn" bindtap="goBill" hover-class="txn--hover">
-      <view class="txn__icon" style="background: var(--cat-shop-soft);">
-        <text class="txn__icon-char">盒</text>
-      </view>
-      <view class="txn__col">
-        <text class="h4">盒马鲜生</text>
-        <text class="muted" style="font-size: 22rpx;">09:48 · 微信</text>
-      </view>
-      <text class="amount-sm">−23.00</text>
-    </view>
+    <txn-row
+      icon-bg="var(--cat-shop-soft)"
+      icon-char="盒"
+      title="盒马鲜生"
+      sub="09:48 · 微信"
+      amount="−23.00"
+      handler="goBill"
+      bind:tap="onTxnTap"
+    />
+    <txn-row
+      icon-bg="var(--cat-transport-soft)"
+      icon-char="滴"
+      title="滴滴出行"
+      sub="10:30 · 支付宝"
+      amount="−12.00"
+      handler="goBill"
+      bind:tap="onTxnTap"
+    />
+    <txn-row
+      icon-bg="var(--cat-income-soft)"
+      icon-char="资"
+      title="工资到账"
+      sub="10:30 · 招商银行"
+      amount="+¥ 12,000.00"
+      amount-style="color: var(--color-success);"
+      handler="goBill"
+      bind:tap="onTxnTap"
+    />
+  </section-card>
 
-    <view class="txn" bindtap="goBill" hover-class="txn--hover">
-      <view class="txn__icon" style="background: var(--cat-transport-soft);">
-        <text class="txn__icon-char">滴</text>
-      </view>
-      <view class="txn__col">
-        <text class="h4">滴滴出行</text>
-        <text class="muted" style="font-size: 22rpx;">10:30 · 支付宝</text>
-      </view>
-      <text class="amount-sm">−12.00</text>
-    </view>
+  <!-- 3-tab 底部导航 -->
+  <tabbar active="{{ 0 }}" items="{{ tabs }}" bind:select="onTabSelect" />
 
-    <view class="txn" bindtap="goBill" hover-class="txn--hover">
-      <view class="txn__icon" style="background: var(--cat-income-soft);">
-        <text class="txn__icon-char">资</text>
-      </view>
-      <view class="txn__col">
-        <text class="h4">工资到账</text>
-        <text class="muted" style="font-size: 22rpx;">10:30 · 招商银行</text>
-      </view>
-      <text class="amount-sm" style="color: var(--color-success);">+¥ 12,000.00</text>
-    </view>
-  </view>
-
-  <!-- 底部 tab bar: 3 个 (首页 / 统计 / 资产) -->
-  <view class="tabbar">
-    <view class="tab tab--active">
-      <text class="tab__icon">▣</text>
-      <text class="tab__label">首页</text>
-    </view>
-    <view class="tab" bindtap="goBill">
-      <text class="tab__icon">▤</text>
-      <text class="tab__label">统计</text>
-    </view>
-    <view class="tab" bindtap="goAnalysis">
-      <text class="tab__icon">⊞</text>
-      <text class="tab__label">资产</text>
-    </view>
-  </view>
-
-  <!-- 浮动绿色 + 按钮 (主 CTA) -->
-  <view class="fab" bindtap="goRecognize" hover-class="fab--hover">
-    <text class="fab__icon">+</text>
-  </view>
+  <!-- 浮动翠绿 + 按钮 -->
+  <fab handler="goRecognize" bind:tap="onFabTap" />
 </view>

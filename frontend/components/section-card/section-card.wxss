@@ -1,0 +1,3 @@
+/* section-card 组件 — 沿用 app.wxss 公共 .section, 仅补 padding 变体 */
+.section--normal { padding: var(--space-3) var(--space-4); }
+.section--tight { padding: var(--space-4) var(--space-5); }
