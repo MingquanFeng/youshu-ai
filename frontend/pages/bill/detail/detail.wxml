@@ -18,19 +18,19 @@
       </view>
     </view>
 
-    <!-- 大金额 card (MUJI 借鉴参考图) -->
+    <!-- 大金额 card (Modern Soft) -->
     <view class="amount-card">
       <text class="label">金额</text>
-      <text class="amount-md" style="font-size: 80rpx; font-weight: 500; margin-top: var(--space-3);">¥ {{bill.amount_str}}</text>
-      <view class="row gap-2" style="margin-top: var(--space-3);">
+      <text class="amount-md">¥ {{bill.amount_str}}</text>
+      <view class="row gap-2 amount-card__meta-row">
         <view class="chip chip--food">
           <view class="chip__dot"></view>
           <text>{{bill.category}}</text>
         </view>
-        <view class="muted" style="font-size: 22rpx;">·</view>
+        <text class="muted" style="font-size: 22rpx;">·</text>
         <text class="muted" style="font-size: 22rpx;">{{bill.pay_method || '未指定'}}</text>
       </view>
-      <view wx:if="{{bill.remark}}" class="muted" style="font-size: 24rpx; margin-top: var(--space-3); line-height: 1.6;">{{bill.remark}}</view>
+      <view wx:if="{{bill.remark}}" class="amount-card__remark">{{bill.remark}}</view>
     </view>
 
     <!-- 编辑表单 (card 化) -->
@@ -56,7 +56,7 @@
 
     <!-- 按钮组 -->
     <view class="actions">
-      <button class="btn btn--danger" disabled="{{saving}}" bindtap="confirmDelete">删除</button>
+      <button class="btn btn--danger-soft" disabled="{{saving}}" bindtap="confirmDelete">删除</button>
       <button class="btn" disabled="{{saving}}" bindtap="save">{{saving ? '保存中 …' : '保存修订'}}</button>
     </view>
   </block>

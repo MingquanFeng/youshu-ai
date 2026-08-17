@@ -1,140 +1,37 @@
-/* index — MUJI v5.3 借鉴参考图: card 容器 + 圆形 icon + FAB */
+/* index — Modern Soft v6 (账本首页)
+ * 全部样式已提取到 app.wxss (stat, section, txn, tabbar, fab 共用)
+ * 这里只保留 .page 容器特化 (padding + 上下边距 for tabbar/fab)
+ */
 
 .page {
-  padding: var(--space-5) var(--space-5) 160rpx;
-  min-height: 100vh;
+  padding: var(--space-5) var(--space-5) 220rpx;
   background: var(--color-bg);
   color: var(--color-fg);
-  position: relative;
 }
 
-/* 顶部问候 */
-.topbar {
-  margin-bottom: var(--space-5);
-}
-.topbar__greeting {
-  font-size: var(--text-xl);
-  font-weight: 500;
+/* 本月剩余 stat — 大数字 + 进度条 */
+.stat .stat__amount {
+  font-family: var(--font-mono);
+  font-size: 72rpx;
+  font-weight: 600;
   color: var(--color-fg);
+  line-height: 1.05;
+  margin-top: 12rpx;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+.stat__income,
+.stat__expense {
+  font-size: 24rpx;
+  color: var(--color-fg-2);
+  font-variant-numeric: tabular-nums;
 }
 
-/* Stat card (本月剩余) — card 化, 浅米色背景 */
-.stat {
-  background: var(--color-bg-2);
-  border: 1rpx solid var(--color-border);
-  border-radius: var(--radius-lg);
-  padding: var(--space-5);
-  margin-bottom: var(--space-5);
-  box-shadow: 0 1rpx 2rpx rgba(58, 58, 58, 0.04);
-}
-.stat .label { margin-bottom: 4rpx; }
-
-/* Section (流水 list) */
-.section {
-  background: var(--color-bg-2);
-  border: 1rpx solid var(--color-border);
-  border-radius: var(--radius-lg);
-  padding: var(--space-3) var(--space-4);
-  box-shadow: 0 1rpx 2rpx rgba(58, 58, 58, 0.04);
-  margin-bottom: var(--space-5);
-}
-.section-head {
-  padding: var(--space-2) 0 var(--space-3);
-}
-
-/* 流水条目 — 借鉴参考图: 圆形 icon + 浅分类色背景 + 单字 */
-.txn {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  padding: var(--space-3) 0;
-  transition: opacity var(--dur-base) var(--ease-out);
-}
-.txn:active, .txn--hover { opacity: 0.55; }
-
-.txn__icon {
-  width: 64rpx;
-  height: 64rpx;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  background: var(--cat-other-soft);
-}
-.txn__icon-char {
-  font-family: var(--font-display);
-  font-size: 28rpx;
+/* section-head link 样式 */
+.section-head__more {
+  font-size: 22rpx;
+  color: var(--color-primary);
   font-weight: 500;
-  color: var(--color-fg);
-  line-height: 1;
+  transition: opacity var(--dur-fast) var(--ease-out);
 }
-
-.txn__col {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 4rpx;
-}
-.txn .amount-sm {
-  font-weight: 500;
-  color: var(--color-fg);
-}
-
-/* 底部 tab bar: 4 个 (借鉴参考图) */
-.tabbar {
-  position: fixed;
-  left: 0; right: 0; bottom: 0;
-  background: var(--color-bg-2);
-  border-top: 1rpx solid var(--color-border);
-  box-shadow: 0 -2rpx 8rpx rgba(58, 58, 58, 0.05);
-  display: flex;
-  padding: var(--space-2) var(--space-2) calc(var(--space-2) + env(safe-area-inset-bottom));
-  z-index: 100;
-}
-.tab {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2rpx;
-  padding: var(--space-1) 0;
-  color: var(--color-fg-3);
-  transition: color var(--dur-fast) var(--ease-out);
-  position: relative;
-}
-.tab__icon {
-  font-size: 32rpx;
-  line-height: 1;
-}
-.tab__label {
-  font-size: 20rpx;
-  font-weight: 400;
-}
-.tab--active { color: var(--color-fg); }
-.tab--active .tab__label { font-weight: 500; }
-.tab--active .tab__icon { color: var(--color-primary); }
-
-/* FAB — 浮动草药绿色 + 按钮 (主 CTA) */
-.fab {
-  position: fixed;
-  right: 32rpx;
-  bottom: calc(120rpx + env(safe-area-inset-bottom));
-  width: 112rpx;
-  height: 112rpx;
-  border-radius: 50%;
-  background: var(--color-accent-green);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 6rpx 20rpx rgba(126, 139, 106, 0.30);
-  transition: transform var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out);
-  z-index: 101;
-}
-.fab--hover { transform: scale(0.95); box-shadow: 0 3rpx 10rpx rgba(126, 139, 106, 0.30); }
-.fab__icon {
-  font-size: 64rpx;
-  font-weight: 300;
-  line-height: 1;
-  color: #fff;
-}
+.section-head__more:active { opacity: 0.6; }

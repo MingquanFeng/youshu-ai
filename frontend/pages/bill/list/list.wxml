@@ -10,11 +10,11 @@
     <view class="row between">
       <view>
         <text class="label">本月支出</text>
-        <text class="amount-md" style="font-size: 48rpx; font-weight: 500; margin-top: 8rpx;">¥ 9,414.00</text>
+        <text class="stat__amount">¥ 9,414.00</text>
       </view>
       <view class="row gap-3" style="align-items: center;">
-        <text class="muted" style="font-size: 22rpx;">收入</text>
-        <text class="amount-sm" style="color: var(--color-success);">+¥ 22,000</text>
+        <text class="stat__label-pair">收入</text>
+        <text class="stat__income-value">+¥ 22,000</text>
       </view>
     </view>
   </view>
@@ -23,7 +23,7 @@
   <view class="section">
     <view class="row between section-head">
       <text class="h4">所有流水</text>
-      <text class="muted" style="font-size: 22rpx;">按时间倒序</text>
+      <text class="section-head__sub">按时间倒序</text>
     </view>
 
     <view wx:if="{{items.length > 0}}">
@@ -47,7 +47,7 @@
     </view>
 
     <view wx:else class="empty">
-      <view class="empty__icon" style="background: var(--color-bg-3); width: 96rpx; height: 96rpx; border-radius: 50%; margin: 0 auto var(--space-3);"></view>
+      <view class="empty__icon"></view>
       <text class="empty__title">还没有记录</text>
       <text class="empty__hint">从一笔记账开始</text>
     </view>

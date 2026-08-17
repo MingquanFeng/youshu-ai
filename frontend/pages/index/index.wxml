@@ -5,16 +5,16 @@
     <text class="muted" style="font-size: 22rpx; margin-top: 4rpx;">7月28日 星期一</text>
   </view>
 
-  <!-- 本月剩余 card (浅米色背景 + 极淡 shadow) -->
+  <!-- 本月剩余 card (柔和阴影 + 大数字) -->
   <view class="stat">
     <text class="label">本月剩余</text>
-    <text class="amount-md" style="font-size: 64rpx; font-weight: 500; line-height: 1.05; margin-top: 12rpx;">¥ 12,586.00</text>
-    <view class="bar-track" style="margin-top: var(--space-3);">
+    <text class="stat__amount">¥ 12,586.00</text>
+    <view class="bar-track" style="margin-top: var(--space-4);">
       <view class="bar-fill" style="width: 36%;"></view>
     </view>
     <view class="row between" style="margin-top: var(--space-3);">
-      <text class="muted" style="font-size: 22rpx;">收入 ¥ 22,000.00</text>
-      <text class="muted" style="font-size: 22rpx;">支出 ¥ 9,414.00</text>
+      <text class="stat__income">收入 ¥ 22,000.00</text>
+      <text class="stat__expense">支出 ¥ 9,414.00</text>
     </view>
   </view>
 
@@ -22,7 +22,7 @@
   <view class="section">
     <view class="row between section-head">
       <text class="h4">今天</text>
-      <text class="muted" bindtap="goBill" style="font-size: 22rpx;">查看全部 →</text>
+      <text class="section-head__more" bindtap="goBill">查看全部 →</text>
     </view>
 
     <view class="txn" bindtap="goBill" hover-class="txn--hover">

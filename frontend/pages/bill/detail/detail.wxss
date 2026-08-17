@@ -1,121 +1,47 @@
-/* bill/detail — 详情 (MUJI v5.3) */
+/* bill/detail — Modern Soft v6
+ * 全部样式提取到 app.wxss (topbar, amount-card, form-card, form-row, chip, actions 共用)
+ * 这里只保留 .page 容器特化 + 详情页特殊样式
+ */
 
 .page {
   padding: var(--space-5) var(--space-5) var(--space-7);
-  min-height: 100vh;
   background: var(--color-bg);
   color: var(--color-fg);
 }
 
-.topbar {
-  margin-bottom: var(--space-5);
-}
-.topbar__icon {
-  width: 88rpx;
-  height: 88rpx;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  background: var(--cat-other-soft);
-}
-.topbar__icon-char {
-  font-family: var(--font-display);
-  font-size: 36rpx;
-  font-weight: 500;
-  color: var(--color-fg);
-  line-height: 1;
-}
-.topbar__merchant {
-  font-size: var(--text-lg);
-  font-weight: 500;
-  color: var(--color-fg);
-  line-height: var(--leading-tight);
-  margin-bottom: 2rpx;
-}
-
-/* 大金额 card */
-.amount-card {
-  background: var(--color-bg-2);
-  border: 1rpx solid var(--color-border);
-  border-radius: var(--radius-lg);
-  padding: var(--space-5);
-  margin-bottom: var(--space-4);
-  box-shadow: 0 1rpx 2rpx rgba(58, 58, 58, 0.04);
-}
+/* 大金额 card — 用主色翠绿 */
 .amount-card .amount-md {
   font-family: var(--font-mono);
   color: var(--color-primary);
   font-variant-numeric: tabular-nums;
   line-height: 1;
+  font-size: 80rpx;
+  font-weight: 600;
+  margin-top: var(--space-3);
+  letter-spacing: -0.02em;
 }
 
-/* 编辑表单 card (同 recognize) */
-.form-card {
-  background: var(--color-bg-2);
-  border: 1rpx solid var(--color-border);
-  border-radius: var(--radius-lg);
-  padding: var(--space-4) var(--space-5);
-  margin-bottom: var(--space-5);
-  box-shadow: 0 1rpx 2rpx rgba(58, 58, 58, 0.04);
-}
-.form-card .label { margin-bottom: var(--space-3); }
-.form-row {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  padding: var(--space-2) 0;
-  border-bottom: 1rpx solid var(--color-border);
-}
-.form-row:last-child { border-bottom: none; }
-.form-row--top { align-items: flex-start; }
-.form-label {
-  width: 100rpx;
-  flex-shrink: 0;
-  color: var(--color-fg-2);
-  font-size: var(--text-sm);
-}
-.form-row .input,
-.form-row .textarea {
-  flex: 1;
-  min-width: 0;
-}
-.form-row .textarea {
-  min-height: 80rpx;
-}
-
-/* 分类 chip */
-.chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 4rpx;
-  font-size: var(--text-xs);
-  font-weight: 500;
-  padding: 4rpx 12rpx;
-  border-radius: var(--radius-pill);
-  background: var(--color-bg-3);
-  color: var(--color-fg-2);
-}
-.chip__dot {
-  width: 8rpx;
-  height: 8rpx;
-  border-radius: 50%;
-  background: var(--color-fg-3);
-}
-.chip--food      { background: var(--cat-food-soft); color: var(--cat-food); }
-.chip--transport { background: var(--cat-transport-soft); color: var(--cat-transport); }
-.chip--shop      { background: var(--cat-shop-soft); color: var(--cat-shop); }
-.chip--home      { background: var(--cat-home-soft); color: var(--cat-home); }
-.chip--fun       { background: var(--cat-fun-soft); color: var(--cat-fun); }
-.chip--medical   { background: var(--cat-medical-soft); color: var(--cat-medical); }
-.chip--income    { background: var(--cat-income-soft); color: var(--cat-income); }
-.chip--other     { background: var(--cat-other-soft); color: var(--cat-other); }
-
-/* 按钮组 */
-.actions {
-  display: flex;
-  gap: var(--space-3);
+/* 分类 chip + 支付方式同行 */
+.amount-card__meta-row {
   margin-top: var(--space-3);
 }
-.actions .btn { flex: 1; min-width: 0; }
+
+/* 备注文字 */
+.amount-card__remark {
+  font-size: 24rpx;
+  color: var(--color-fg-2);
+  margin-top: var(--space-3);
+  line-height: 1.6;
+}
+
+/* 删除按钮改成 ghost-danger (软) */
+.btn--danger-soft {
+  background: var(--color-error-soft);
+  color: var(--color-error);
+  border: none;
+  box-shadow: var(--shadow-sm);
+}
+.btn--danger-soft:hover, .btn--danger-soft.is-hover {
+  background: var(--color-error);
+  color: #FFFFFF;
+}

@@ -25,7 +25,7 @@
     <view class="section">
       <view class="row between section-head">
         <text class="h4">分类构成</text>
-        <text class="muted" style="font-size: 22rpx;">{{categories.length}} 类</text>
+        <text class="section-head__sub">{{categories.length}} 类</text>
       </view>
 
       <view wx:if="{{categories.length > 0}}" class="pie-wrap">
@@ -40,7 +40,7 @@
               </view>
               <view class="row gap-3" style="align-items: baseline;">
                 <text class="amount-sm" style="font-size: var(--text-md);">¥ {{item.amount_str}}</text>
-                <text class="muted mono" style="font-size: var(--text-sm); min-width: 60rpx; text-align: right;">{{item.percent_str}}</text>
+                <text class="pie-row__percent">{{item.percent_str}}</text>
               </view>
             </view>
             <view class="bar-track" style="margin-top: 6rpx;">
@@ -58,16 +58,16 @@
     <view class="section">
       <view class="row between section-head">
         <text class="h4">近 30 天</text>
-        <text class="muted" style="font-size: 22rpx;">{{daily.length}} 天</text>
+        <text class="section-head__sub">{{daily.length}} 天</text>
       </view>
 
       <view wx:if="{{daily.length > 0}}" class="daily-list">
         <view wx:for="{{daily}}" wx:key="date" class="daily-row">
-          <text class="muted mono" style="font-size: 22rpx; width: 80rpx;">{{item.date_short}}</text>
-          <view class="bar-track" style="flex: 1; height: 4rpx;">
-            <view class="bar-fill" style="width: {{item.bar_width || '0%'}}; background: var(--color-primary);"></view>
+          <text class="daily-row__date">{{item.date_short}}</text>
+          <view class="daily-row__bar-track">
+            <view class="daily-row__bar-fill" style="width: {{item.bar_width || '0%'}};"></view>
           </view>
-          <text class="amount-sm muted" style="font-size: 22rpx; min-width: 100rpx; text-align: right;">¥ {{item.total_str}}</text>
+          <text class="daily-row__amount">¥ {{item.total_str}}</text>
         </view>
       </view>
       <view wx:else class="empty">

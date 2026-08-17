@@ -24,14 +24,14 @@
     </view>
   </block>
 
-  <!-- 识别结果 (card 化) -->
+  <!-- 识别结果 (card 化 + 顶部柔色高亮) -->
   <block wx:if="{{result && !loading}}">
     <view class="result-card">
       <text class="label">识别结果</text>
 
       <!-- 大金额显示 -->
       <view class="result-amount">
-        <text class="muted" style="font-size: 24rpx;">¥</text>
+        <text class="result-amount__currency">¥</text>
         <text class="result-amount__num">{{result.amount_str}}</text>
       </view>
 
