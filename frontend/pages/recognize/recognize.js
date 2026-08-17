@@ -1,7 +1,17 @@
 // pages/recognize/recognize.js — AI 识别页
 import { recognizeImage, saveBill, uploadImage } from '../../api/bill'
-import { chooseImage } from '../../utils/request'
+import { chooseImage, getApiBase } from '../../utils/request'
 import { formatBillTime } from '../../utils/format'
+
+// 后端返回的 image_url 是相对路径 (/static/uploads/...),
+// 微信 <image> 不支持相对路径, 必须拼成绝对 URL
+function toAbsoluteUrl(rel) {
+  if (!rel) return ''
+  if (rel.startsWith('http://') || rel.startsWith('https://')) return rel
+  // getApiBase 返回 http://host:port/api/v1, 去掉 /api/v1
+  const origin = getApiBase().replace(/\/api\/v1\/?$/, '')
+  return origin + rel
+}
 
 const INITIAL_FORM = {
   amount: 0,
@@ -43,7 +53,7 @@ Page({
       this.setData({ errorMsg: '', result: null, form: Object.assign({}, INITIAL_FORM) })
       const up = await uploadImage(path)
       this.setData({
-        imageUrl: up.image_url,
+        imageUrl: toAbsoluteUrl(up.image_url),
         imageId: up.image_id
       })
       await this.recognize()

@@ -63,5 +63,18 @@ Page({
     } catch (e) {
       this.setData({ loading: false })
     }
+  },
+
+  goIndex() {
+    wx.reLaunch({ url: '/pages/index/index' })
+  },
+  goBill() {
+    wx.reLaunch({ url: '/pages/bill/list/list' })
+  },
+  goAnalysis() {
+    wx.reLaunch({ url: '/pages/analysis/analysis' })
+  },
+  goRecognize() {
+    wx.navigateTo({ url: '/pages/recognize/recognize' })
   }
 })

@@ -65,7 +65,7 @@
 
   <!-- 4-tab bar -->
   <view class="tabbar">
-    <view class="tab" bindtap="goRecognize">
+    <view class="tab" bindtap="goIndex">
       <text class="tab__icon">▣</text>
       <text class="tab__label">首页</text>
     </view>

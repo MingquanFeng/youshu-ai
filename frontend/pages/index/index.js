@@ -18,6 +18,9 @@ Page({
   goAnalysis() {
     wx.navigateTo({ url: '/pages/analysis/analysis' })
   },
+  goIndex() {
+    wx.reLaunch({ url: '/pages/index/index' })
+  },
 
   maybeLogin() {
     if (wx.getStorageSync('token')) return

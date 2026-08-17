@@ -77,5 +77,14 @@ Page({
 
   goRecognize() {
     wx.navigateTo({ url: '/pages/recognize/recognize' })
+  },
+  goIndex() {
+    wx.reLaunch({ url: '/pages/index/index' })
+  },
+  goBill() {
+    wx.reLaunch({ url: '/pages/bill/list/list' })
+  },
+  goAnalysis() {
+    wx.navigateTo({ url: '/pages/analysis/analysis' })
   }
 })
