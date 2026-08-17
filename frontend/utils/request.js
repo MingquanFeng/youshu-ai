@@ -1,5 +1,20 @@
 // utils/request.js — Promise 化的 wx.request + 自动 token + 错误码处理
-const DEFAULT_BASE = 'http://127.0.0.1:8000/api/v1'
+
+// === 开发期 API base 配置 ===
+// 真机的 127.0.0.1 是手机本身, 必须用电脑 LAN IP
+// 换 wifi / 换电脑要同步改这里; 生产 build 时换成真实域名
+const DEV_LOCAL  = 'http://127.0.0.1:8000/api/v1'
+const DEV_LAN_IP = 'http://192.168.18.204:8000/api/v1'
+
+function getDefaultBase() {
+  try {
+    const sys = wx.getSystemInfoSync()
+    // 开发者工具模拟器 → 用本地 loopback
+    if (sys && sys.platform === 'devtools') return DEV_LOCAL
+  } catch (e) { /* 旧基础库或非小程序环境 */ }
+  // 真机 (iOS / Android / macOS / Windows) → 用 LAN IP
+  return DEV_LAN_IP
+}
 
 function getToken() {
   try { return wx.getStorageSync('token') || '' } catch (e) { return '' }
@@ -10,10 +25,11 @@ function clearToken() {
 }
 
 function getApiBase() {
+  // 优先级: storage > globalData > 平台默认
   try {
-    return wx.getStorageSync('apiBase') || getApp().globalData.apiBase || DEFAULT_BASE
+    return wx.getStorageSync('apiBase') || getApp().globalData.apiBase || getDefaultBase()
   } catch (e) {
-    return DEFAULT_BASE
+    return getDefaultBase()
   }
 }
 
