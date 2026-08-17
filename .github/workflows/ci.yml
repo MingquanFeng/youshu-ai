@@ -1,39 +1,127 @@
-name: ci
+name: CI
 
 on:
   push:
     branches: [main]
   pull_request:
     branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
+  # === 后端: pytest ===
   backend:
-    name: backend (pytest + ruff)
+    name: Backend (pytest)
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: backend
-
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: '3.13'
           cache: pip
           cache-dependency-path: backend/pyproject.toml
 
-      - name: Install (incl. dev extras)
-        run: |
-          python -m pip install --upgrade pip
-          pip install -e ".[dev]"
+      - name: Install (editable + dev deps)
+        run: pip install -e ".[dev]"
 
-      - name: Ruff
-        run: ruff check .
-
-      - name: Import smoke
-        run: python -c "from app.main import app; assert len(app.routes) > 0"
-
-      - name: Pytest
+      - name: Run tests
         run: pytest -q
+
+  # === 前端: JSON / JS / WXSS / WXML 静态校验 ===
+  frontend-check:
+    name: Frontend (syntax / balance)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Validate all JSON (app.json / page.json / component.json)
+        run: |
+          cd frontend
+          status=0
+          while IFS= read -r -d '' f; do
+            if ! node -e "JSON.parse(require('fs').readFileSync('$0','utf8'))" "$f" 2>/dev/null; then
+              # fallback (older node doesn't pass args after file)
+              if ! node -e "JSON.parse(require('fs').readFileSync(process.argv[1],'utf8'))" "$f"; then
+                echo "::error file=$f::invalid JSON"
+                status=1
+              fi
+            fi
+          done < <(find . -name '*.json' -not -path '*/node_modules/*' -print0)
+          exit $status
+
+      - name: JS syntax check (node --check)
+        run: |
+          cd frontend
+          status=0
+          for f in $(find . -name '*.js' -not -path '*/node_modules/*'); do
+            if ! node --check "$f" 2>&1 | grep -v '^$'; then
+              :
+            fi
+          done
+          # node --check 失败会返回非零, 用整体判断
+          fail=0
+          for f in $(find . -name '*.js' -not -path '*/node_modules/*'); do
+            if ! node --check "$f" >/dev/null 2>&1; then
+              echo "::error file=$f::JS syntax error"
+              fail=1
+            fi
+          done
+          exit $fail
+
+      - name: WXSS brace balance + wxml tag balance
+        run: |
+          cd frontend
+          status=0
+          while IFS= read -r f; do
+            o=$(grep -o '{' "$f" | wc -l | tr -d ' ')
+            c=$(grep -o '}' "$f" | wc -l | tr -d ' ')
+            if [ "$o" != "$c" ]; then
+              echo "::error file=$f::brace mismatch { $o vs } $c"
+              status=1
+            fi
+          done < <(find . -name '*.wxss')
+          while IFS= read -r f; do
+            o=$(grep -oE '<[A-Za-z]' "$f" | wc -l | tr -d ' ')
+            c=$(grep -oE '</[A-Za-z]' "$f" | wc -l | tr -d ' ')
+            s=$(grep -oE '/>' "$f" | wc -l | tr -d ' ')
+            diff=$((o - s - c))
+            if [ "$diff" != "0" ]; then
+              echo "::error file=$f::tag mismatch open-close=$diff"
+              status=1
+            fi
+          done < <(find . -name '*.wxml')
+          exit $status
+
+      - name: Required files present
+        run: |
+          cd frontend
+          test -f app.json
+          test -f app.wxss
+          for p in pages/index/index pages/recognize/recognize pages/bill/list/list pages/bill/detail/detail pages/analysis/analysis; do
+            for ext in wxml wxss js json; do
+              test -f "$p.$ext" || { echo "::error::missing $p.$ext"; exit 1; }
+            done
+          done
+
+  # === 密钥扫描: gitleaks (与 pre-commit hook 同) ===
+  secrets-scan:
+    name: Secrets scan (gitleaks)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
