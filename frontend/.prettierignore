@@ -8,8 +8,10 @@ theme.json
 # wxss/wxml 不格式化 (Prettier 对 WXSS 支持有限)
 *.wxss
 *.wxml
-# CI/工具脚本不格式化 (一些 Node 工具按个人风格)
+# Node 工具 (package.json 只要 type 字段)
 scripts/check_wxml.js
+scripts/package.json
+# CI/工具脚本不格式化 (一些 Node 工具按个人风格)
 .github/
 # 文档/截图
 docs/screenshots/
