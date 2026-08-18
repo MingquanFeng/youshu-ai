@@ -84,6 +84,7 @@ def _minimax_run(result: RecognizeResult) -> RecognizeResult:
     """MiniMax 文本模型做识别结果校验/分类 (OpenAI 兼容协议).
 
     缺包 / 缺 key → 降级 mock.
+    注意: MiniMax 不支持 response_format=json_object, prompt 强制要求纯 JSON 输出.
     """
     try:
         from openai import OpenAI  # type: ignore
@@ -97,17 +98,27 @@ def _minimax_run(result: RecognizeResult) -> RecognizeResult:
 
     client = OpenAI(api_key=settings.minimax_api_key, base_url=settings.minimax_base_url)
     prompt = (
-        "你是记账审查助手, 对下面识别结果做合理性检查并返回 JSON (保留字段 amount/merchant/category/payment/score):"
-        f" {result.model_dump_json()}"
+        "你是记账审查助手。对下面识别结果做合理性检查并修正: "
+        f"{result.model_dump_json()}。"
+        "只返回 JSON (字段 amount/merchant/category/payment/score), "
+        "不要解释, 不要 markdown 代码块, 不要前后缀。"
     )
     resp = client.chat.completions.create(
         model=settings.minimax_text_model,
         messages=[{"role": "user", "content": prompt}],
-        response_format={"type": "json_object"},
+        max_tokens=200,
     )
-    import json
 
-    data = json.loads(resp.choices[0].message.content)
+    import json
+    import re
+
+    text = resp.choices[0].message.content.strip()
+    # MiniMax 可能返回 markdown 包裹 ```json ... ``` 或前后有杂文本, 提取 JSON
+    m = re.search(r"\{.*\}", text, re.DOTALL)
+    if not m:
+        raise ValueError(f"MiniMax 返回非 JSON: {text[:200]}")
+    data = json.loads(m.group(0))
+
     return RecognizeResult(
         amount=float(data.get("amount", result.amount)),
         merchant=str(data.get("merchant", result.merchant)),
