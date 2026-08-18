@@ -1,8 +1,16 @@
 <view class="page">
-  <!-- 状态条 -->
+  <!-- 错误条 (持续展示, 含重试) -->
+  <view wx:if="{{errorMsg}}" class="state-bar state-bar--error state-bar--sticky">
+    <text class="state-bar__msg">{{errorMsg}}</text>
+    <text class="state-bar__action" bindtap="clearError">✕</text>
+  </view>
+
+  <!-- 加载 / 找不到 -->
   <view wx:if="{{loading}}" class="state-bar state-bar--loading">载入中 …</view>
-  <view wx:elif="{{notFound}}" class="state-bar state-bar--error">此条记录不存在或已删除</view>
-  <view wx:elif="{{errorMsg}}" class="state-bar state-bar--error">{{errorMsg}}</view>
+  <view wx:elif="{{notFound}}" class="state-bar state-bar--error">
+    此条记录不存在或已删除
+    <text class="state-bar__action" bindtap="goBack">返回</text>
+  </view>
 
   <block wx:elif="{{bill}}">
     <!-- 顶部: 单条信息 -->
@@ -18,7 +26,7 @@
       </view>
     </view>
 
-    <!-- 大金额 card (Modern Soft) -->
+    <!-- 大金额 card -->
     <view class="amount-card">
       <text class="label">金额</text>
       <text class="amount-md">¥ {{bill.amount_str}}</text>
@@ -33,31 +41,110 @@
       <view wx:if="{{bill.remark}}" class="amount-card__remark">{{bill.remark}}</view>
     </view>
 
-    <!-- 编辑表单 (card 化) -->
+    <!-- 编辑表单 -->
     <view class="form-card">
-      <text class="label">编辑</text>
-      <view class="form-row">
+      <view class="row between" style="margin-bottom: var(--space-3);">
+        <text class="label">编辑</text>
+        <text wx:if="{{!canSave && !errors.amount && !errors.category}}" class="muted" style="font-size: 20rpx;">未修改 · 无需保存</text>
+        <text wx:elif="{{errors.amount || errors.category}}" class="muted" style="font-size: 20rpx; color: var(--color-error);">请修正错误</text>
+      </view>
+
+      <view class="form-row {{ errors.amount ? 'form-row--error' : '' }}">
         <text class="form-label">金额</text>
-        <input class="input" type="digit" value="{{form.amount}}" bindinput="onAmountInput" />
+        <view class="col flex-1">
+          <input
+            class="input"
+            type="digit"
+            value="{{form.amount}}"
+            bindinput="onAmountInput"
+            disabled="{{saving}}"
+            placeholder="0.00"
+          />
+          <text wx:if="{{errors.amount}}" class="form-error">{{errors.amount}}</text>
+        </view>
       </view>
-      <view class="form-row">
+
+      <view class="form-row {{ errors.category ? 'form-row--error' : '' }}">
         <text class="form-label">分类</text>
-        <input class="input" type="text" value="{{form.category}}" bindinput="onFieldInput" data-field="category" />
+        <view class="col flex-1">
+          <input
+            class="input"
+            type="text"
+            value="{{form.category}}"
+            bindinput="onFieldInput"
+            data-field="category"
+            disabled="{{saving}}"
+            placeholder="如 餐饮"
+          />
+          <text wx:if="{{errors.category}}" class="form-error">{{errors.category}}</text>
+        </view>
       </view>
+
       <view class="form-row">
         <text class="form-label">商家</text>
-        <input class="input" type="text" value="{{form.merchant}}" bindinput="onFieldInput" data-field="merchant" />
+        <input
+          class="input"
+          type="text"
+          value="{{form.merchant}}"
+          bindinput="onFieldInput"
+          data-field="merchant"
+          disabled="{{saving}}"
+          placeholder="可选"
+        />
       </view>
+
+      <view class="form-row">
+        <text class="form-label">支付</text>
+        <input
+          class="input"
+          type="text"
+          value="{{form.pay_method}}"
+          bindinput="onFieldInput"
+          data-field="pay_method"
+          disabled="{{saving}}"
+          placeholder="如 微信 / 支付宝"
+        />
+      </view>
+
+      <view class="form-row">
+        <text class="form-label">时间</text>
+        <picker
+          mode="date"
+          value="{{form.bill_time}}"
+          bindchange="onPickerChange"
+          disabled="{{saving}}"
+          class="form-picker"
+        >
+          <view class="input form-picker__inner">{{form.bill_time || '选择日期'}}</view>
+        </picker>
+      </view>
+
       <view class="form-row form-row--top">
         <text class="form-label">备注</text>
-        <textarea class="textarea" value="{{form.remark}}" bindinput="onFieldInput" data-field="remark" />
+        <textarea
+          class="textarea"
+          value="{{form.remark}}"
+          bindinput="onFieldInput"
+          data-field="remark"
+          disabled="{{saving}}"
+          placeholder="可选"
+        />
       </view>
     </view>
 
     <!-- 按钮组 -->
     <view class="actions">
-      <button class="btn btn--danger-soft" disabled="{{saving}}" bindtap="confirmDelete">删除</button>
-      <button class="btn" disabled="{{saving}}" bindtap="save">{{saving ? '保存中 …' : '保存修订'}}</button>
+      <button class="btn btn--danger-soft" disabled="{{saving}}" bindtap="confirmDelete">
+        {{ saving ? '处理中…' : '删除' }}
+      </button>
+      <button
+        class="btn"
+        disabled="{{!canSave || saving}}"
+        bindtap="save"
+      >
+        <text wx:if="{{saving}}" class="btn-spinner">◌</text>
+        <text>{{ saving ? '保存中 …' : (canSave ? '保存修订' : '保存修订') }}</text>
+      </button>
     </view>
   </block>
 </view>

@@ -2,15 +2,63 @@
 import { getBillDetail, removeBill, updateBill } from '../../../api/bill'
 import { formatBillTime } from '../../../utils/format'
 
+// 字段校验规则
+const MAX_AMOUNT = 9999999
+
+function makeForm(b) {
+  return {
+    amount: b.amount,
+    category: b.category || '',
+    merchant: b.merchant || '',
+    pay_method: b.pay_method || '',
+    bill_time: b.bill_time || '',
+    remark: b.remark || ''
+  }
+}
+
+// 字段级校验: 返回 { field: msg } 表示错误
+function validateForm(form) {
+  const errors = {}
+  if (form.amount === '' || form.amount === null || form.amount === undefined) {
+    errors.amount = '请输入金额'
+  } else if (Number.isNaN(Number(form.amount))) {
+    errors.amount = '金额必须是数字'
+  } else if (Number(form.amount) <= 0) {
+    errors.amount = '金额必须大于 0'
+  } else if (Number(form.amount) > MAX_AMOUNT) {
+    errors.amount = `金额不能超过 ${MAX_AMOUNT}`
+  }
+  if (!form.category || !form.category.trim()) {
+    errors.category = '请输入分类'
+  }
+  return errors
+}
+
+// deep equal for form diff
+function isFormDirty(orig, form) {
+  if (!orig) return true
+  const fields = ['amount', 'category', 'merchant', 'pay_method', 'bill_time', 'remark']
+  for (const f of fields) {
+    const a = (orig[f] ?? '').toString().trim()
+    const b = (form[f] ?? '').toString().trim()
+    if (a !== b) return true
+  }
+  return false
+}
+
 Page({
   data: {
     bill: null,
-    form: { amount: 0, category: '', merchant: '', remark: '' },
+    originalForm: null,  // 编辑前的 form, 用于 dirty 检查
+    form: { amount: 0, category: '', merchant: '', pay_method: '', bill_time: '', remark: '' },
+    errors: {},           // 字段错误
     loading: false,
     saving: false,
     notFound: false,
-    errorMsg: '',
-    billId: 0
+    errorMsg: '',         // 全局错误 (toast 替代)
+    billId: 0,
+    canSave: false,
+    maxAmount: MAX_AMOUNT
   },
 
   onLoad(options) {
@@ -27,18 +75,17 @@ Page({
     this.setData({ loading: true, errorMsg: '' })
     try {
       const res = await getBillDetail(this.data.billId)
+      const form = makeForm(res)
       this.setData({
         bill: {
           ...res,
           bill_time_short: formatBillTime(res.bill_time),
           amount_str: Number(res.amount).toFixed(2)
         },
-        form: {
-          amount: res.amount,
-          category: res.category,
-          merchant: res.merchant,
-          remark: res.remark
-        }
+        originalForm: form,
+        form,
+        errors: {},
+        canSave: false
       })
     } catch (e) {
       if (e && e.code === 40400) {
@@ -56,35 +103,56 @@ Page({
   },
 
   onAmountInput(e) {
-    this.setData({ 'form.amount': Number(e.detail.value) })
+    const v = e.detail.value
+    this.setData({ 'form.amount': v }, () => this.recomputeDirtyAndErrors())
   },
   onFieldInput(e) {
     const { field } = e.currentTarget.dataset
-    this.setData({ ['form.' + field]: e.detail.value })
+    this.setData({ ['form.' + field]: e.detail.value }, () => this.recomputeDirtyAndErrors())
+  },
+  onPickerChange(e) {
+    this.setData({ 'form.bill_time': e.detail.value }, () => this.recomputeDirtyAndErrors())
+  },
+
+  recomputeDirtyAndErrors() {
+    const { form, originalForm } = this.data
+    const errors = validateForm(form)
+    const dirty = isFormDirty(originalForm, form)
+    // 字段没改 + 字段有错 → 都不能保存
+    this.setData({ errors, canSave: dirty && Object.keys(errors).length === 0 })
   },
 
   async save() {
     if (this.data.saving) return
-    if (!this.data.form.amount || this.data.form.amount <= 0) {
-      wx.showToast({ title: '请输入有效金额', icon: 'none' })
-      return
-    }
-    this.setData({ saving: true })
+    if (!this.data.canSave) return
+    this.setData({ saving: true, errorMsg: '' })
     try {
       await updateBill(this.data.billId, this.data.form)
       wx.showToast({ title: '保存成功', icon: 'success' })
       setTimeout(() => wx.navigateBack(), 600)
     } catch (e) {
-      wx.showToast({ title: (e && e.message) || '保存失败', icon: 'none' })
+      // 422 字段错误: { code: 42200, errors: {field: msg} }
+      if (e && e.code === 42200 && e.errors) {
+        this.setData({ errors: e.errors, errorMsg: '请检查标红字段' })
+      } else {
+        this.setData({ errorMsg: (e && e.message) || '保存失败，请稍后重试' })
+      }
     } finally {
       this.setData({ saving: false })
     }
   },
 
+  clearError() {
+    this.setData({ errorMsg: '' })
+  },
+
   confirmDelete() {
     wx.showModal({
       title: '确认删除',
-      content: '确定要删除这条账单吗？',
+      content: '确定要删除这条账单吗？删除后无法恢复。',
+      confirmText: '删除',
+      confirmColor: '#EF4444',
+      cancelText: '取消',
       success: (res) => {
         if (!res.confirm) return
         this.doDelete()
@@ -93,13 +161,13 @@ Page({
   },
 
   async doDelete() {
-    this.setData({ saving: true })
+    this.setData({ saving: true, errorMsg: '' })
     try {
       await removeBill(this.data.billId)
       wx.showToast({ title: '已删除', icon: 'success' })
       setTimeout(() => wx.navigateBack(), 600)
     } catch (e) {
-      wx.showToast({ title: (e && e.message) || '删除失败', icon: 'none' })
+      this.setData({ errorMsg: (e && e.message) || '删除失败' })
     } finally {
       this.setData({ saving: false })
     }

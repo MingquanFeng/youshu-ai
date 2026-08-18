@@ -1,15 +1,13 @@
-/* bill/detail — Modern Soft v6
- * 全部样式提取到 app.wxss (topbar, amount-card, form-card, form-row, chip, actions 共用)
- * 这里只保留 .page 容器特化 + 详情页特殊样式
- */
+/* bill/detail — Modern Soft v6 + 编辑完整化 (校验/dirty/loading/错误) */
 
+/* Page wrapper */
 .page {
   padding: var(--space-5) var(--space-5) var(--space-7);
   background: var(--color-bg);
   color: var(--color-fg);
 }
 
-/* 大金额 card — 用主色翠绿 */
+/* 大金额 card */
 .amount-card .amount-md {
   font-family: var(--font-mono);
   color: var(--color-primary);
@@ -20,13 +18,7 @@
   margin-top: var(--space-3);
   letter-spacing: -0.02em;
 }
-
-/* 分类 chip + 支付方式同行 */
-.amount-card__meta-row {
-  margin-top: var(--space-3);
-}
-
-/* 备注文字 */
+.amount-card__meta-row { margin-top: var(--space-3); }
 .amount-card__remark {
   font-size: 24rpx;
   color: var(--color-fg-2);
@@ -34,14 +26,142 @@
   line-height: 1.6;
 }
 
-/* 删除按钮改成 ghost-danger (软) */
+/* 表单 card */
+.form-card {
+  background: var(--color-bg-2);
+  border: 1rpx solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4) var(--space-5);
+  margin-bottom: var(--space-5);
+  box-shadow: var(--shadow-sm);
+}
+.form-card .label { margin-bottom: var(--space-3); }
+.form-row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-2) 0;
+  border-bottom: 1rpx solid var(--color-border-2);
+}
+.form-row:last-child { border-bottom: none; }
+.form-label {
+  width: 100rpx;
+  flex-shrink: 0;
+  color: var(--color-fg-2);
+  font-size: var(--text-sm);
+  padding-top: 18rpx;  /* align with input vertical center */
+}
+.form-row .input,
+.form-row .textarea,
+.form-row .form-picker {
+  flex: 1;
+  min-width: 0;
+  border: 1rpx solid var(--color-border);
+  background: var(--color-bg-2);
+  padding: 12rpx 18rpx;
+  font-family: inherit;
+  font-size: var(--text-md);
+  color: var(--color-fg);
+  border-radius: var(--radius-sm);
+  transition: border-color var(--dur-base) var(--ease-out),
+              box-shadow var(--dur-base) var(--ease-out);
+  box-sizing: border-box;
+}
+.form-row .input:focus,
+.form-row .textarea:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 4rpx rgba(16, 185, 129, 0.12);
+  outline: none;
+}
+.form-row .textarea {
+  min-height: 120rpx;
+  line-height: 1.55;
+  resize: vertical;
+}
+.form-row .input[disabled],
+.form-row .textarea[disabled] {
+  background: var(--color-bg-3);
+  color: var(--color-fg-3);
+  cursor: not-allowed;
+}
+
+/* picker 包装 (label 与 input 同样式) */
+.form-picker__inner {
+  display: block;
+  min-height: 40rpx;
+}
+
+/* 字段错误态 */
+.form-row--error .input,
+.form-row--error .textarea,
+.form-row--error .form-picker {
+  border-color: var(--color-error);
+  box-shadow: 0 0 0 4rpx rgba(239, 68, 68, 0.10);
+}
+.form-error {
+  font-size: 22rpx;
+  color: var(--color-error);
+  margin-top: 6rpx;
+  font-weight: 500;
+}
+
+/* state-bar 加 action 槽位 + sticky 变体 */
+.state-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+.state-bar--sticky {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  margin: calc(var(--space-5) * -1) calc(var(--space-5) * -1) var(--space-3);
+  border-radius: 0;
+}
+.state-bar__msg {
+  flex: 1;
+  min-width: 0;
+}
+.state-bar__action {
+  font-size: 26rpx;
+  font-weight: 600;
+  opacity: 0.7;
+  padding: 4rpx 12rpx;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: opacity var(--dur-fast) var(--ease-out);
+}
+.state-bar__action:active { opacity: 1.0; }
+
+/* 删除按钮 (软) */
 .btn--danger-soft {
   background: var(--color-error-soft);
   color: var(--color-error);
   border: none;
   box-shadow: var(--shadow-sm);
 }
-.btn--danger-soft:hover, .btn--danger-soft.is-hover {
-  background: var(--color-error);
-  color: #FFFFFF;
+.btn--danger-soft[disabled] {
+  background: var(--color-bg-3);
+  color: var(--color-fg-3);
+  box-shadow: none;
 }
+
+/* 保存按钮 spinner (text-only 旋转指示) */
+.btn-spinner {
+  display: inline-block;
+  margin-right: 8rpx;
+  font-size: 28rpx;
+  animation: btn-spin 0.9s linear infinite;
+}
+@keyframes btn-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* actions 间距 */
+.actions {
+  display: flex;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+.actions .btn { flex: 1; min-width: 0; }

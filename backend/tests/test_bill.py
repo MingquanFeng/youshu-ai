@@ -173,8 +173,8 @@ def test_get_bill_id_must_be_int(client, auth_headers):
     res = client.get("/api/v1/bill/abc", headers=auth_headers)
     assert res.status_code == 422
     body = res.json()
-    assert body["code"] == 40000
-    assert isinstance(body["data"], list)
+    assert body["code"] == 42200
+    assert isinstance(body["data"], dict)
 
 
 # ----------------------------- T-003: update_bill ----------------------------- #
@@ -309,7 +309,7 @@ def test_update_bill_rejects_non_positive_amount(client, auth_headers):
             headers=auth_headers,
         )
         assert res.status_code == 422
-        assert res.json()["code"] == 40000
+        assert res.json()["code"] == 42200
 
 
 def test_update_bill_empty_body_rejected(client, auth_headers):
@@ -333,7 +333,7 @@ def test_update_bill_id_must_be_int(client, auth_headers):
     )
     assert res.status_code == 422
     body = res.json()
-    assert body["code"] == 40000
+    assert body["code"] == 42200
 
 
 def test_update_bill_adds_correction_marker_to_remark(client, auth_headers):
@@ -451,5 +451,5 @@ def test_delete_bill_id_must_be_int(client, auth_headers):
     res = client.delete("/api/v1/bill/abc", headers=auth_headers)
     assert res.status_code == 422
     body = res.json()
-    assert body["code"] == 40000
-    assert isinstance(body["data"], list)
+    assert body["code"] == 42200
+    assert isinstance(body["data"], dict)

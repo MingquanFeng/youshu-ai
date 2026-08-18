@@ -146,13 +146,13 @@ def test_daily_requires_auth(client):
 def test_daily_days_zero(client, auth_headers):
     res = client.post("/api/v1/analysis/daily", json={"days": 0}, headers=auth_headers)
     assert res.status_code == 422
-    assert res.json()["code"] == 40000
+    assert res.json()["code"] == 42200
 
 
 def test_daily_days_too_large(client, auth_headers):
     res = client.post("/api/v1/analysis/daily", json={"days": 366}, headers=auth_headers)
     assert res.status_code == 422
-    assert res.json()["code"] == 40000
+    assert res.json()["code"] == 42200
 
 
 def test_daily_soft_delete_filtered(client, auth_headers):
@@ -253,13 +253,13 @@ def test_category_requires_auth(client):
 def test_category_months_zero(client, auth_headers):
     res = client.post("/api/v1/analysis/category", json={"months": 0}, headers=auth_headers)
     assert res.status_code == 422
-    assert res.json()["code"] == 40000
+    assert res.json()["code"] == 42200
 
 
 def test_category_months_too_large(client, auth_headers):
     res = client.post("/api/v1/analysis/category", json={"months": 13}, headers=auth_headers)
     assert res.status_code == 422
-    assert res.json()["code"] == 40000
+    assert res.json()["code"] == 42200
 
 
 def test_category_soft_delete_filtered(client, auth_headers):

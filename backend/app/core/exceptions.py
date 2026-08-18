@@ -33,9 +33,17 @@ def register_exception_handlers(app: FastAPI) -> None:
 
     @app.exception_handler(RequestValidationError)
     async def _validation(_: Request, exc: RequestValidationError) -> JSONResponse:
+        # 把 Pydantic ValidationError 列表简化为 {field: msg} 字典
+        # 前端按字段名直接展示在对应 input 旁
+        errors: dict[str, str] = {}
+        for err in exc.errors():
+            loc = err.get("loc", ())
+            field = str(loc[-1]) if loc else "_"
+            # 同字段多错时取第一条
+            errors.setdefault(field, err.get("msg", "校验失败"))
         return JSONResponse(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            content=jsonable_encoder(fail(40000, "请求参数校验失败", data=exc.errors())),
+            content=jsonable_encoder(fail(42200, "请求参数校验失败", data=errors)),
         )
 
     @app.exception_handler(Exception)
