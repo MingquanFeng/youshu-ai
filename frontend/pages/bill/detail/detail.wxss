@@ -7,18 +7,29 @@
   color: var(--color-fg);
 }
 
-/* 大金额 card */
+/* 大金额 card: 字号比首页小 (次要展示) */
 .amount-card .amount-md {
   font-family: var(--font-mono);
   color: var(--color-primary);
   font-variant-numeric: tabular-nums;
   line-height: 1;
-  font-size: 80rpx;
+  font-size: 56rpx;
   font-weight: 600;
   margin-top: var(--space-3);
   letter-spacing: -0.02em;
+  display: block;
 }
-.amount-card__meta-row { margin-top: var(--space-3); }
+.amount-card__meta-row {
+  margin-top: var(--space-3);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+.amount-card__pay {
+  font-size: 24rpx;
+  color: var(--color-fg-2);
+}
 .amount-card__remark {
   font-size: 24rpx;
   color: var(--color-fg-2);
@@ -26,16 +37,17 @@
   line-height: 1.6;
 }
 
-/* topbar 紧凑: icon 缩小到 72rpx, 与 txn__icon 同尺寸视觉一致 */
+/* topbar 紧凑: icon 左 + 信息列右, 强制 row 覆盖公共 column */
 .topbar {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  margin-bottom: var(--space-5);
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: var(--space-3) !important;
+  margin-bottom: var(--space-5) !important;
 }
 .topbar__icon {
-  width: 72rpx;
-  height: 72rpx;
+  width: 64rpx;
+  height: 64rpx;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -46,8 +58,8 @@
 }
 .topbar__icon-char {
   font-family: var(--font-display);
-  font-size: 30rpx;
-  font-weight: 500;
+  font-size: 28rpx;
+  font-weight: 600;
   color: var(--color-fg);
   line-height: 1;
 }

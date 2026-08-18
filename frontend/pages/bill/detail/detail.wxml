@@ -28,13 +28,12 @@
     <view class="amount-card">
       <text class="label">金额</text>
       <text class="amount-md">¥ {{bill.amount_str}}</text>
-      <view class="row gap-2 amount-card__meta-row">
-        <view class="chip chip--food">
+      <view class="amount-card__meta-row">
+        <view class="chip chip--{{bill.category_key}}">
           <view class="chip__dot"></view>
           <text>{{bill.category}}</text>
         </view>
-        <text class="muted" style="font-size: 22rpx;">·</text>
-        <text class="muted" style="font-size: 22rpx;">{{bill.pay_method || '未指定'}}</text>
+        <text class="amount-card__pay">{{bill.pay_method || '未指定'}}</text>
       </view>
       <view wx:if="{{bill.remark}}" class="amount-card__remark">{{bill.remark}}</view>
     </view>
