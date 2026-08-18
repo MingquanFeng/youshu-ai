@@ -5,7 +5,7 @@ import { formatBillTime } from '../../utils/format';
 
 // 后端返回的 image_url 是相对路径 (/static/uploads/...),
 // 微信 <image> 不支持相对路径, 必须拼成绝对 URL
-function toAbsoluteUrl(rel) {
+export function toAbsoluteUrl(rel) {
   if (!rel) return '';
   if (rel.startsWith('http://') || rel.startsWith('https://')) return rel;
   // getApiBase 返回 http://host:port/api/v1, 去掉 /api/v1

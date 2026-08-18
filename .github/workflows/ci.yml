@@ -117,6 +117,10 @@ jobs:
         working-directory: frontend
         run: npm run check
 
+      - name: Unit tests (vitest)
+        working-directory: frontend
+        run: npm test
+
       - name: Required files present
         run: |
           cd frontend

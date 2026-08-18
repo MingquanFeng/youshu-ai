@@ -3,10 +3,10 @@ import { getBillDetail, removeBill, updateBill } from '../../../api/bill';
 import { formatBillTime } from '../../../utils/format';
 
 // 字段校验规则
-const MAX_AMOUNT = 9999999;
+export const MAX_AMOUNT = 9999999;
 
 // 分类中文 → key (用于 icon 颜色)
-const CAT_KEY_MAP = {
+export const CAT_KEY_MAP = {
   餐饮: 'food',
   交通: 'transport',
   购物: 'shop',
@@ -16,7 +16,7 @@ const CAT_KEY_MAP = {
   工资: 'income'
 };
 
-function makeForm(b) {
+export function makeForm(b) {
   return {
     amount: b.amount,
     category: b.category || '',
@@ -27,13 +27,13 @@ function makeForm(b) {
   };
 }
 
-function shallowClone(obj) {
+export function shallowClone(obj) {
   // 用于 originalForm: 防止与 form 共享引用导致 dirty 永远 false
   return Object.assign({}, obj);
 }
 
 // 字段级校验: 返回 { field: msg } 表示错误
-function validateForm(form) {
+export function validateForm(form) {
   const errors = {};
   if (form.amount === '' || form.amount === null || form.amount === undefined) {
     errors.amount = '请输入金额';
@@ -51,7 +51,7 @@ function validateForm(form) {
 }
 
 // deep equal for form diff
-function isFormDirty(orig, form) {
+export function isFormDirty(orig, form) {
   if (!orig) return true;
   const fields = ['amount', 'category', 'merchant', 'pay_method', 'bill_time', 'remark'];
   for (const f of fields) {
