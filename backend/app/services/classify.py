@@ -8,7 +8,6 @@ import logging
 from functools import lru_cache
 
 from app.core.config import settings
-from app.core.exceptions import BizException
 from app.services.types import RecognizeResult
 
 logger = logging.getLogger(__name__)
@@ -20,13 +19,17 @@ def _llm_backend() -> str:
 
 
 def refine(result: RecognizeResult) -> RecognizeResult:
-    """对 vision 结果做二次校验：修正异常金额、补默认分类。"""
+    """对 vision 结果做二次校验：修正异常金额、补默认分类。
+
+    backend 缺失依赖/Key 时自动降级 mock, 不中断请求。
+    """
     backend = _llm_backend()
     if backend == "deepseek":
         return _deepseek_run(result)
     if backend == "mock":
         return _mock_run(result)
-    raise BizException(50000, f"未知 LLM 后端: {backend}")
+    logger.warning("未知 LLM 后端: %s, 降级 mock", backend)
+    return _mock_run(result)
 
 
 def _mock_run(result: RecognizeResult) -> RecognizeResult:
@@ -41,11 +44,15 @@ def _mock_run(result: RecognizeResult) -> RecognizeResult:
 def _deepseek_run(result: RecognizeResult) -> RecognizeResult:
     try:
         from openai import OpenAI  # type: ignore
-    except ImportError as exc:
-        raise BizException(50000, "未安装 openai 客户端") from exc
+    except ImportError:
+        logger.warning(
+            "openai 未安装 (pip install -e '.[ai]'), 降级到 mock classify"
+        )
+        return _mock_run(result)
 
     if not settings.deepseek_api_key:
-        raise BizException(50000, "缺少 DEEPSEEK_API_KEY")
+        logger.warning("DEEPSEEK_API_KEY 未设置, 降级到 mock classify")
+        return _mock_run(result)
 
     client = OpenAI(api_key=settings.deepseek_api_key, base_url="https://api.deepseek.com")
     prompt = (

@@ -23,7 +23,7 @@ def _ocr_backend() -> str:
 
 
 def run_ocr(image_path: str) -> str:
-    """对一张本地图片跑 OCR，返回纯文本。"""
+    """对一张本地图片跑 OCR，返回纯文本。缺依赖自动降级 mock。"""
     if not os.path.exists(image_path):
         raise BizException(40400, "图片不存在", status_code=404)
 
@@ -32,7 +32,8 @@ def run_ocr(image_path: str) -> str:
         return _paddleocr_run(image_path)
     if backend == "mock":
         return _mock_run(image_path)
-    raise BizException(50000, f"未知 OCR 后端: {backend}")
+    logger.warning("未知 OCR 后端: %s, 降级 mock", backend)
+    return _mock_run(image_path)
 
 
 def _mock_run(image_path: str) -> str:
@@ -46,11 +47,18 @@ def _mock_run(image_path: str) -> str:
 
 
 def _paddleocr_run(image_path: str) -> str:
-    """真实 PaddleOCR 推理。延迟导入避免没装 paddle 时 import 失败。"""
+    """真实 PaddleOCR 推理。延迟导入避免没装 paddle 时 import 失败。
+
+    依赖缺失 → 自动降级 mock 并 warning, 不中断请求。
+    """
     try:
         from paddleocr import PaddleOCR  # type: ignore
-    except ImportError as exc:
-        raise BizException(50000, "未安装 paddleocr，无法使用该后端") from exc
+    except ImportError:
+        logger.warning(
+            "paddleocr 未安装 (pip install -e '.[ai]'), 降级到 mock OCR. 文件: %s",
+            image_path,
+        )
+        return _mock_run(image_path)
 
     img = Image.open(image_path)
     w, h = img.size

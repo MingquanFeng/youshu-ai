@@ -20,6 +20,8 @@ dependencies = [
 ai = [
     "paddleocr>=2.7.0",
     "paddlepaddle>=2.6.0",
+    "dashscope>=1.20.0",   # 阿里云百炼 Qwen-VL 多模态
+    "openai>=1.30.0",       # DeepSeek / OpenAI 兼容客户端
 ]
 dev = [
     "pytest>=8.2.0",

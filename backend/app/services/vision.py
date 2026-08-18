@@ -5,7 +5,6 @@ MVP 用 mock：基于 OCR 文本抽取结构化信息。
 """
 from __future__ import annotations
 
-import importlib.util
 import logging
 import os
 import re
@@ -25,12 +24,14 @@ def _vision_backend() -> str:
 
 
 def run_vision(image_path: str, ocr_text: str) -> RecognizeResult:
+    """视觉模型：缺依赖/key 自动降级 mock."""
     backend = _vision_backend()
     if backend == "qwen-vl":
         return _qwen_vl_run(image_path, ocr_text)
     if backend == "mock":
         return _mock_run(image_path, ocr_text)
-    raise BizException(50000, f"未知视觉后端: {backend}")
+    logger.warning("未知视觉后端: %s, 降级 mock", backend)
+    return _mock_run(image_path, ocr_text)
 
 
 # ------------------------------ mock 实现 ------------------------------ #
@@ -92,13 +93,23 @@ QWEN_PROMPT = """你是专业记账助手。
 
 
 def _qwen_vl_run(image_path: str, ocr_text: str) -> RecognizeResult:
-    """真实 Qwen-VL 多模态调用：图片 + prompt，返回 JSON。"""
-    if importlib.util.find_spec("dashscope") is None:
-        raise BizException(50000, "未安装 dashscope，无法使用 Qwen-VL 后端")
-    from dashscope import MultiModalConversation  # type: ignore
+    """真实 Qwen-VL 多模态调用：图片 + prompt，返回 JSON。
+
+    依赖或 key 缺失 → 降级 mock + warning, 不中断请求。
+    这样开发期没装 dashscope 也能端到端跑, 生产填了 key 自动切真模型。
+    """
+    try:
+        from dashscope import MultiModalConversation  # type: ignore
+    except ImportError:
+        logger.warning(
+            "dashscope 未安装 (pip install -e '.[ai]'), 降级到 mock vision. 文件: %s",
+            image_path,
+        )
+        return _mock_run(image_path, ocr_text)
 
     if not settings.dashscope_api_key:
-        raise BizException(50000, "缺少 DASHSCOPE_API_KEY")
+        logger.warning("DASHSCOPE_API_KEY 未设置, 降级到 mock vision. 文件: %s", image_path)
+        return _mock_run(image_path, ocr_text)
 
     messages = [
         {
