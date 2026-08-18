@@ -1,0 +1,41 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: youshu-ai-backend
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+    environment:
+      - TZ=Asia/Shanghai
+      - APP_NAME=youshu-ai
+      - APP_ENV=production
+      - APP_HOST=0.0.0.0
+      - APP_PORT=8000
+      - APP_DEBUG=false
+      - JWT_SECRET=${JWT_SECRET:-change-me-in-prod}
+      - JWT_ALGORITHM=HS256
+      - JWT_EXPIRE_MINUTES=10080
+      - DATABASE_URL=${DATABASE_URL:-sqlite:///./youshu_ai.db}
+      - WX_APP_ID=${WX_APP_ID:-}
+      - WX_APP_SECRET=${WX_APP_SECRET:-}
+      - OCR_BACKEND=${OCR_BACKEND:-mock}
+      - VISION_BACKEND=${VISION_BACKEND:-mock}
+      - LLM_BACKEND=${LLM_BACKEND:-mock}
+      - DASHSCOPE_API_KEY=${DASHSCOPE_API_KEY:-}
+      - DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY:-}
+    volumes:
+      - ./backend/storage:/app/storage
+      - ./backend/youshu_ai.db:/app/youshu_ai.db
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
