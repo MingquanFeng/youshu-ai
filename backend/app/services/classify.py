@@ -1,6 +1,6 @@
 """文本分析层：把 vision 输出再用 LLM 校验/分类。
 
-MVP 用关键词直接分类。生产可接 DeepSeek-V3 做兜底纠错与建议生成。
+MVP 用关键词直接分类。生产可接 DeepSeek / MiniMax 做兜底纠错与建议生成。
 """
 from __future__ import annotations
 
@@ -26,6 +26,8 @@ def refine(result: RecognizeResult) -> RecognizeResult:
     backend = _llm_backend()
     if backend == "deepseek":
         return _deepseek_run(result)
+    if backend == "minimax":
+        return _minimax_run(result)
     if backend == "mock":
         return _mock_run(result)
     logger.warning("未知 LLM 后端: %s, 降级 mock", backend)
@@ -61,6 +63,45 @@ def _deepseek_run(result: RecognizeResult) -> RecognizeResult:
     )
     resp = client.chat.completions.create(
         model="deepseek-chat",
+        messages=[{"role": "user", "content": prompt}],
+        response_format={"type": "json_object"},
+    )
+    import json
+
+    data = json.loads(resp.choices[0].message.content)
+    return RecognizeResult(
+        amount=float(data.get("amount", result.amount)),
+        merchant=str(data.get("merchant", result.merchant)),
+        category=str(data.get("category", result.category)),
+        time=result.time,
+        payment=str(data.get("payment", result.payment)),
+        score=float(data.get("score", result.score)),
+        raw_ocr=result.raw_ocr,
+    )
+
+
+def _minimax_run(result: RecognizeResult) -> RecognizeResult:
+    """MiniMax 文本模型做识别结果校验/分类 (OpenAI 兼容协议).
+
+    缺包 / 缺 key → 降级 mock.
+    """
+    try:
+        from openai import OpenAI  # type: ignore
+    except ImportError:
+        logger.warning("openai 未安装, 降级到 mock classify")
+        return _mock_run(result)
+
+    if not settings.minimax_api_key:
+        logger.warning("MINIMAX_API_KEY 未设置, 降级到 mock classify")
+        return _mock_run(result)
+
+    client = OpenAI(api_key=settings.minimax_api_key, base_url=settings.minimax_base_url)
+    prompt = (
+        "你是记账审查助手, 对下面识别结果做合理性检查并返回 JSON (保留字段 amount/merchant/category/payment/score):"
+        f" {result.model_dump_json()}"
+    )
+    resp = client.chat.completions.create(
+        model=settings.minimax_text_model,
         messages=[{"role": "user", "content": prompt}],
         response_format={"type": "json_object"},
     )

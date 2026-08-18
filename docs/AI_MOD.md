@@ -109,3 +109,35 @@ tail -f logs/$(date +%Y%m%d).log | grep -i '降级\|dashscope\|deepseek'
 ```bash
 .venv/bin/uvicorn app.main:app --log-level info 2>&1 | grep 降级
 ```
+---
+
+## MiniMax 一站式接入 (推荐)
+
+MiniMax 同时提供 **VL 多模态** 和 **文本模型**，API 兼容 OpenAI SDK，
+**一个 MINIMAX_API_KEY 覆盖 vision + llm 两层**，最简配置。
+
+### 配置
+
+```bash
+# .env
+pip install openai          # MiniMax API 兼容 OpenAI SDK, 不用装额外包
+VISION_BACKEND=minimax
+LLM_BACKEND=minimax
+OCR_BACKEND=mock            # MiniMax-VL 直接读图, OCR step 可跳过
+MINIMAX_API_KEY=your-key-here
+```
+
+### 模型选择
+
+| 字段 | 默认值 | 说明 |
+|---|---|---|
+| `MINIMAX_BASE_URL` | `https://api.minimaxi.com/v1` | API 端点 |
+| `MINIMAX_VL_MODEL` | `MiniMax-01-Vis-32k` | 视觉模型 |
+| `MINIMAX_TEXT_MODEL` | `MiniMax-Text-01` | 文本模型 |
+
+### 优势
+
+- **1 个 key 覆盖 2 层**（vision + llm）
+- **复用现有 openai 包**（无需新增依赖）
+- **国内访问稳定**（不需要代理）
+- **VL 直接读图**（OCR step 可跳过，端到端延迟更低）

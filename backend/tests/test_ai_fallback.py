@@ -70,3 +70,61 @@ def test_refine_unknown_backend_falls_back(monkeypatch, caplog):
     with caplog.at_level(logging.WARNING, logger="app.services.classify"):
         out = classify._mock_run(inp)
     assert out.category == "其他"
+
+
+def test_vision_minimax_missing_key_falls_back(caplog, monkeypatch, tmp_path):
+    """MINIMAX_API_KEY 未设 → 降级 mock (用 ocr_text 抽出 amount)."""
+    path = _make_tmp_png(tmp_path)
+    monkeypatch.setattr("app.core.config.settings.minimax_api_key", "")
+    with caplog.at_level(logging.WARNING, logger="app.services.vision"):
+        result = vision_svc._minimax_vl_run(path, ocr_text="微信支付 88.00 元")
+    assert result.amount == 88.0
+    msgs = [r.message for r in caplog.records]
+    assert any(("MINIMAX_API_KEY" in m) or ("openai" in m) for m in msgs), msgs
+
+
+def test_classify_minimax_missing_key_falls_back(caplog, monkeypatch):
+    """MINIMAX_API_KEY 未设 → 降级 mock."""
+    from app.services.types import RecognizeResult
+    from datetime import datetime
+    monkeypatch.setattr("app.core.config.settings.minimax_api_key", "")
+    inp = RecognizeResult(
+        amount=12.0, merchant="海底捞", category="",
+        time=datetime.now(), payment="微信支付", score=0.9, raw_ocr="x"
+    )
+    with caplog.at_level(logging.WARNING, logger="app.services.classify"):
+        out = classify._minimax_run(inp)
+    assert out.category == "其他"  # mock 给默认
+    msgs = [r.message for r in caplog.records]
+    assert any(("MINIMAX_API_KEY" in m) or ("openai" in m) for m in msgs), msgs
+
+
+def test_vision_run_dispatches_to_minimax(monkeypatch):
+    """run_vision(backend=minimax) 应调用 _minimax_vl_run."""
+    monkeypatch.setattr("app.core.config.settings.vision_backend", "minimax")
+    vision_svc._vision_backend.cache_clear()
+    called = {}
+    def fake_minimax(path, ocr_text):
+        called["hit"] = True
+        from app.services.types import RecognizeResult
+        from datetime import datetime
+        return RecognizeResult(amount=1, merchant="m", category="c",
+                               time=datetime.now(), payment="p", score=1.0, raw_ocr="")
+    monkeypatch.setattr("app.services.vision._minimax_vl_run", fake_minimax)
+    from app.services.types import RecognizeResult
+    res = vision_svc.run_vision("/tmp/x.png", "ocr")
+    assert called.get("hit") is True
+    assert res.amount == 1
+
+
+def test_refine_dispatches_to_minimax(monkeypatch):
+    """refine(backend=minimax) 应调用 _minimax_run."""
+    from app.services.types import RecognizeResult
+    from datetime import datetime
+    monkeypatch.setattr("app.core.config.settings.llm_backend", "minimax")
+    classify._llm_backend.cache_clear()
+    inp = RecognizeResult(amount=1, merchant="m", category="",
+                           time=datetime.now(), payment="p", score=1.0, raw_ocr="")
+    out = classify.refine(inp)
+    # 不会抛异常, mock 给默认
+    assert out.category == "其他"
