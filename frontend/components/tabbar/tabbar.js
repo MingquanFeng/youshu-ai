@@ -9,9 +9,9 @@ Component({
   },
   methods: {
     onTap(e) {
-      const { index, handler } = e.currentTarget.dataset
-      if (this.data.active === index) return
-      this.triggerEvent('select', { index, handler })
+      const { index, handler } = e.currentTarget.dataset;
+      if (this.data.active === index) return;
+      this.triggerEvent('select', { index, handler });
     }
   }
-})
+});

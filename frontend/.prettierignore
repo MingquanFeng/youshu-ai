@@ -1,0 +1,16 @@
+node_modules/
+miniprogram_npm/
+# 微信开发者工具管理的文件, 不让 prettier 改
+project.config.json
+project.private.config.json
+sitemap.json
+theme.json
+# wxss/wxml 不格式化 (Prettier 对 WXSS 支持有限)
+*.wxss
+*.wxml
+# CI/工具脚本不格式化 (一些 Node 工具按个人风格)
+scripts/check_wxml.js
+.github/
+# 文档/截图
+docs/screenshots/
+*.md

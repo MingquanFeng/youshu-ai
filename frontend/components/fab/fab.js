@@ -8,7 +8,7 @@ Component({
   },
   methods: {
     onTap() {
-      this.triggerEvent('tap', { handler: this.data.handler })
+      this.triggerEvent('tap', { handler: this.data.handler });
     }
   }
-})
+});

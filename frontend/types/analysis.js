@@ -31,4 +31,4 @@
  * @property {number} total
  */
 
-export {}
+export {};

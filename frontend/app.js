@@ -7,9 +7,9 @@ App({
   },
 
   onLaunch() {
-    const token = wx.getStorageSync('token') || ''
-    const apiBase = wx.getStorageSync('apiBase') || 'http://127.0.0.1:8000/api/v1'
-    this.globalData.token = token
-    this.globalData.apiBase = apiBase
+    const token = wx.getStorageSync('token') || '';
+    const apiBase = wx.getStorageSync('apiBase') || 'http://127.0.0.1:8000/api/v1';
+    this.globalData.token = token;
+    this.globalData.apiBase = apiBase;
   }
-})
+});

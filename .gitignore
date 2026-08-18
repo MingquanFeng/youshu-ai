@@ -6,6 +6,9 @@
 .claude/
 # 子项目自带 .gitignore；这里只放外层关心的
 
+# Frontend deps (eslint/prettier)
+frontend/node_modules/
+
 # T-005 QA screenshots
 docs/screenshots/
 

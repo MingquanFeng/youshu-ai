@@ -39,4 +39,4 @@
  * @property {number} score     0-1
  */
 
-export {}
+export {};

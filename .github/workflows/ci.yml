@@ -109,6 +109,14 @@ jobs:
 
           exit $status
 
+      - name: Install npm dependencies
+        working-directory: frontend
+        run: npm ci --silent
+
+      - name: Lint + Format check
+        working-directory: frontend
+        run: npm run check
+
       - name: Required files present
         run: |
           cd frontend

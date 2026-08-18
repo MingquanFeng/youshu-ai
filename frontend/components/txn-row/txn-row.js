@@ -14,8 +14,8 @@ Component({
   },
   methods: {
     onTap() {
-      if (!this.data.handler) return
-      this.triggerEvent('tap', { handler: this.data.handler })
+      if (!this.data.handler) return;
+      this.triggerEvent('tap', { handler: this.data.handler });
     }
   }
-})
+});

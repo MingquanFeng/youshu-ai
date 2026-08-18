@@ -1,16 +1,20 @@
 // pages/bill/detail/detail.js — 账单详情 + 编辑 + 删除
-import { getBillDetail, removeBill, updateBill } from '../../../api/bill'
-import { formatBillTime } from '../../../utils/format'
+import { getBillDetail, removeBill, updateBill } from '../../../api/bill';
+import { formatBillTime } from '../../../utils/format';
 
 // 字段校验规则
-const MAX_AMOUNT = 9999999
+const MAX_AMOUNT = 9999999;
 
 // 分类中文 → key (用于 icon 颜色)
 const CAT_KEY_MAP = {
-  '餐饮': 'food', '交通': 'transport', '购物': 'shop',
-  '居家': 'home', '娱乐': 'fun', '医疗': 'medical',
-  '工资': 'income'
-}
+  餐饮: 'food',
+  交通: 'transport',
+  购物: 'shop',
+  居家: 'home',
+  娱乐: 'fun',
+  医疗: 'medical',
+  工资: 'income'
+};
 
 function makeForm(b) {
   return {
@@ -20,74 +24,74 @@ function makeForm(b) {
     pay_method: b.pay_method || '',
     bill_time: b.bill_time || '',
     remark: b.remark || ''
-  }
+  };
 }
 
 function shallowClone(obj) {
   // 用于 originalForm: 防止与 form 共享引用导致 dirty 永远 false
-  return Object.assign({}, obj)
+  return Object.assign({}, obj);
 }
 
 // 字段级校验: 返回 { field: msg } 表示错误
 function validateForm(form) {
-  const errors = {}
+  const errors = {};
   if (form.amount === '' || form.amount === null || form.amount === undefined) {
-    errors.amount = '请输入金额'
+    errors.amount = '请输入金额';
   } else if (Number.isNaN(Number(form.amount))) {
-    errors.amount = '金额必须是数字'
+    errors.amount = '金额必须是数字';
   } else if (Number(form.amount) <= 0) {
-    errors.amount = '金额必须大于 0'
+    errors.amount = '金额必须大于 0';
   } else if (Number(form.amount) > MAX_AMOUNT) {
-    errors.amount = `金额不能超过 ${MAX_AMOUNT}`
+    errors.amount = `金额不能超过 ${MAX_AMOUNT}`;
   }
   if (!form.category || !form.category.trim()) {
-    errors.category = '请输入分类'
+    errors.category = '请输入分类';
   }
-  return errors
+  return errors;
 }
 
 // deep equal for form diff
 function isFormDirty(orig, form) {
-  if (!orig) return true
-  const fields = ['amount', 'category', 'merchant', 'pay_method', 'bill_time', 'remark']
+  if (!orig) return true;
+  const fields = ['amount', 'category', 'merchant', 'pay_method', 'bill_time', 'remark'];
   for (const f of fields) {
-    const a = (orig[f] ?? '').toString().trim()
-    const b = (form[f] ?? '').toString().trim()
-    if (a !== b) return true
+    const a = (orig[f] ?? '').toString().trim();
+    const b = (form[f] ?? '').toString().trim();
+    if (a !== b) return true;
   }
-  return false
+  return false;
 }
 
 Page({
   data: {
     bill: null,
-    originalForm: null,  // 编辑前的 form, 用于 dirty 检查
+    originalForm: null, // 编辑前的 form, 用于 dirty 检查
     form: { amount: 0, category: '', merchant: '', pay_method: '', bill_time: '', remark: '' },
-    errors: {},           // 字段错误
+    errors: {}, // 字段错误
     loading: false,
     saving: false,
     notFound: false,
-    errorMsg: '',         // 全局错误 (toast 替代)
+    errorMsg: '', // 全局错误 (toast 替代)
     billId: 0,
     canSave: false,
     maxAmount: MAX_AMOUNT
   },
 
   onLoad(options) {
-    const id = Number(options.id)
+    const id = Number(options.id);
     if (!id) {
-      this.setData({ notFound: true })
-      return
+      this.setData({ notFound: true });
+      return;
     }
-    this.setData({ billId: id })
-    this.fetchDetail()
+    this.setData({ billId: id });
+    this.fetchDetail();
   },
 
   async fetchDetail() {
-    this.setData({ loading: true, errorMsg: '' })
+    this.setData({ loading: true, errorMsg: '' });
     try {
-      const res = await getBillDetail(this.data.billId)
-      const form = makeForm(res)
+      const res = await getBillDetail(this.data.billId);
+      const form = makeForm(res);
       this.setData({
         bill: {
           ...res,
@@ -101,64 +105,64 @@ Page({
         form,
         errors: {},
         canSave: false
-      })
+      });
     } catch (e) {
       if (e && e.code === 40400) {
-        this.setData({ notFound: true })
+        this.setData({ notFound: true });
       } else {
-        this.setData({ errorMsg: (e && e.message) || '加载失败' })
+        this.setData({ errorMsg: (e && e.message) || '加载失败' });
       }
     } finally {
-      this.setData({ loading: false })
+      this.setData({ loading: false });
     }
   },
 
   reload() {
-    this.fetchDetail()
+    this.fetchDetail();
   },
 
   onAmountInput(e) {
-    const v = e.detail.value
-    this.setData({ 'form.amount': v }, () => this.recomputeDirtyAndErrors())
+    const v = e.detail.value;
+    this.setData({ 'form.amount': v }, () => this.recomputeDirtyAndErrors());
   },
   onFieldInput(e) {
-    const { field } = e.currentTarget.dataset
-    this.setData({ ['form.' + field]: e.detail.value }, () => this.recomputeDirtyAndErrors())
+    const { field } = e.currentTarget.dataset;
+    this.setData({ ['form.' + field]: e.detail.value }, () => this.recomputeDirtyAndErrors());
   },
   onPickerChange(e) {
-    this.setData({ 'form.bill_time': e.detail.value }, () => this.recomputeDirtyAndErrors())
+    this.setData({ 'form.bill_time': e.detail.value }, () => this.recomputeDirtyAndErrors());
   },
 
   recomputeDirtyAndErrors() {
-    const { form, originalForm } = this.data
-    const errors = validateForm(form)
-    const dirty = isFormDirty(originalForm, form)
+    const { form, originalForm } = this.data;
+    const errors = validateForm(form);
+    const dirty = isFormDirty(originalForm, form);
     // 字段没改 + 字段有错 → 都不能保存
-    this.setData({ errors, canSave: dirty && Object.keys(errors).length === 0 })
+    this.setData({ errors, canSave: dirty && Object.keys(errors).length === 0 });
   },
 
   async save() {
-    if (this.data.saving) return
-    if (!this.data.canSave) return
-    this.setData({ saving: true, errorMsg: '' })
+    if (this.data.saving) return;
+    if (!this.data.canSave) return;
+    this.setData({ saving: true, errorMsg: '' });
     try {
-      await updateBill(this.data.billId, this.data.form)
-      wx.showToast({ title: '保存成功', icon: 'success' })
-      setTimeout(() => wx.navigateBack(), 600)
+      await updateBill(this.data.billId, this.data.form);
+      wx.showToast({ title: '保存成功', icon: 'success' });
+      setTimeout(() => wx.navigateBack(), 600);
     } catch (e) {
       // 422 字段错误: { code: 42200, errors: {field: msg} }
       if (e && e.code === 42200 && e.errors) {
-        this.setData({ errors: e.errors, errorMsg: '请检查标红字段' })
+        this.setData({ errors: e.errors, errorMsg: '请检查标红字段' });
       } else {
-        this.setData({ errorMsg: (e && e.message) || '保存失败，请稍后重试' })
+        this.setData({ errorMsg: (e && e.message) || '保存失败，请稍后重试' });
       }
     } finally {
-      this.setData({ saving: false })
+      this.setData({ saving: false });
     }
   },
 
   clearError() {
-    this.setData({ errorMsg: '' })
+    this.setData({ errorMsg: '' });
   },
 
   confirmDelete() {
@@ -169,26 +173,26 @@ Page({
       confirmColor: '#EF4444',
       cancelText: '取消',
       success: (res) => {
-        if (!res.confirm) return
-        this.doDelete()
+        if (!res.confirm) return;
+        this.doDelete();
       }
-    })
+    });
   },
 
   async doDelete() {
-    this.setData({ saving: true, errorMsg: '' })
+    this.setData({ saving: true, errorMsg: '' });
     try {
-      await removeBill(this.data.billId)
-      wx.showToast({ title: '已删除', icon: 'success' })
-      setTimeout(() => wx.navigateBack(), 600)
+      await removeBill(this.data.billId);
+      wx.showToast({ title: '已删除', icon: 'success' });
+      setTimeout(() => wx.navigateBack(), 600);
     } catch (e) {
-      this.setData({ errorMsg: (e && e.message) || '删除失败' })
+      this.setData({ errorMsg: (e && e.message) || '删除失败' });
     } finally {
-      this.setData({ saving: false })
+      this.setData({ saving: false });
     }
   },
 
   goBack() {
-    wx.navigateBack()
+    wx.navigateBack();
   }
-})
+});
