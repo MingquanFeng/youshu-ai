@@ -49,3 +49,13 @@ ignore = [
     "B008",  # FastAPI 依赖里常见，误伤多
 ]
 
+[tool.pytest.ini_options]
+# 第三方库的 deprecation 我们管不了, 不污染测试输出
+# 注意: starlette 自定义 StarletteDeprecationWarning (不继承 Python DeprecationWarning),
+#       必须按 class 全名匹配
+filterwarnings = [
+    "ignore:Using `httpx` with `starlette.testclient` is deprecated:starlette.exceptions.StarletteDeprecationWarning",
+    "ignore::starlette.exceptions.StarletteDeprecationWarning",
+    "ignore:on_event is deprecated:DeprecationWarning",
+]
+

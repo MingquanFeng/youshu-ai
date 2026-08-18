@@ -23,6 +23,11 @@ class BizException(Exception):
         super().__init__(message)
 
 
+# starlette 0.40+ 弃用 HTTP_422_UNPROCESSABLE_ENTITY, 改名 UNPROCESSABLE_CONTENT
+# 直接 hardcode 422, 避免任何 starlette 版本警告
+_HTTP_422 = 422  # starlette.status.HTTP_422_UNPROCESSABLE_CONTENT
+
+
 def register_exception_handlers(app: FastAPI) -> None:
     @app.exception_handler(BizException)
     async def _biz(_: Request, exc: BizException) -> JSONResponse:
@@ -42,7 +47,7 @@ def register_exception_handlers(app: FastAPI) -> None:
             # 同字段多错时取第一条
             errors.setdefault(field, err.get("msg", "校验失败"))
         return JSONResponse(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=_HTTP_422,
             content=jsonable_encoder(fail(42200, "请求参数校验失败", data=errors)),
         )
 

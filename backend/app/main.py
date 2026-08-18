@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import logging
 import os
+from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -26,12 +27,21 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # 替代 @app.on_event("startup") (FastAPI 0.93+ 弃用)
+    init_db()
+    logger.info("Database initialized: %s", settings.database_url)
+    yield
+
+
 def create_app() -> FastAPI:
     application = FastAPI(
         title=settings.app_name,
         version="0.1.0",
         description="AI 原生个人记账应用 - 后端 API",
         debug=settings.app_debug,
+        lifespan=lifespan,
     )
 
     application.add_middleware(
@@ -51,11 +61,6 @@ def create_app() -> FastAPI:
         StaticFiles(directory=settings.storage_dir),
         name="uploads",
     )
-
-    @application.on_event("startup")
-    def _on_startup() -> None:
-        init_db()
-        logger.info("Database initialized: %s", settings.database_url)
 
     @application.get("/health", tags=["meta"])
     def health() -> dict:
