@@ -32,7 +32,14 @@ describe('makeForm', () => {
   });
 
   it('保留原始字段, 不修改 bill 对象', () => {
-    const bill = { amount: 1, category: '其他', merchant: '', pay_method: 'wx', bill_time: '2026-01-01', remark: 'r' };
+    const bill = {
+      amount: 1,
+      category: '其他',
+      merchant: '',
+      pay_method: 'wx',
+      bill_time: '2026-01-01',
+      remark: 'r'
+    };
     const snap = JSON.parse(JSON.stringify(bill));
     makeForm(bill);
     expect(bill).toEqual(snap);
@@ -130,7 +137,9 @@ describe('isFormDirty', () => {
   });
 
   it('null undefined 视为空字符串', () => {
-    expect(isFormDirty({ ...baseForm, remark: null }, { ...baseForm, remark: undefined })).toBe(false);
+    expect(isFormDirty({ ...baseForm, remark: null }, { ...baseForm, remark: undefined })).toBe(
+      false
+    );
   });
 
   it('category 改变 → 脏', () => {
