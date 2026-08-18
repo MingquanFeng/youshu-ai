@@ -110,48 +110,9 @@
   text-align: right;
 }
 
-/* 30 天趋势 (行高更宽 + bar 加粗) */
-.daily-list {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
+/* 30 天趋势 (折线图: <line-chart> 组件) */
+.daily-chart {
   padding-top: var(--space-2);
-}
-.daily-row {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  padding: 4rpx 0;
-  transition: opacity var(--dur-fast) var(--ease-out);
-}
-.daily-row:active { opacity: 0.6; }
-.daily-row__date {
-  font-family: var(--font-mono);
-  font-size: 22rpx;
-  color: var(--color-fg-2);
-  font-variant-numeric: tabular-nums;
-  width: 80rpx;
-}
-.daily-row__bar-track {
-  flex: 1;
-  height: 8rpx;
-  background: var(--color-bg-3);
-  border-radius: var(--radius-pill);
-  overflow: hidden;
-}
-.daily-row__bar-fill {
-  height: 100%;
-  background: var(--color-primary);
-  border-radius: var(--radius-pill);
-  transition: width var(--dur-slow) var(--ease-out);
-}
-.daily-row__amount {
-  font-family: var(--font-mono);
-  font-size: 22rpx;
-  color: var(--color-fg-2);
-  font-variant-numeric: tabular-nums;
-  min-width: 100rpx;
-  text-align: right;
 }
 
 /* AI 建议 (左侧珊瑚色条 + 暖色背景) */

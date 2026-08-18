@@ -94,14 +94,8 @@
         <text class="section-head__sub">{{daily.length}} 天</text>
       </view>
 
-      <view wx:if="{{daily.length > 0}}" class="daily-list">
-        <view wx:for="{{daily}}" wx:key="date" class="daily-row">
-          <text class="daily-row__date">{{item.date_short}}</text>
-          <view class="daily-row__bar-track">
-            <view class="daily-row__bar-fill" style="width: {{item.bar_width || '0%'}};"></view>
-          </view>
-          <text class="daily-row__amount">¥ {{item.total_str}}</text>
-        </view>
+      <view wx:if="{{daily.length > 0}}" class="daily-chart">
+        <line-chart data="{{daily}}" height="{{360}}" />
       </view>
       <view wx:else class="empty">
         <text class="muted" style="font-size: 22rpx;">N° 000 · 暂无数据</text>

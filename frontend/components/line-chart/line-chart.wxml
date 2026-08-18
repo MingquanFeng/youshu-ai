@@ -1,0 +1,8 @@
+<view class="line-chart" style="height: {{ height }}rpx;">
+  <canvas
+    wx:if="{{ canvasId }}"
+    type="2d"
+    id="{{ canvasId }}"
+    class="line-chart__canvas"
+  ></canvas>
+</view>
