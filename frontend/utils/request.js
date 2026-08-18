@@ -1,10 +1,11 @@
 // utils/request.js — Promise 化的 wx.request + 自动 token + 错误码处理
 
-// === 开发期 API base 配置 ===
-// 真机的 127.0.0.1 是手机本身, 必须用电脑 LAN IP
-// 换 wifi / 换电脑要同步改这里; 生产 build 时换成真实域名
+// === API base 配置 ===
+// 开发者工具模拟器 → 本地 loopback
+// 真机 / 发布 → 云服务器公网 IP
+// 换云服务器 IP 改这里; 生产正式上线建议换成 https://api.example.com 域名
 const DEV_LOCAL = 'http://127.0.0.1:8000/api/v1';
-const DEV_LAN_IP = 'http://192.168.18.204:8000/api/v1';
+const PROD_BASE = 'http://82.156.173.21/api/v1';
 
 function getDefaultBase() {
   try {
@@ -14,8 +15,8 @@ function getDefaultBase() {
   } catch (e) {
     /* 旧基础库或非小程序环境 */
   }
-  // 真机 (iOS / Android / macOS / Windows) → 用 LAN IP
-  return DEV_LAN_IP;
+  // 真机 (iOS / Android / macOS / Windows) → 云服务器
+  return PROD_BASE;
 }
 
 function getToken() {

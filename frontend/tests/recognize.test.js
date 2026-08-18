@@ -28,10 +28,10 @@ describe('toAbsoluteUrl', () => {
   });
 
   it('相对路径拼接 baseUrl + path', () => {
-    // 真机 → baseUrl 是 http://192.168.18.204:8000/api/v1
+    // 真机 → baseUrl 是 http://82.156.173.21/api/v1 (云服务器)
     // toAbsoluteUrl 去掉 /api/v1 再拼
     expect(toAbsoluteUrl('/static/uploads/2/foo.png')).toBe(
-      'http://192.168.18.204:8000/static/uploads/2/foo.png'
+      'http://82.156.173.21/static/uploads/2/foo.png'
     );
   });
 
