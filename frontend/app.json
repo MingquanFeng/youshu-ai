@@ -7,13 +7,15 @@
     "pages/analysis/analysis"
   ],
   "window": {
-    "navigationBarTextStyle": "black",
+    "navigationBarTextStyle": "auto",
     "navigationBarTitleText": "AI 记账助手",
-    "navigationBarBackgroundColor": "#ffffff",
-    "backgroundColor": "#f8fafc",
+    "navigationBarBackgroundColor": "#FAF8F5",
+    "backgroundColor": "#FAF8F5",
     "backgroundTextStyle": "light",
     "enablePullDownRefresh": false
   },
+  "darkmode": true,
+  "themeLocation": "theme.json",
   "style": "v2",
   "sitemapLocation": "sitemap.json",
   "lazyCodeLoading": "requiredComponents"

@@ -687,3 +687,78 @@ page {
     animation: none !important;
   }
 }
+
+/* ============ Dark mode (iOS 13+ / Android 10+ 系统暗黑) ============ */
+@media (prefers-color-scheme: dark) {
+  page {
+    /* Surfaces — 暖黑调, 不是纯黑 */
+    --color-bg:          #161513;   /* 主背景 — 深暖黑 */
+    --color-bg-2:        #232120;   /* 卡片表面 */
+    --color-bg-3:        #1C1B1A;   /* 凹陷 / 输入框 */
+    --color-bg-warm:     #2D2622;   /* 暖色高亮 */
+    --color-bg-elevated: #232120;
+
+    /* Text — 浅暖灰 */
+    --color-fg:          #F1EFEC;   /* slate-50 warm */
+    --color-fg-2:        #A8A6A3;   /* 次文字 */
+    --color-fg-3:        #787673;   /* 提示 */
+    --color-fg-4:        #4A4845;   /* 占位 */
+
+    /* Primary — 翠绿 (暗 mode 提亮) */
+    --color-primary:     #34D399;
+    --color-primary-2:   #10B981;
+    --color-primary-3:   #6EE7B7;
+    --color-primary-soft:#064E3B;
+    --color-on-primary:  #0B1F18;   /* 深绿底上用深字 (暗 mode 主按钮文字) */
+
+    /* Accent — 暖珊瑚 (暗 mode 提亮) */
+    --color-accent:      #FB7185;
+    --color-accent-2:    #F43F5E;
+    --color-accent-soft: #4C1D24;
+
+    --color-border:      #34322F;
+    --color-border-2:    #2A2826;
+    --color-rule:        rgba(255, 255, 255, 0.06);
+
+    --color-error:       #F87171;
+    --color-error-soft:  #4C1D1D;
+    --color-success:     #34D399;
+    --color-success-soft:#064E3B;
+    --color-warning:     #FBBF24;
+    --color-warning-soft:#4C3A1D;
+
+    /* 分类色 — 暗 mode 加深底 + 提亮前景 */
+    --cat-food-soft:      rgba(245, 158, 11, 0.18);
+    --cat-transport-soft: rgba(56, 189, 248, 0.18);
+    --cat-shop-soft:      rgba(244, 114, 182, 0.18);
+    --cat-home-soft:      rgba(148, 163, 184, 0.20);
+    --cat-fun-soft:       rgba(167, 139, 250, 0.18);
+    --cat-medical-soft:   rgba(248, 113, 113, 0.18);
+    --cat-income-soft:    rgba(16, 185, 129, 0.20);
+    --cat-other-soft:     rgba(156, 163, 175, 0.16);
+
+    /* 分类文字色 (提亮) */
+    --cat-food:          #FBBF24;
+    --cat-transport:     #7DD3FC;
+    --cat-shop:          #F9A8D4;
+    --cat-home:          #CBD5E1;
+    --cat-fun:           #C4B5FD;
+    --cat-medical:       #FCA5A5;
+    --cat-income:        #6EE7B7;
+    --cat-other:         #9CA3AF;
+
+    /* Shadow — 暗 mode 下用更深阴影 */
+    --shadow-sm:  0 1rpx 3rpx rgba(0, 0, 0, 0.40), 0 1rpx 2rpx rgba(0, 0, 0, 0.30);
+    --shadow-md:  0 4rpx 12rpx rgba(0, 0, 0, 0.50), 0 2rpx 4rpx rgba(0, 0, 0, 0.30);
+    --shadow-lg:  0 10rpx 32rpx rgba(0, 0, 0, 0.55), 0 4rpx 10rpx rgba(0, 0, 0, 0.35);
+    --shadow-fab: 0 8rpx 24rpx rgba(52, 211, 153, 0.40), 0 2rpx 6rpx rgba(52, 211, 153, 0.20);
+    --shadow-press: 0 2rpx 8rpx rgba(0, 0, 0, 0.40);
+
+    background-color: var(--color-bg);
+    color: var(--color-fg);
+  }
+
+  /* Chip 在暗 mode 下前景不变 (分类色已提亮), 保持 chip--home 文字对比 */
+  .chip--home { color: #CBD5E1; }
+  .chip--other { color: #A8A6A3; }
+}
