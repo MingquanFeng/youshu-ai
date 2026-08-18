@@ -5,6 +5,13 @@ import { formatBillTime } from '../../../utils/format'
 // 字段校验规则
 const MAX_AMOUNT = 9999999
 
+// 分类中文 → key (用于 icon 颜色)
+const CAT_KEY_MAP = {
+  '餐饮': 'food', '交通': 'transport', '购物': 'shop',
+  '居家': 'home', '娱乐': 'fun', '医疗': 'medical',
+  '工资': 'income'
+}
+
 function makeForm(b) {
   return {
     amount: b.amount,
@@ -14,6 +21,11 @@ function makeForm(b) {
     bill_time: b.bill_time || '',
     remark: b.remark || ''
   }
+}
+
+function shallowClone(obj) {
+  // 用于 originalForm: 防止与 form 共享引用导致 dirty 永远 false
+  return Object.assign({}, obj)
 }
 
 // 字段级校验: 返回 { field: msg } 表示错误
@@ -79,10 +91,13 @@ Page({
       this.setData({
         bill: {
           ...res,
+          category_key: CAT_KEY_MAP[res.category] || 'other',
+          category_char: (res.category || '?').charAt(0),
           bill_time_short: formatBillTime(res.bill_time),
           amount_str: Number(res.amount).toFixed(2)
         },
-        originalForm: form,
+        // 深拷贝 (此处字段都是 primitive, Object.assign 足够),
+        originalForm: shallowClone(form),
         form,
         errors: {},
         canSave: false

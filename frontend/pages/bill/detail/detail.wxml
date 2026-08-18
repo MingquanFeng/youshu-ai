@@ -15,14 +15,12 @@
   <block wx:elif="{{bill}}">
     <!-- 顶部: 单条信息 -->
     <view class="topbar">
-      <view class="row gap-3" style="align-items: center;">
-        <view class="topbar__icon" style="background: var(--cat-{{bill.category_key}}-soft);">
-          <text class="topbar__icon-char">{{bill.category_char || '?'}}</text>
-        </view>
-        <view class="col">
-          <text class="topbar__merchant">{{bill.merchant || bill.category || '—'}}</text>
-          <text class="muted" style="font-size: 22rpx;">{{bill.bill_time_short}} · {{bill.source === 'image_ai' ? 'AI 识别' : '手动'}}</text>
-        </view>
+      <view class="topbar__icon" style="background: var(--cat-{{bill.category_key}}-soft);">
+        <text class="topbar__icon-char">{{bill.category_char || '?'}}</text>
+      </view>
+      <view class="topbar__info">
+        <text class="topbar__merchant">{{bill.merchant || bill.category || '—'}}</text>
+        <text class="topbar__meta">{{bill.bill_time_short}} · {{bill.source === 'image_ai' ? 'AI 识别' : '手动'}}</text>
       </view>
     </view>
 
