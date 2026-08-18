@@ -7,7 +7,7 @@
     "pages/analysis/analysis"
   ],
   "window": {
-    "navigationBarTextStyle": "auto",
+    "navigationBarTextStyle": "black",
     "navigationBarTitleText": "AI 记账助手",
     "navigationBarBackgroundColor": "#FAF8F5",
     "backgroundColor": "#FAF8F5",
