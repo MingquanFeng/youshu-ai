@@ -83,3 +83,48 @@ GitHub commit 历史永久记录 AppID
 - "看起来对"的占位符是更糟糕的失败模式
 
 **教训修正**：Hallmark 守则"占位符必须用 `__FIELD_NAME__` 或 `touristappid`"中，**`touristappid` 应该替换为更明显的占位符**（如 `wx__REPLACE_ME__`），让任何人都能立刻识别"这是占位、必须替换"。
+---
+
+## 生产部署前必做（运维清单）
+
+### JWT_SECRET 强度
+
+后端启动时（`app/core/security.py`）会校验：
+
+- `APP_ENV=prod` 且 `JWT_SECRET` 是默认值 `change-me-in-prod` → **fatal 启动失败**
+- `APP_ENV=prod` 且 `JWT_SECRET < 32 字符` → **fatal 启动失败**
+- dev/test → 只 warning，不阻塞
+
+**部署前生成强 secret**：
+
+```bash
+openssl rand -hex 32
+# 输出 64 位 hex, 如 a3f5e8c2b1d4f7e9...
+```
+
+写入生产 `.env`：
+
+```bash
+APP_ENV=prod
+JWT_SECRET=<上面生成的 64 位 hex>
+```
+
+### 其他必改的环境变量
+
+| 变量 | dev 默认 | 生产必改 |
+|---|---|---|
+| `JWT_SECRET` | `change-me-in-prod` | `openssl rand -hex 32` |
+| `DATABASE_URL` | `sqlite:///./youshu_ai.db` | PostgreSQL（生产推荐）|
+| `WX_APP_ID` | 空 | 真实 AppID（从小程序后台拿）|
+| `WX_APP_SECRET` | 空 | 真实 AppSecret |
+| `DASHSCOPE_API_KEY` | 空（mock）| 阿里云百炼 API-KEY |
+| `DEEPSEEK_API_KEY` | 空（mock）| DeepSeek API-KEY |
+
+### 其他安全检查
+
+- [ ] gitleaks pre-commit hook 安装并通过
+- [ ] GitHub Secret Scanning 启用（公开仓库默认）
+- [ ] 生产域名 HTTPS 证书有效
+- [ ] 后端 `/health` 仅返回 `status: ok` 不暴露版本号
+- [ ] 数据库不暴露公网（绑定 127.0.0.1 或内网）
+- [ ] 日志中不打印 token / secret
