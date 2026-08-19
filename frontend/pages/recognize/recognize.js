@@ -13,6 +13,25 @@ export function toAbsoluteUrl(rel) {
   return origin + rel;
 }
 
+// 基础库 3.x <image> 不再支持 HTTP 协议 (必须 HTTPS)
+// 临时方案: 把 http:// URL 通过 wx.downloadFile 转到 wxfile:// 本地路径
+export function downloadToLocal(url) {
+  return new Promise((resolve) => {
+    if (!url) return resolve('');
+    // 已是 https / wxfile / data: 协议直接用
+    if (url.startsWith('https://') || url.startsWith('wxfile://') || url.startsWith('data:')) {
+      return resolve(url);
+    }
+    // 不是 http 也返回原值 (兜底)
+    if (!url.startsWith('http://')) return resolve(url);
+    wx.downloadFile({
+      url,
+      success: (res) => resolve(res.tempFilePath || url),
+      fail: () => resolve(url) // 失败也返回原值, <image> 会再报错但不阻塞业务
+    });
+  });
+}
+
 const INITIAL_FORM = {
   amount: 0,
   category: '',
@@ -52,8 +71,9 @@ Page({
       const path = paths[0];
       this.setData({ errorMsg: '', result: null, form: Object.assign({}, INITIAL_FORM) });
       const up = await uploadImage(path);
+      const localUrl = await downloadToLocal(toAbsoluteUrl(up.image_url));
       this.setData({
-        imageUrl: toAbsoluteUrl(up.image_url),
+        imageUrl: localUrl,
         imageId: up.image_id
       });
       await this.recognize();

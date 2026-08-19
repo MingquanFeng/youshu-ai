@@ -1,6 +1,6 @@
-// tests/recognize.test.js — recognize 页 toAbsoluteUrl 测试
+// tests/recognize.test.js — recognize 页 toAbsoluteUrl / downloadToLocal 测试
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { toAbsoluteUrl } from '../pages/recognize/recognize.js';
+import { toAbsoluteUrl, downloadToLocal } from '../pages/recognize/recognize.js';
 
 describe('toAbsoluteUrl', () => {
   beforeEach(() => {
@@ -49,5 +49,45 @@ describe('toAbsoluteUrl', () => {
       globalData: { apiBase: 'http://global.example.com/api/v1' }
     });
     expect(toAbsoluteUrl('/static/x.png')).toBe('http://global.example.com/static/x.png');
+  });
+});
+
+describe('downloadToLocal', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    globalThis.wx.downloadFile = vi.fn();
+  });
+
+  it('空值返回空串', async () => {
+    expect(await downloadToLocal('')).toBe('');
+    expect(await downloadToLocal(null)).toBe('');
+  });
+
+  it('https URL 不下载直接返回', async () => {
+    expect(await downloadToLocal('https://x.com/foo.png')).toBe('https://x.com/foo.png');
+    expect(globalThis.wx.downloadFile).not.toHaveBeenCalled();
+  });
+
+  it('wxfile/data URL 不下载直接返回', async () => {
+    expect(await downloadToLocal('wxfile://tmp/abc')).toBe('wxfile://tmp/abc');
+    expect(await downloadToLocal('data:image/png;base64,xxx')).toBe('data:image/png;base64,xxx');
+  });
+
+  it('http URL 调 wx.downloadFile 拿 tempFilePath', async () => {
+    globalThis.wx.downloadFile.mockImplementation(({ success }) => {
+      success({ tempFilePath: 'wxfile://tmp/downloaded.png' });
+    });
+    const result = await downloadToLocal('http://127.0.0.1:8000/static/x.png');
+    expect(result).toBe('wxfile://tmp/downloaded.png');
+    expect(globalThis.wx.downloadFile).toHaveBeenCalledWith({
+      url: 'http://127.0.0.1:8000/static/x.png',
+      success: expect.any(Function),
+      fail: expect.any(Function)
+    });
+  });
+
+  it('download fail 回退原值', async () => {
+    globalThis.wx.downloadFile.mockImplementation(({ fail }) => fail(new Error('net')));
+    expect(await downloadToLocal('http://x.com/y.png')).toBe('http://x.com/y.png');
   });
 });
