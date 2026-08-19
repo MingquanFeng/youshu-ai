@@ -143,8 +143,10 @@ def _qwen_vl_run(image_path: str, ocr_text: str) -> RecognizeResult:
     except json.JSONDecodeError as exc:
         raise BizException(50000, f"Qwen-VL 返回非 JSON: {text[:200]}") from exc
 
+    raw_amount = float(data.get("amount", 0))
+    amount = abs(raw_amount) if raw_amount != 0 else 0.01
     return RecognizeResult(
-        amount=float(data.get("amount", 0)),
+        amount=amount,
         merchant=str(data.get("merchant", "")),
         category=str(data.get("category") or "其他"),
         time=datetime.fromisoformat(data["time"]) if "time" in data else datetime.now(),
