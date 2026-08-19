@@ -1,6 +1,52 @@
-// pages/index/index.js — 首页（入口 + 懒登录）
-import { login } from '../../api/bill';
-import { setToken, setUser } from '../../utils/storage';
+// pages/index/index.js — 首页（懒登录 + 本月剩余 + 今天流水）
+import { listBills } from '../../api/bill';
+import { monthlyAnalysis } from '../../api/analysis';
+
+// 分类中文 → key (icon 颜色, 与 detail.js 保持一致)
+const CAT_KEY_MAP = {
+  餐饮: 'food',
+  交通: 'transport',
+  购物: 'shop',
+  居家: 'home',
+  娱乐: 'fun',
+  医疗: 'medical',
+  工资: 'income'
+};
+
+// 简单日期格式化
+function todayStr() {
+  const d = new Date();
+  return d.toISOString().slice(0, 10); // YYYY-MM-DD
+}
+
+function dateLabel(d = new Date()) {
+  const m = d.getMonth() + 1;
+  const day = d.getDate();
+  const week = ['日', '一', '二', '三', '四', '五', '六'][d.getDay()];
+  return `${m}月${day}日 星期${week}`;
+}
+
+function greeting(d = new Date()) {
+  const h = d.getHours();
+  if (h < 6) return '凌晨好';
+  if (h < 12) return '早上好';
+  if (h < 14) return '中午好';
+  if (h < 18) return '下午好';
+  return '晚上好';
+}
+
+// 把后端 list item 转成 txn-row props
+function toTxnProps(item) {
+  return {
+    iconBg: `var(--cat-${CAT_KEY_MAP[item.category] || 'other'}-soft)`,
+    iconChar: (item.category || '?').charAt(0),
+    title: item.merchant || item.category || '—',
+    sub: `${(item.bill_time_short || '').slice(5, 16)} · ${item.pay_method || '未指定'}`,
+    amount: item.amount_sign,
+    amountStyle: item.amount_color || '',
+    _id: item.id
+  };
+}
 
 Page({
   data: {
@@ -8,11 +54,71 @@ Page({
       { icon: '▣', label: '首页', handler: '' },
       { icon: '▤', label: '统计', handler: 'goBill' },
       { icon: '⊞', label: '资产', handler: 'goAnalysis' }
-    ]
+    ],
+    greeting: greeting(),
+    todayLabel: dateLabel(),
+    monthly: {
+      total_str: '0.00',
+      income_str: '0.00',
+      expense_str: '0.00',
+      remain_str: '0.00',
+      bar_pct: 0
+    },
+    today: [],
+    loading: false,
+    errorMsg: ''
   },
 
   onLoad() {
-    this.maybeLogin();
+    this.fetchAll();
+  },
+
+  onShow() {
+    // 每次进入首页刷新 (识别页保存后跳回首页能即时看到)
+    this.fetchAll();
+  },
+
+  onPullDownRefresh() {
+    this.fetchAll().finally(() => wx.stopPullDownRefresh());
+  },
+
+  async fetchAll() {
+    this.setData({ loading: true, errorMsg: '' });
+    try {
+      const [monthly, today] = await Promise.all([
+        monthlyAnalysis(),
+        listBills({ date: todayStr(), size: 10 })
+      ]);
+
+      // 本月分析
+      const income = Number(monthly.income || 0);
+      const expense = Number(monthly.expense || 0);
+      const total = Number(monthly.total || 0);
+      const remain = income - expense;
+      const barPct = income > 0 ? Math.round((expense / income) * 100) : 0;
+
+      // 今天流水
+      const txns = (today.items || []).map(toTxnProps);
+
+      this.setData({
+        monthly: {
+          total_str: total.toFixed(2),
+          income_str: income.toFixed(2),
+          expense_str: expense.toFixed(2),
+          remain_str: remain.toFixed(2),
+          bar_pct: barPct
+        },
+        today: txns,
+        greeting: greeting(),
+        todayLabel: dateLabel(),
+        loading: false
+      });
+    } catch (e) {
+      this.setData({
+        loading: false,
+        errorMsg: (e && e.message) || '加载失败, 请下拉重试'
+      });
+    }
   },
 
   goRecognize() {
@@ -28,7 +134,6 @@ Page({
     wx.reLaunch({ url: '/pages/index/index' });
   },
 
-  // 组件事件分发: 子组件传 handler 名, 这里统一调用
   onTabSelect(e) {
     const { handler } = e.detail || {};
     if (handler && typeof this[handler] === 'function') this[handler]();
@@ -37,27 +142,8 @@ Page({
     const { handler } = e.detail || {};
     if (handler && typeof this[handler] === 'function') this[handler]();
   },
-  onTxnTap(e) {
-    const { handler } = e.detail || {};
-    if (handler && typeof this[handler] === 'function') this[handler]();
-  },
-
-  maybeLogin() {
-    if (wx.getStorageSync('token')) return;
-    // 开发期：用 mock code 让后端直接通过
-    // 真实环境：先 wx.login 拿 code 再发后端
-    const code = 'mock-dev-code';
-    login(code)
-      .then((res) => {
-        setToken(res.token);
-        setUser(res);
-        if (typeof getApp === 'function') {
-          getApp().globalData.token = res.token;
-          getApp().globalData.user = res;
-        }
-      })
-      .catch((err) => {
-        console.warn('懒登录失败', err);
-      });
+  onTxnTap() {
+    // 列表项点击 → 进入 list 页查看全部
+    this.goBill();
   }
 });

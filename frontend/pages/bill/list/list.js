@@ -1,8 +1,13 @@
-// pages/bill/list/list.js — 账单列表（分页 + 下拉 + 上拉）
+// pages/bill/list/list.js — 账单列表（分页 + 下拉 + 上拉 + 当月统计）
 import { listBills } from '../../../api/bill';
+import { monthlyAnalysis } from '../../../api/analysis';
 import { formatBillTime } from '../../../utils/format';
 
 const PAGE_SIZE = 20;
+
+function monthLabel(d = new Date()) {
+  return `${d.getMonth() + 1}月`;
+}
 
 Page({
   data: {
@@ -13,6 +18,8 @@ Page({
     refreshing: false,
     errorMsg: '',
     hasMore: false,
+    monthLabel: monthLabel(),
+    monthly: { expense_str: '0.00', income_str: '0.00' },
     tabs: [
       { icon: '▣', label: '首页', handler: 'goIndex' },
       { icon: '▤', label: '统计', handler: '' },
@@ -21,19 +28,18 @@ Page({
   },
 
   onLoad() {
-    this.loadPage(1, 'reset');
+    this.loadAll();
   },
 
   onShow() {
-    // 从详情/识别页返回时刷新
     if (this.data.items.length > 0) {
-      this.loadPage(1, 'reset');
+      this.loadAll();
     }
   },
 
   onPullDownRefresh() {
     this.setData({ refreshing: true });
-    this.loadPage(1, 'reset').then(() => {
+    this.loadAll().then(() => {
       wx.stopPullDownRefresh();
     });
   },
@@ -43,49 +49,78 @@ Page({
     this.loadPage(this.data.page + 1, 'append');
   },
 
+  async loadAll() {
+    // 并发拉本月统计 + 第一页流水
+    this.setData({ loading: true, errorMsg: '' });
+    try {
+      const [monthly, list] = await Promise.all([
+        monthlyAnalysis(),
+        listBills({ page: 1, size: PAGE_SIZE })
+      ]);
+      const mapped = (list.items || []).map((b) => this._mapItem(b));
+      this.setData({
+        monthly: {
+          expense_str: Number(monthly.expense || 0).toFixed(2),
+          income_str: Number(monthly.income || 0).toFixed(2)
+        },
+        items: mapped,
+        page: list.page || 1,
+        total: list.total || 0,
+        hasMore: mapped.length < (list.total || 0),
+        monthLabel: monthLabel(),
+        loading: false
+      });
+    } catch (e) {
+      this.setData({
+        loading: false,
+        errorMsg: (e && e.message) || '加载失败, 请下拉重试'
+      });
+    }
+  },
+
   async loadPage(p, mode) {
     if (this.data.loading) return;
     this.setData({ loading: true, errorMsg: '' });
     try {
       const res = await listBills({ page: p, size: PAGE_SIZE });
-      const mapped = res.items.map((b) => {
-        const cat = b.category || '其他';
-        const isIncome = b.amount > 0 || cat === '工资' || cat === 'income';
-        return {
-          ...b,
-          bill_time_short: formatBillTime(b.bill_time),
-          amount_str: Number(b.amount).toFixed(2),
-          amount_sign: isIncome
-            ? '+¥ ' + Number(b.amount).toFixed(2)
-            : '−¥ ' + Number(b.amount).toFixed(2),
-          amount_color: isIncome ? 'color: var(--color-success);' : '',
-          icon_char: cat.charAt(0),
-          icon_bg:
-            'var(--cat-' +
-            ({
-              餐饮: 'food',
-              交通: 'transport',
-              购物: 'shop',
-              居家: 'home',
-              娱乐: 'fun',
-              医疗: 'medical',
-              工资: 'income'
-            }[cat] || 'other') +
-            '-soft);'
-        };
-      });
-      const merged = mode === 'reset' ? mapped : this.data.items.concat(mapped);
+      const mapped = (res.items || []).map((b) => this._mapItem(b));
+      const merged = mode === 'append' ? this.data.items.concat(mapped) : mapped;
       this.setData({
         items: merged,
         page: res.page,
         total: res.total,
-        hasMore: merged.length < res.total
+        hasMore: merged.length < (res.total || 0)
       });
     } catch (e) {
-      this.setData({ errorMsg: (e && e.message) || '加载失败，请稍后重试' });
+      this.setData({ errorMsg: (e && e.message) || '加载失败, 请稍后重试' });
     } finally {
       this.setData({ loading: false, refreshing: false });
     }
+  },
+
+  _mapItem(b) {
+    const cat = b.category || '其他';
+    const isIncome = b.amount > 0 || cat === '工资' || cat === 'income';
+    const CAT_KEY = {
+      餐饮: 'food',
+      交通: 'transport',
+      购物: 'shop',
+      居家: 'home',
+      娱乐: 'fun',
+      医疗: 'medical',
+      工资: 'income'
+    };
+    return {
+      ...b,
+      bill_time_short: formatBillTime(b.bill_time),
+      amount_str: Number(b.amount).toFixed(2),
+      amount_sign: isIncome
+        ? '+¥ ' + Number(b.amount).toFixed(2)
+        : '−¥ ' + Number(b.amount).toFixed(2),
+      amount_color: isIncome ? 'color: var(--color-success);' : '',
+      icon_char: cat.charAt(0),
+      icon_bg: 'var(--cat-' + (CAT_KEY[cat] || 'other') + '-soft);'
+    };
   },
 
   onItemTap(e) {

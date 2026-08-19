@@ -1,20 +1,24 @@
 <view class="page">
-  <!-- 顶部: 极简, 只有月名 + 问候 -->
+  <!-- 顶部: 极简, 问候 + 日期 -->
   <view class="topbar">
-    <text class="topbar__greeting">早上好</text>
-    <text class="muted" style="font-size: 22rpx; margin-top: 4rpx;">7月28日 星期一</text>
+    <text class="topbar__greeting">{{greeting}}</text>
+    <text class="muted" style="font-size: 22rpx; margin-top: 4rpx;">{{todayLabel}}</text>
   </view>
+
+  <!-- 加载 / 错误 -->
+  <view wx:if="{{loading && !monthly.total_str}}" class="state-bar state-bar--loading">载入中 …</view>
+  <view wx:if="{{errorMsg}}" class="state-bar state-bar--error">{{errorMsg}}</view>
 
   <!-- 本月剩余 card (柔和阴影 + 大数字) -->
   <view class="stat">
     <text class="label">本月剩余</text>
-    <text class="stat__amount">¥ 12,586.00</text>
+    <text class="stat__amount">¥ {{monthly.remain_str}}</text>
     <view class="bar-track" style="margin-top: var(--space-4);">
-      <view class="bar-fill" style="width: 36%;"></view>
+      <view class="bar-fill" style="width: {{monthly.bar_pct}}%;"></view>
     </view>
     <view class="row between" style="margin-top: var(--space-3);">
-      <text class="stat__income">收入 ¥ 22,000.00</text>
-      <text class="stat__expense">支出 ¥ 9,414.00</text>
+      <text class="stat__income">收入 ¥ {{monthly.income_str}}</text>
+      <text class="stat__expense">支出 ¥ {{monthly.expense_str}}</text>
     </view>
   </view>
 
@@ -25,34 +29,48 @@
       <text class="section-head__more" bindtap="goBill">查看全部 →</text>
     </view>
 
-    <txn-row
-      icon-bg="var(--cat-shop-soft)"
-      icon-char="盒"
-      title="盒马鲜生"
-      sub="09:48 · 微信"
-      amount="−23.00"
-      handler="goBill"
-      bind:tap="onTxnTap"
-    />
-    <txn-row
-      icon-bg="var(--cat-transport-soft)"
-      icon-char="滴"
-      title="滴滴出行"
-      sub="10:30 · 支付宝"
-      amount="−12.00"
-      handler="goBill"
-      bind:tap="onTxnTap"
-    />
-    <txn-row
-      icon-bg="var(--cat-income-soft)"
-      icon-char="资"
-      title="工资到账"
-      sub="10:30 · 招商银行"
-      amount="+¥ 12,000.00"
-      amount-style="color: var(--color-success);"
-      handler="goBill"
-      bind:tap="onTxnTap"
-    />
+    <!-- 加载中 (没有 today 数据且 loading) -->
+    <view wx:if="{{loading && today.length === 0}}">
+      <view class="skel-row">
+        <view class="skel skel--circle"></view>
+        <view class="skel-row__col">
+          <view class="skel skel--md" style="width: 40%;"></view>
+          <view class="skel skel--sm"></view>
+        </view>
+        <view class="skel" style="width: 100rpx; height: 26rpx;"></view>
+      </view>
+      <view class="skel-row">
+        <view class="skel skel--circle"></view>
+        <view class="skel-row__col">
+          <view class="skel skel--md" style="width: 50%;"></view>
+          <view class="skel skel--sm"></view>
+        </view>
+        <view class="skel" style="width: 100rpx; height: 26rpx;"></view>
+      </view>
+    </view>
+
+    <!-- 空状态 -->
+    <view wx:elif="{{today.length === 0 && !loading}}" class="empty">
+      <view class="empty__icon"></view>
+      <text class="empty__title">今天还没有记账</text>
+      <text class="empty__hint">点击右下角 + 开始记录</text>
+    </view>
+
+    <!-- 真实数据 -->
+    <block wx:else>
+      <txn-row
+        wx:for="{{today}}"
+        wx:key="_id"
+        icon-bg="{{item.iconBg}}"
+        icon-char="{{item.iconChar}}"
+        title="{{item.title}}"
+        sub="{{item.sub}}"
+        amount="{{item.amount}}"
+        amount-style="{{item.amountStyle}}"
+        handler="goBill"
+        bind:tap="onTxnTap"
+      />
+    </block>
   </section-card>
 
   <!-- 3-tab 底部导航 -->

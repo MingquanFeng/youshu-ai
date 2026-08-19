@@ -1,20 +1,23 @@
 <view class="page">
   <!-- 顶部 header: 月份 + 统计 -->
   <view class="topbar">
-    <text class="topbar__month">7月</text>
+    <text class="topbar__month">{{monthLabel}}</text>
     <text class="muted" style="font-size: 22rpx;">共 {{total}} 笔</text>
   </view>
+
+  <!-- 错误条 -->
+  <view wx:if="{{errorMsg}}" class="state-bar state-bar--error">{{errorMsg}}</view>
 
   <!-- 当月统计 card -->
   <view class="stat">
     <view class="row between">
       <view class="stat__left">
         <text class="label">本月支出</text>
-        <text class="stat__amount">¥ 9,414.00</text>
+        <text class="stat__amount">¥ {{monthly.expense_str}}</text>
       </view>
       <view class="stat__right">
         <text class="stat__label-pair">收入</text>
-        <text class="stat__income-value">+¥ 22,000</text>
+        <text class="stat__income-value">+¥ {{monthly.income_str}}</text>
       </view>
     </view>
   </view>
