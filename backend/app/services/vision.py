@@ -92,7 +92,7 @@ QWEN_PROMPT = """你是专业记账助手。
 - 时间
 - 支付方式
 - 消费分类
-只返回 JSON，不要解释。"""
+**只返回纯 JSON, 不要 markdown 代码块标记, 不要解释, 不要前后缀**。字段: amount (数字, 元) / merchant (字符串) / category (餐饮/交通/购物/居家/娱乐/医疗/其他) / time (ISO 8601) / payment (微信支付/支付宝/银行卡/现金 等)"""
 
 
 def _qwen_vl_run(image_path: str, ocr_text: str) -> RecognizeResult:
@@ -132,9 +132,14 @@ def _qwen_vl_run(image_path: str, ocr_text: str) -> RecognizeResult:
     text = content[0]["text"] if isinstance(content, list) else str(content)
 
     import json
+    import re
 
+    # 容错提取 JSON: 模型偶尔返回 markdown ```json ... ``` 包裹或前后有杂文本
+    m = re.search(r"\{.*\}", text, re.DOTALL)
+    if not m:
+        raise BizException(50000, f"Qwen-VL 返回非 JSON: {text[:200]}") from None
     try:
-        data = json.loads(text)
+        data = json.loads(m.group(0))
     except json.JSONDecodeError as exc:
         raise BizException(50000, f"Qwen-VL 返回非 JSON: {text[:200]}") from exc
 
