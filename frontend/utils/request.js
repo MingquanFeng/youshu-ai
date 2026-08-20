@@ -59,9 +59,10 @@ async function ensureLogin() {
 
 export function request(path, opts = {}) {
   const baseUrl = opts.baseUrl || getApiBase();
-  const token = getToken();
   return new Promise((resolve, reject) => {
+    // token 必须在 ensureLogin 后取, 否则 maybeLogin 还没写 storage
     ensureLogin().then(() => {
+      const token = getToken();
       wx.request({
         url: baseUrl + path,
         method: opts.method || 'GET',
@@ -95,9 +96,9 @@ export function request(path, opts = {}) {
 
 export function uploadFile(path, filePath, name = 'file') {
   const baseUrl = getApiBase();
-  const token = getToken();
   return new Promise((resolve, reject) => {
     ensureLogin().then(() => {
+      const token = getToken();
       wx.uploadFile({
         url: baseUrl + path,
         filePath,
