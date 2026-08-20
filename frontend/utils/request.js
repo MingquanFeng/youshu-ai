@@ -42,36 +42,52 @@ function getApiBase() {
   }
 }
 
+// 在调 wx.request 前确保 token 已就绪 (await app.maybeLogin)
+// 解决 onLaunch 异步触发懒登录 vs onLoad 立即拉数据的 race
+async function ensureLogin() {
+  if (wx.getStorageSync('token')) return;
+  try {
+    const app = getApp();
+    if (app && typeof app.maybeLogin === 'function') {
+      await app.maybeLogin();
+    }
+  } catch (e) {
+    /* 旧基础库或非小程序环境 */
+  }
+}
+
 export function request(path, opts = {}) {
   const baseUrl = opts.baseUrl || getApiBase();
   const token = getToken();
   return new Promise((resolve, reject) => {
-    wx.request({
-      url: baseUrl + path,
-      method: opts.method || 'GET',
-      data: opts.data || {},
-      header: {
-        'Content-Type': 'application/json',
-        ...(token ? { Authorization: 'Bearer ' + token } : {}),
-        ...(opts.header || {})
-      },
-      success(res) {
-        const body = res.data || {};
-        if (body.code === 0) {
-          resolve(body.data);
-        } else if (body.code === 40100) {
-          clearToken();
-          wx.showToast({ title: '请重新登录', icon: 'none' });
-          reject(body);
-        } else {
-          wx.showToast({ title: body.message || '请求失败', icon: 'none' });
-          reject(body);
+    ensureLogin().then(() => {
+      wx.request({
+        url: baseUrl + path,
+        method: opts.method || 'GET',
+        data: opts.data || {},
+        header: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: 'Bearer ' + token } : {}),
+          ...(opts.header || {})
+        },
+        success(res) {
+          const body = res.data || {};
+          if (body.code === 0) {
+            resolve(body.data);
+          } else if (body.code === 40100) {
+            clearToken();
+            wx.showToast({ title: '请重新登录', icon: 'none' });
+            reject(body);
+          } else {
+            wx.showToast({ title: body.message || '请求失败', icon: 'none' });
+            reject(body);
+          }
+        },
+        fail(err) {
+          wx.showToast({ title: '网络异常', icon: 'none' });
+          reject(err);
         }
-      },
-      fail(err) {
-        wx.showToast({ title: '网络异常', icon: 'none' });
-        reject(err);
-      }
+      });
     });
   });
 }
@@ -80,34 +96,36 @@ export function uploadFile(path, filePath, name = 'file') {
   const baseUrl = getApiBase();
   const token = getToken();
   return new Promise((resolve, reject) => {
-    wx.uploadFile({
-      url: baseUrl + path,
-      filePath,
-      name,
-      header: token ? { Authorization: 'Bearer ' + token } : {},
-      success(res) {
-        let body = res.data;
-        if (typeof body === 'string') {
-          try {
-            body = JSON.parse(body);
-          } catch (e) {
-            return reject({ message: '响应解析失败' });
+    ensureLogin().then(() => {
+      wx.uploadFile({
+        url: baseUrl + path,
+        filePath,
+        name,
+        header: token ? { Authorization: 'Bearer ' + token } : {},
+        success(res) {
+          let body = res.data;
+          if (typeof body === 'string') {
+            try {
+              body = JSON.parse(body);
+            } catch (e) {
+              return reject({ message: '响应解析失败' });
+            }
           }
+          if (body.code === 0) resolve(body.data);
+          else if (body.code === 40100) {
+            clearToken();
+            wx.showToast({ title: '请重新登录', icon: 'none' });
+            reject(body);
+          } else {
+            wx.showToast({ title: body.message || '上传失败', icon: 'none' });
+            reject(body);
+          }
+        },
+        fail(err) {
+          wx.showToast({ title: '上传失败', icon: 'none' });
+          reject(err);
         }
-        if (body.code === 0) resolve(body.data);
-        else if (body.code === 40100) {
-          clearToken();
-          wx.showToast({ title: '请重新登录', icon: 'none' });
-          reject(body);
-        } else {
-          wx.showToast({ title: body.message || '上传失败', icon: 'none' });
-          reject(body);
-        }
-      },
-      fail(err) {
-        wx.showToast({ title: '上传失败', icon: 'none' });
-        reject(err);
-      }
+      });
     });
   });
 }
