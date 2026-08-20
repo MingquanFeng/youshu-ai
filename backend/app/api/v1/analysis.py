@@ -105,14 +105,16 @@ def daily(
     start = today - timedelta(days=body.days - 1)
 
     # 时区安全：用 substr(1,10) 按存储格式截取 YYYY-MM-DD，避免 SQLite func.date() 按 UTC 切日期
+    # total = 当日支出绝对值 (排除收入, 只反映支出趋势)
     rows = (
         db.query(
             func.substr(Bill.bill_time, 1, 10).label("d"),
-            func.sum(Bill.amount).label("s"),
+            func.sum(-Bill.amount).label("s"),  # amount<0 时 -amount=正, 支出累加
         )
         .filter(
             Bill.user_id == user_id,
             Bill.deleted_at.is_(None),
+            Bill.amount < 0,  # 只看支出
             func.substr(Bill.bill_time, 1, 10) >= start.isoformat(),
             func.substr(Bill.bill_time, 1, 10) <= today.isoformat(),
         )
@@ -124,7 +126,8 @@ def daily(
     items = []
     for i in range(body.days):
         d = start + timedelta(days=i)
-        items.append(DailyItem(date=d.isoformat(), total=totals.get(d.isoformat(), 0)))
+        # round 到整数 (元), 折线图视觉上更干净, 避免小波动
+        items.append(DailyItem(date=d.isoformat(), total=round(totals.get(d.isoformat(), 0))))
 
     return ok(DailyOut(days=items).model_dump())
 
