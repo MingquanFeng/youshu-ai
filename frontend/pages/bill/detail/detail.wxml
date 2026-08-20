@@ -46,6 +46,17 @@
         <text wx:elif="{{errors.amount || errors.category}}" class="muted" style="font-size: 20rpx; color: var(--color-error);">请修正错误</text>
       </view>
 
+      <!-- 方向 (支出/收入) -->
+      <view class="form-row">
+        <text class="form-label">方向</text>
+        <view class="row gap-2 dir-toggle">
+          <view class="dir-btn {{direction === 'expense' ? 'dir-btn--active dir-btn--expense' : ''}}"
+                bindtap="onDirectionTap" data-dir="expense">支出</view>
+          <view class="dir-btn {{direction === 'income' ? 'dir-btn--active dir-btn--income' : ''}}"
+                bindtap="onDirectionTap" data-dir="income">收入</view>
+        </view>
+      </view>
+
       <view class="form-row {{ errors.amount ? 'form-row--error' : '' }}">
         <text class="form-label">金额</text>
         <view class="col flex-1">

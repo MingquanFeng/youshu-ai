@@ -212,3 +212,30 @@
   margin-top: var(--space-3);
 }
 .actions .btn { flex: 1; min-width: 0; }
+
+/* 方向切换 (支出/收入) — pill 按钮组 */
+.dir-toggle {
+  flex: 1;
+}
+.dir-btn {
+  flex: 1;
+  height: 56rpx;
+  line-height: 56rpx;
+  text-align: center;
+  border-radius: var(--radius-pill);
+  background: var(--color-bg-3);
+  color: var(--color-fg-2);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  transition: all var(--dur-fast) var(--ease-out);
+}
+.dir-btn--active.dir-btn--expense {
+  background: var(--color-primary);
+  color: #fff;
+  box-shadow: 0 2rpx 6rpx rgba(16, 185, 129, 0.25);
+}
+.dir-btn--active.dir-btn--income {
+  background: var(--color-warning);
+  color: #fff;
+  box-shadow: 0 2rpx 6rpx rgba(245, 158, 11, 0.25);
+}

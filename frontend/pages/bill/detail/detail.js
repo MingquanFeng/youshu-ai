@@ -17,8 +17,12 @@ export const CAT_KEY_MAP = {
 };
 
 export function makeForm(b) {
+  // direction: 'expense' (支出) | 'income' (收入)
+  // amount 永远存绝对值在 form (UI 输入), 提交时按 direction 加符号
+  const raw = Number(b.amount || 0);
   return {
-    amount: b.amount,
+    amount: Math.abs(raw),
+    direction: raw < 0 ? 'income' : 'expense',
     category: b.category || '',
     merchant: b.merchant || '',
     pay_method: b.pay_method || '',
@@ -53,7 +57,15 @@ export function validateForm(form) {
 // deep equal for form diff
 export function isFormDirty(orig, form) {
   if (!orig) return true;
-  const fields = ['amount', 'category', 'merchant', 'pay_method', 'bill_time', 'remark'];
+  const fields = [
+    'amount',
+    'direction',
+    'category',
+    'merchant',
+    'pay_method',
+    'bill_time',
+    'remark'
+  ];
   for (const f of fields) {
     const a = (orig[f] ?? '').toString().trim();
     const b = (form[f] ?? '').toString().trim();
@@ -66,7 +78,15 @@ Page({
   data: {
     bill: null,
     originalForm: null, // 编辑前的 form, 用于 dirty 检查
-    form: { amount: 0, category: '', merchant: '', pay_method: '', bill_time: '', remark: '' },
+    form: {
+      amount: 0,
+      direction: 'expense',
+      category: '',
+      merchant: '',
+      pay_method: '',
+      bill_time: '',
+      remark: ''
+    },
     errors: {}, // 字段错误
     loading: false,
     saving: false,
@@ -131,6 +151,11 @@ Page({
   },
   onPickerChange(e) {
     this.setData({ 'form.bill_time': e.detail.value }, () => this.recomputeDirtyAndErrors());
+  },
+  onDirectionTap(e) {
+    const { dir } = e.currentTarget.dataset;
+    if (dir === this.data.form.direction) return;
+    this.setData({ 'form.direction': dir }, () => this.recomputeDirtyAndErrors());
   },
 
   recomputeDirtyAndErrors() {
