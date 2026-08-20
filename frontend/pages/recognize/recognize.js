@@ -34,6 +34,7 @@ export function downloadToLocal(url) {
 
 const INITIAL_FORM = {
   amount: 0,
+  direction: 'expense', // expense | income, 后端 vision 启发判断, 用户可在编辑时切换
   category: '',
   merchant: '',
   bill_time: '',
@@ -100,7 +101,8 @@ Page({
           score_pct: (score * 100).toFixed(0) + '%'
         },
         form: {
-          amount: r.amount,
+          amount: Math.abs(r.amount), // UI 永远输入绝对值
+          direction: r.direction || 'expense', // 后端 vision 启发判断: 红包/收款 → income
           category: r.category,
           merchant: r.merchant,
           bill_time: r.time,
@@ -128,11 +130,11 @@ Page({
     }
     this.setData({ saving: true });
     try {
-      // 支出 = amount 负数, 收入 (工资/退款) = amount 正数
-      const isIncome = this.data.form.category === '工资' || this.data.form.category === 'income';
-      const amount = isIncome ? Math.abs(this.data.form.amount) : -Math.abs(this.data.form.amount);
+      // 按 direction 加符号: 支出 = 负, 收入 = 正
+      const amt = Number(this.data.form.amount) || 0;
+      const signedAmount = this.data.form.direction === 'income' ? Math.abs(amt) : -Math.abs(amt);
       await saveBill({
-        amount,
+        amount: signedAmount,
         category: this.data.form.category,
         merchant: this.data.form.merchant,
         bill_time: this.data.form.bill_time,

@@ -74,6 +74,7 @@ def _mock_run(image_path: str, ocr_text: str) -> RecognizeResult:
 
     return RecognizeResult(
         amount=amount,
+        direction=_guess_direction(pay, merchant, text),
         merchant=merchant,
         category=_guess_category(merchant),
         time=time,
@@ -145,8 +146,15 @@ def _qwen_vl_run(image_path: str, ocr_text: str) -> RecognizeResult:
 
     raw_amount = float(data.get("amount", 0))
     amount = abs(raw_amount) if raw_amount != 0 else 0.01
+    # LLM 识别 direction: 红包/收款/退款/转入零钱 → income, 其余 expense
+    direction = _guess_direction(
+        str(data.get("payment", "")),
+        str(data.get("merchant", "")),
+        ocr_text
+    )
     return RecognizeResult(
         amount=amount,
+        direction=direction,
         merchant=str(data.get("merchant", "")),
         category=str(data.get("category") or "其他"),
         time=datetime.fromisoformat(data["time"]) if "time" in data else datetime.now(),
@@ -169,6 +177,24 @@ def _guess_category(merchant: str) -> str:
         if any(k in merchant for k in kws):
             return cat
     return "其他"
+
+
+_INCOME_KEYWORDS = [
+    "收款", "收到", "转入", "退款", "红包", "转账收", "入账",
+    "零钱通", "零钱收入", "提现到账"
+]
+
+
+def _guess_direction(payment: str, merchant: str, raw_ocr: str = "") -> str:
+    """从支付方式/商户/OCR 文本启发判断 收入/支出.
+
+    默认 expense (支出), 命中收入关键字 → income.
+    """
+    text = " ".join([payment or "", merchant or "", raw_ocr or ""])
+    for kw in _INCOME_KEYWORDS:
+        if kw in text:
+            return "income"
+    return "expense"
 
 
 # ------------------------------ MiniMax-VL ------------------------------ #
@@ -236,8 +262,14 @@ def _minimax_vl_run(image_path: str, ocr_text: str) -> RecognizeResult:
     except json.JSONDecodeError as exc:
         raise BizException(50000, f"MiniMax-VL 返回非 JSON: {text[:200]}") from exc
 
+    direction = _guess_direction(
+        str(data.get("payment", "")),
+        str(data.get("merchant", "")),
+        ""
+    )
     return RecognizeResult(
         amount=float(data.get("amount", 0)),
+        direction=direction,
         merchant=str(data.get("merchant", "")),
         category=str(data.get("category") or "其他"),
         time=datetime.fromisoformat(data["time"]) if "time" in data else datetime.now(),

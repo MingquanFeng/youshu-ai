@@ -7,7 +7,8 @@ from pydantic import BaseModel, Field
 
 
 class RecognizeResult(BaseModel):
-    amount: float = Field(..., gt=0, description="金额，正数")
+    amount: float = Field(..., gt=0, description="金额，正数绝对值（方向由 direction 字段决定）")
+    direction: str = Field("expense", description="方向: 'expense' 支出 | 'income' 收入")
     merchant: str = Field("", description="商户名")
     category: str = Field("其他", description="一级分类")
     time: datetime = Field(..., description="消费发生时间")

@@ -32,7 +32,12 @@ def recognize_pipeline(
     db.add(record)
     db.commit()
     db.refresh(record)
-    return final
+
+    # 落库后, 如果识别为收入 (direction=income), amount 在 DB 里存正数
+    # 前端 save 时按 direction 加符号, 调用 /bill/save 时 amount 为正
+    if final.direction == "income":
+        return final.model_copy(update={"amount": abs(final.amount)})
+    return final.model_copy(update={"amount": -abs(final.amount)})
 
 
 def _to_public_url(image_path: str) -> str:
