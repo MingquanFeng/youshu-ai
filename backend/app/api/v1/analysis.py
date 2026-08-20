@@ -36,7 +36,7 @@ def monthly(
 
     # 支出 (amount < 0): 绝对值累加, 用于显示
     expense_rows = (
-        db.query(func.coalesce(func.sum(-Bill.amount), 0))
+        db.query(func.coalesce(func.sum(0 - Bill.amount), 0))
         .filter(
             Bill.user_id == user_id,
             Bill.bill_time >= start,
@@ -68,14 +68,14 @@ def monthly(
 
     # 找 top 支出分类 (按绝对值)
     top_rows = (
-        db.query(Bill.category, func.sum(-Bill.amount).label("s"))
+        db.query(Bill.category, func.sum(0 - Bill.amount).label("s"))
         .filter(
             Bill.user_id == user_id,
             Bill.bill_time >= start,
             Bill.amount < 0,
         )
         .group_by(Bill.category)
-        .order_by(func.sum(-Bill.amount).desc())
+        .order_by(func.sum(0 - Bill.amount).desc())
         .limit(1)
         .all()
     )
@@ -107,10 +107,11 @@ def daily(
     # 时区安全：用 substr(1,10) 按存储格式截取 YYYY-MM-DD，避免 SQLite func.date() 按 UTC 切日期
     # total = 当日支出绝对值 (排除收入, 只反映支出趋势)
     # 必须 ORDER BY 日期, 不然后续补 0 填充会按 SQL 物理顺序错位
+    # 注意: func.sum(-Bill.amount) 在 SQLAlchemy 2.x 不取反, 必须用 0 - Bill.amount
     rows = (
         db.query(
             func.substr(Bill.bill_time, 1, 10).label("d"),
-            func.sum(-Bill.amount).label("s"),  # amount<0 时 -amount=正, 支出累加
+            func.sum(0 - Bill.amount).label("s"),  # 支出累加 (amount<0 时返正)
         )
         .filter(
             Bill.user_id == user_id,
