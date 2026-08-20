@@ -19,10 +19,11 @@ def _save(client, headers, amount: float, category: str, time: str):
 
 
 def _save_daily(client, headers, amount, bill_time):
+    # amount 参数表达"支出多少", 自动转负数存 (符合前端保存逻辑)
     return client.post(
         "/api/v1/bill/save",
         json={
-            "amount": amount,
+            "amount": -abs(amount),  # 支出 = 负数
             "category": "餐饮",
             "merchant": "测试",
             "pay_method": "微信",
