@@ -171,11 +171,14 @@ Page({
     if (!this.data.canSave) return;
     this.setData({ saving: true, errorMsg: '' });
     try {
-      await updateBill(this.data.billId, this.data.form);
+      // 按 direction 加符号: 支出 = 负, 收入 = 正
+      const amt = Number(this.data.form.amount) || 0;
+      const signedAmount = this.data.form.direction === 'income' ? Math.abs(amt) : -Math.abs(amt);
+      const payload = { ...this.data.form, amount: signedAmount };
+      await updateBill(this.data.billId, payload);
       wx.showToast({ title: '保存成功', icon: 'success' });
       setTimeout(() => wx.navigateBack(), 600);
     } catch (e) {
-      // 422 字段错误: { code: 42200, errors: {field: msg} }
       if (e && e.code === 42200 && e.errors) {
         this.setData({ errors: e.errors, errorMsg: '请检查标红字段' });
       } else {
