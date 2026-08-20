@@ -57,14 +57,19 @@ def test_monthly_empty(client, auth_headers):
 
 
 def test_monthly_sums_and_top(client, auth_headers):
-    _save(client, auth_headers, 30, "餐饮", "2026-08-01T10:00:00")
-    _save(client, auth_headers, 80, "餐饮", "2026-08-05T10:00:00")
-    _save(client, auth_headers, 50, "交通", "2026-08-08T10:00:00")
+    # 支出: amount 存负数
+    _save(client, auth_headers, -30, "餐饮", "2026-08-01T10:00:00")
+    _save(client, auth_headers, -80, "餐饮", "2026-08-05T10:00:00")
+    _save(client, auth_headers, -50, "交通", "2026-08-08T10:00:00")
+    # 收入: 工资 (amount > 0)
+    _save(client, auth_headers, 5000, "工资", "2026-08-01T10:00:00")
 
     res = client.post("/api/v1/analysis/monthly", headers=auth_headers).json()
     assert res["code"] == 0
     data = res["data"]
-    assert data["total"] == 160
+    assert data["expense"] == 160       # abs(-30) + abs(-80) + abs(-50)
+    assert data["income"] == 5000       # 工资
+    assert data["total"] == -4840       # expense - income (净支出)
     assert data["top_category"] == "餐饮"
     assert "餐饮" in data["advice"]
 

@@ -34,24 +34,61 @@ def monthly(
     now = datetime.now()
     start = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
 
-    rows = (
-        db.query(Bill.category, func.sum(Bill.amount))
-        .filter(Bill.user_id == user_id, Bill.bill_time >= start)
+    # 支出 (amount < 0): 绝对值累加, 用于显示
+    expense_rows = (
+        db.query(func.coalesce(func.sum(-Bill.amount), 0))
+        .filter(
+            Bill.user_id == user_id,
+            Bill.bill_time >= start,
+            Bill.amount < 0,
+        )
+        .one()
+    )
+    expense = float(expense_rows[0] or 0)
+
+    # 收入 (amount > 0): 累加
+    income_rows = (
+        db.query(func.coalesce(func.sum(Bill.amount), 0))
+        .filter(
+            Bill.user_id == user_id,
+            Bill.bill_time >= start,
+            Bill.amount > 0,
+        )
+        .one()
+    )
+    income = float(income_rows[0] or 0)
+
+    if expense == 0 and income == 0:
+        return ok(
+            MonthlyAnalysisOut(
+                income=0, expense=0, total=0,
+                top_category="暂无", advice="本月还没有账单，先记一笔吧～"
+            ).model_dump()
+        )
+
+    # 找 top 支出分类 (按绝对值)
+    top_rows = (
+        db.query(Bill.category, func.sum(-Bill.amount).label("s"))
+        .filter(
+            Bill.user_id == user_id,
+            Bill.bill_time >= start,
+            Bill.amount < 0,
+        )
         .group_by(Bill.category)
+        .order_by(func.sum(-Bill.amount).desc())
+        .limit(1)
         .all()
     )
-    total = float(sum(amount for _, amount in rows))
-    if not rows:
-        return ok(MonthlyAnalysisOut(total=0, top_category="暂无", advice="本月还没有账单，先记一笔吧～").model_dump())
-
-    counter = Counter({cat: float(amt) for cat, amt in rows})
-    top_category, top_amount = counter.most_common(1)[0]
-    ratio = top_amount / total if total else 0
-    advice = _make_advice(top_category, ratio, total)
+    top_category = top_rows[0][0] if top_rows else "暂无"
+    top_amount = float(top_rows[0][1]) if top_rows else 0
+    ratio = top_amount / expense if expense else 0
+    advice = _make_advice(top_category, ratio, expense)
 
     return ok(
         MonthlyAnalysisOut(
-            total=round(total, 2),
+            income=round(income, 2),
+            expense=round(expense, 2),
+            total=round(expense - income, 2),
             top_category=top_category,
             advice=advice,
         ).model_dump()
@@ -138,9 +175,9 @@ def category(
     return ok(CategoryOut(categories=items, total=round(grand_total, 2)).model_dump())
 
 
-def _make_advice(category: str, ratio: float, total: float) -> str:
+def _make_advice(category: str, ratio: float, expense: float) -> str:
     if ratio >= 0.5:
         return f"本月 {category} 占比 {int(ratio * 100)}%，建议适当控制该类支出。"
-    if total >= 5000:
-        return f"本月已支出 {total:.0f} 元，整体消费偏高，注意预算。"
+    if expense >= 5000:
+        return f"本月已支出 {expense:.0f} 元，整体消费偏高，注意预算。"
     return f"继续保持，{category} 类支出较为合理。"

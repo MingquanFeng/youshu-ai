@@ -93,7 +93,8 @@ def test_recognize_unknown_image(client, auth_headers):
     assert body["code"] == 40400
 
 
-def test_save_rejects_non_positive_amount(client, auth_headers):
+def test_save_rejects_zero_amount(client, auth_headers):
+    """amount=0 仍被拒 (无意义, 支出/收入都不能为0), 但负数 (支出) 现在允许."""
     res = client.post(
         "/api/v1/bill/save",
         json={
@@ -300,16 +301,25 @@ def test_update_bill_requires_auth(client):
     assert res.json()["code"] == 40100
 
 
-def test_update_bill_rejects_non_positive_amount(client, auth_headers):
+def test_update_bill_rejects_zero_amount_allows_negative(client, auth_headers):
+    """amount=0 仍 422, amount<0 (支出) 现在允许."""
     bill_id = _save_one(client, auth_headers)
-    for bad_amount in (0, -1):
-        res = client.put(
-            f"/api/v1/bill/{bill_id}",
-            json={"amount": bad_amount},
-            headers=auth_headers,
-        )
-        assert res.status_code == 422
-        assert res.json()["code"] == 42200
+    # 0 仍被拒
+    res = client.put(
+        f"/api/v1/bill/{bill_id}",
+        json={"amount": 0},
+        headers=auth_headers,
+    )
+    assert res.status_code == 422
+    assert res.json()["code"] == 42200
+    # 负数 (支出) 允许
+    res = client.put(
+        f"/api/v1/bill/{bill_id}",
+        json={"amount": -50.0},
+        headers=auth_headers,
+    )
+    assert res.status_code == 200
+    assert res.json()["code"] == 0
 
 
 def test_update_bill_empty_body_rejected(client, auth_headers):

@@ -99,8 +99,7 @@ Page({
   },
 
   _mapItem(b) {
-    const cat = b.category || '其他';
-    const isIncome = b.amount > 0 || cat === '工资' || cat === 'income';
+    // amount: 正数=收入, 负数=支出.  按符号直接显示, 不再硬判 cat
     const CAT_KEY = {
       餐饮: 'food',
       交通: 'transport',
@@ -110,14 +109,14 @@ Page({
       医疗: 'medical',
       工资: 'income'
     };
+    const cat = b.category || '其他';
+    const amt = Number(b.amount);
     return {
       ...b,
       bill_time_short: formatBillTime(b.bill_time),
-      amount_str: Number(b.amount).toFixed(2),
-      amount_sign: isIncome
-        ? '+¥ ' + Number(b.amount).toFixed(2)
-        : '−¥ ' + Number(b.amount).toFixed(2),
-      amount_color: isIncome ? 'color: var(--color-success);' : '',
+      amount_str: Math.abs(amt).toFixed(2),
+      amount_sign: amt >= 0 ? '+¥ ' + Math.abs(amt).toFixed(2) : '−¥ ' + Math.abs(amt).toFixed(2),
+      amount_color: amt >= 0 ? 'color: var(--color-success);' : '',
       icon_char: cat.charAt(0),
       icon_bg: 'var(--cat-' + (CAT_KEY[cat] || 'other') + '-soft);'
     };

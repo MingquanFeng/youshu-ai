@@ -128,8 +128,11 @@ Page({
     }
     this.setData({ saving: true });
     try {
+      // 支出 = amount 负数, 收入 (工资/退款) = amount 正数
+      const isIncome = this.data.form.category === '工资' || this.data.form.category === 'income';
+      const amount = isIncome ? Math.abs(this.data.form.amount) : -Math.abs(this.data.form.amount);
       await saveBill({
-        amount: this.data.form.amount,
+        amount,
         category: this.data.form.category,
         merchant: this.data.form.merchant,
         bill_time: this.data.form.bill_time,

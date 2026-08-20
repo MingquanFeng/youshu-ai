@@ -58,7 +58,6 @@ Page({
     greeting: greeting(),
     todayLabel: dateLabel(),
     monthly: {
-      total_str: '0.00',
       income_str: '0.00',
       expense_str: '0.00',
       remain_str: '0.00',
@@ -90,11 +89,10 @@ Page({
         listBills({ date: todayStr(), size: 10 })
       ]);
 
-      // 本月分析
+      // 后端 income(正) expense(正绝对值) total(净支出=expense-income)
       const income = Number(monthly.income || 0);
       const expense = Number(monthly.expense || 0);
-      const total = Number(monthly.total || 0);
-      const remain = income - expense;
+      // 进度条: 支出 / 收入 (但不能除0)
       const barPct = income > 0 ? Math.round((expense / income) * 100) : 0;
 
       // 今天流水
@@ -102,10 +100,9 @@ Page({
 
       this.setData({
         monthly: {
-          total_str: total.toFixed(2),
           income_str: income.toFixed(2),
           expense_str: expense.toFixed(2),
-          remain_str: remain.toFixed(2),
+          remain_str: (income - expense).toFixed(2),
           bar_pct: barPct
         },
         today: txns,
