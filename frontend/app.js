@@ -22,9 +22,13 @@ App({
   },
 
   maybeLogin() {
-    if (wx.getStorageSync('token')) return;
+    // 返回缓存的 Promise, 多次调用复用同一个请求 (避免 race)
+    if (this.maybeLoginPromise) return this.maybeLoginPromise;
+    if (wx.getStorageSync('token')) {
+      return (this.maybeLoginPromise = Promise.resolve());
+    }
     const code = 'mock-dev-code';
-    login(code)
+    this.maybeLoginPromise = login(code)
       .then((res) => {
         setToken(res.token);
         setUser(res);
@@ -34,6 +38,9 @@ App({
       })
       .catch((err) => {
         console.warn('[app] 懒登录失败', err);
+        // 失败也要清掉 promise 允许重试
+        this.maybeLoginPromise = null;
       });
+    return this.maybeLoginPromise;
   }
 });
