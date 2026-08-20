@@ -8,15 +8,16 @@ const DEV_LOCAL = 'http://127.0.0.1:8000/api/v1';
 const PROD_BASE = 'http://82.156.173.21/api/v1';
 
 function getDefaultBase() {
+  // 当前所有环境都连云服务器 (本地 uvicorn 未装 dashscope, 走 mock 看不到真模型效果)
+  // 真要本地开发时: 临时改下面这一行, 或 wx.setStorageSync('apiBase', 'http://127.0.0.1:8000/api/v1')
+  return PROD_BASE;
+  /* 保留旧分支备用:
   try {
     const sys = wx.getSystemInfoSync();
-    // 开发者工具模拟器 → 用本地 loopback
     if (sys && sys.platform === 'devtools') return DEV_LOCAL;
-  } catch (e) {
-    /* 旧基础库或非小程序环境 */
-  }
-  // 真机 (iOS / Android / macOS / Windows) → 云服务器
+  } catch (e) {}
   return PROD_BASE;
+  */
 }
 
 function getToken() {
