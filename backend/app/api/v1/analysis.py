@@ -106,6 +106,7 @@ def daily(
 
     # 时区安全：用 substr(1,10) 按存储格式截取 YYYY-MM-DD，避免 SQLite func.date() 按 UTC 切日期
     # total = 当日支出绝对值 (排除收入, 只反映支出趋势)
+    # 必须 ORDER BY 日期, 不然后续补 0 填充会按 SQL 物理顺序错位
     rows = (
         db.query(
             func.substr(Bill.bill_time, 1, 10).label("d"),
@@ -119,6 +120,7 @@ def daily(
             func.substr(Bill.bill_time, 1, 10) <= today.isoformat(),
         )
         .group_by(func.substr(Bill.bill_time, 1, 10))
+        .order_by(func.substr(Bill.bill_time, 1, 10))
         .all()
     )
     totals = {d: float(s) for d, s in rows}
