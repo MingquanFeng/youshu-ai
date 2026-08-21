@@ -212,10 +212,11 @@ Page({
     try {
       await removeBill(this.data.billId);
       wx.showToast({ title: '已删除', icon: 'success' });
-      setTimeout(() => wx.navigateBack(), 600);
+      // 删除后立刻切到 notFound 视图 (避免 "还在编辑页"), 1.5s 后回列表 (覆盖 toast 1.5s)
+      this.setData({ bill: null, notFound: true, saving: false });
+      setTimeout(() => wx.navigateBack(), 1500);
     } catch (e) {
       this.setData({ errorMsg: (e && e.message) || '删除失败' });
-    } finally {
       this.setData({ saving: false });
     }
   },
