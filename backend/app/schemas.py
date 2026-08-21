@@ -29,6 +29,7 @@ class RecognizeIn(BaseModel):
 
 class RecognizeOut(BaseModel):
     amount: float
+    direction: str = "expense"  # expense 支出 | income 收入
     merchant: str
     category: str
     time: datetime

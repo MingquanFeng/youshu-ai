@@ -74,6 +74,7 @@ def recognize(
     return ok(
         RecognizeOut(
             amount=result.amount,
+            direction=result.direction,
             merchant=result.merchant,
             category=result.category,
             time=result.time,
