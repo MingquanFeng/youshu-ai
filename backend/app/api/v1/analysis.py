@@ -35,12 +35,14 @@ def monthly(
     start = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
 
     # 支出 (amount < 0): 绝对值累加, 用于显示
+    # 必须 filter deleted_at.is_(None) 否则软删的 bill 还被算进 stat
     expense_rows = (
         db.query(func.coalesce(func.sum(0 - Bill.amount), 0))
         .filter(
             Bill.user_id == user_id,
             Bill.bill_time >= start,
             Bill.amount < 0,
+            Bill.deleted_at.is_(None),
         )
         .one()
     )
@@ -53,6 +55,7 @@ def monthly(
             Bill.user_id == user_id,
             Bill.bill_time >= start,
             Bill.amount > 0,
+            Bill.deleted_at.is_(None),
         )
         .one()
     )
@@ -73,6 +76,7 @@ def monthly(
             Bill.user_id == user_id,
             Bill.bill_time >= start,
             Bill.amount < 0,
+            Bill.deleted_at.is_(None),
         )
         .group_by(Bill.category)
         .order_by(func.sum(0 - Bill.amount).desc())

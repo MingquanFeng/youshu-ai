@@ -32,9 +32,8 @@ Page({
   },
 
   onShow() {
-    if (this.data.items.length > 0) {
-      this.loadAll();
-    }
+    // 每次进入都刷新 (删除/识别页保存后跳回, 本地 data 可能是旧的, 必须重新拉)
+    this.loadAll();
   },
 
   onPullDownRefresh() {
