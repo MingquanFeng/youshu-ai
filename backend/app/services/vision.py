@@ -88,12 +88,13 @@ def _mock_run(image_path: str, ocr_text: str) -> RecognizeResult:
 
 QWEN_PROMPT = """你是专业记账助手。
 从消费图片中提取：
-- 金额
-- 商户
-- 时间
-- 支付方式
-- 消费分类
-**只返回纯 JSON, 不要 markdown 代码块标记, 不要解释, 不要前后缀**。字段: amount (数字, 元) / merchant (字符串) / category (餐饮/交通/购物/居家/娱乐/医疗/其他) / time (ISO 8601) / payment (微信支付/支付宝/银行卡/现金 等)"""
+- amount (数字, 元, 正数绝对值)
+- merchant (商家名)
+- category (餐饮/交通/购物/居家/娱乐/医疗/其他)
+- time (ISO 8601)
+- payment (微信支付/支付宝/银行卡/现金 等)
+- direction (支出 OR 收入: 看到'收款/已收款/红包/退款/转入/入账/收到/礼金/收到退款/对方/来自'→ 'income', 否则 'expense')
+**只返回纯 JSON, 不要 markdown 代码块标记, 不要解释**。字段: amount / merchant / category / time / payment / direction"""
 
 
 def _qwen_vl_run(image_path: str, ocr_text: str) -> RecognizeResult:
@@ -146,12 +147,16 @@ def _qwen_vl_run(image_path: str, ocr_text: str) -> RecognizeResult:
 
     raw_amount = float(data.get("amount", 0))
     amount = abs(raw_amount) if raw_amount != 0 else 0.01
-    # LLM 识别 direction: 红包/收款/退款/转入零钱 → income, 其余 expense
-    direction = _guess_direction(
-        str(data.get("payment", "")),
-        str(data.get("merchant", "")),
-        ocr_text
-    )
+    # 优先 LLM 直接判 direction (Qwen-VL 看图更准), fallback 关键字启发
+    llm_direction = str(data.get("direction", "")).strip().lower()
+    if llm_direction in ("expense", "income"):
+        direction = llm_direction
+    else:
+        direction = _guess_direction(
+            str(data.get("payment", "")),
+            str(data.get("merchant", "")),
+            ocr_text
+        )
     return RecognizeResult(
         amount=amount,
         direction=direction,
